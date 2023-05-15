@@ -141,9 +141,10 @@ Para verificar los tipos de datos dentro de un marco de datos, use la función `
 str(eg_data_frame)
 ``` 
 
-Note that data types can change. In this example, the character vector has been coerced to a factor in the process of making the data frame.
+Ten en cuenta que los tipos de datos pueden cambiar. En este ejemplo, el vector de caracteres ha sido convertido en un factor en el proceso de crear el marco de datos.
 
-If you wish to check the data type of just one variable, or change that variable to another type, we use `$` to access that variable from within the data frame. For example:
+Si deseas verificar el tipo de datos de una sola variable, o cambiar esa variable a otro tipo, utilizamos `$` para acceder a esa variable desde dentro del marco de datos. Por ejemplo:
+
 
 ```{r, collapse = T}
 str(eg_data_frame$eg_character)
