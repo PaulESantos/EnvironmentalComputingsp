@@ -1,0 +1,23 @@
+---
+title: 'Coding Skills'
+weight: 4
+output: html_document
+---
+
+Podrías pensar que tener habilidades en programación es solo para desarrolladores de sitios web y juegos, pero las habilidades en programación son cada vez más valiosas para los científicos ambientales. Ejecutar tus análisis de datos y gráficos usando código significa que tus métodos de investigación están explícitamente guardados, son reproducibles y se pueden compartir fácilmente con colegas o supervisores.
+
+En estas páginas, ofrecemos algunos consejos para escribir código efectivo y algunas de las habilidades de programación muy útiles que te ahorrarán mucho tiempo.
+
+* [Buenas prácticas para escribir scripts](good-practice/)
+* [Escribir funciones simples](writing-functions/)  
+* [Usar bucles](loops/)
+* Usando listas... próximamente
+* Control lógico... próximamente
+* [Control de versiones](version-control/)
+
+![](Coding_image.jpg)
+**Autor**: Alistair Poore y Will Cornwell
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

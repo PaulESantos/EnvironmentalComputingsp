@@ -1,0 +1,33 @@
+---
+weight: 3
+title: "Manipulación de Datos"
+output: html_document
+---
+
+
+Tener habilidades en la organización y resumen de datos es crucial para estudiantes e investigadores en todas las ciencias. En estas páginas, brindamos algunas orientaciones para manipular los datos de manera que se pueda ahorrar mucho tiempo en el análisis de los mismos y para crear figuras efectivas.
+
+
+![](Data_entry_image.jpg)
+
+
+Manipulación de datos utilizando los paquetes
+[dplyr](https://cran.r-project.org/web/packages/dplyr/index.html),
+[tidyr](https://blog.rstudio.org/2014/07/22/introducing-tidyr/),
+[reshape2](https://cran.r-project.org/web/packages/reshape2/).
+
+* [Creación de nuevas variables](making-new-variables/)
+* [Subconjunto de datos](subsetting-data/) - selección de filas y columnas
+* [Resumen de datos](summarising-data/) - extracción de estadísticas resumidas
+* [Combinación de conjuntos de datos](combining-datasets/) - unir conjuntos de datos enteros o partes mediante la coincidencia de filas
+* [Reorganización de datos](reshaping-data/) entre formatos amplio y largo.
+
+### Ayuda adicional
+
+La [Guía de Gestión de Datos en Ecología y Evolución](http://www.britishecologicalsociety.org/wp-content/uploads/Publ_Data-Management-Booklet.pdf) de la Sociedad Ecológica Británica.
+
+**Autor:** Alistair Poore
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

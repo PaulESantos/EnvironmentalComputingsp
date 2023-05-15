@@ -1,0 +1,41 @@
+---
+title: "About This Site"
+weight: 1
+---
+
+
+Este sitio es una breve introducción a técnicas para la organización de datos, gráficos y análisis, que incluye:
+
+- Cómo organizar sus datos durante la [entrada de datos](/getting-started-with-r/data-entry/).
+- Cómo [manipular y administrar sus datos](/data-manipulation/) para tener transparencia y control de versiones.
+- Instrucciones para ejecutar [análisis estadísticos](/statistics/) con código de muestra en R u otro software relevante (primero consulte [Introducción a R](/getting-started-with-r/)).
+- La justificación de la técnica en lenguaje sencillo (por qué se usa).
+- Cómo interpretar los resultados y las suposiciones que se deben comprobar.
+- [Visualización](/graphics/) de los resultados y formas de comunicar eficazmente los resultados en informes o publicaciones científicas.
+- Dónde encontrar ayuda adicional.
+
+Este sitio integra diferentes técnicas utilizadas por investigadores y posgraduados de la [Universidad de Nueva Gales del Sur, Australia](https://www.unsw.edu.au/), quienes han proporcionado sus conocimientos y habilidades para ayudar a otros a desarrollar habilidades para la ciencia ambiental rigurosa.
+
+Los recursos fueron desarrollados inicialmente para ayudar en la enseñanza de habilidades cuantitativas a estudiantes de pregrado y posgrado en la [Escuela de Ciencias Biológicas, Terrestres y Ambientales](http://www.bees.unsw.edu.au/) en la Universidad de Nueva Gales del Sur, con el apoyo de una subvención de Innovación en Enseñanza y Aprendizaje otorgada a Alistair Poore, Will Cornwell, Iain Suthers y Richard Kingsford. El desarrollo de la segunda generación de este sitio fue posible gracias al apoyo del [Centro de Investigación en Evolución y Ecología](http://www.eerc.unsw.edu.au/).
+
+**Editores del sitio:**
+
+[Profesor Alistair Poore](https://alistairpoore.org)
+
+[Profesor Asociado Will Cornwell](http://willcornwell.org/)
+
+[Profesor Asociado Danial Falster](https://danielfalster.com/)
+
+[Dr. Fonti Kar](https://fontikar.wordpress.com/)
+
+**Autores de la página:** Keryn Bain, Rachel Blakey, Stephanie Brodie, Corey Callaghan, Will Cornwell, Kingsley Griffin, Matt Holland, James Lavender, Andrew Letten, Shinichi Nakagawa, Shaun Nielsen, Alistair Poore, Gordana Popovic, Fiona Robinson y Jakub Stoklosa.
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
+
+## Colaboradores
+
+¡Gracias a ellos <i class="fas fa-heart"></i> por hacer de los programas de código abierto un lugar mejor!
+
+

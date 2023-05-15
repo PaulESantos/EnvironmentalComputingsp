@@ -1,0 +1,77 @@
+Package: Environmental Computing Website
+Title: Website containing R tutorials for coding and statistical skills
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Daniel", "Falster", 
+           email = "daniel.falster@unsw.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0002-9814-092X")),
+    person("Fonti", "Kar",
+           email = "f.kar@unsw.edu.au", role = "cre",
+           comment = c(ORCID = "0000-0002-2760-3974")),
+    person("William", "Cornwell",
+           email = "w.cornwell@unsw.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4080-4073")),
+    person("Alistair", "Poore",
+           email = "a.poore@unsw.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3560-3659"))
+  )
+Description: Skeleton for blogdown + hugo to create all tutorials on the website
+License: CC BY 4.0
+Encoding: UTF-8
+Language: en
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    blogdown,
+    ape,
+    car,
+    dendextend,
+    devtools,
+    dismo,
+    dplyr,
+    emo,
+    forecast,
+    formatR,
+    gganimate,
+    ggmap,
+    ggplot2,
+    gridExtra,
+    Hmisc,
+    httr,
+    installr,
+    knitr,
+    leaflet,
+    lme4,
+    lubridate,
+    mapdata,
+    mapproj,
+    maps,
+    maptools,
+    metafor,
+    mgcv,
+    multcomp,
+    mvabund,
+    mvtnorm,
+    ncdf4,
+    pheatmap,
+    pwr,
+    raster,
+    rasterVis,
+    RColorBrewer,
+    RCurl,
+    readr,
+    reshape2,
+    Reshape2,
+    rgbif,
+    rgdal,
+    rgeos,
+    simr,
+    sp,
+    survival,
+    tidyr,
+    tidyverse,
+    vegan,
+    XML
+Remotes:
+  hadley/emo

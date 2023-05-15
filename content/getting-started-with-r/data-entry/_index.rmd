@@ -1,0 +1,66 @@
+---
+weight: 4
+title: "Data Entry"
+output: html_document
+aliases: /data-entry/
+---
+
+
+Los datos son la vida de la ciencia. Como parte del proceso científico, invertimos una cantidad enorme de tiempo en recolectar, analizar y presentar datos. Sin embargo, antes de que podamos analizar datos, típicamente necesitamos ponerlos en un formato que pueda ser interpretado por otros, y más importante aún, por el software usado para análisis. Hacer esto bien puede ahorrarte mucho tiempo; hacerlo mal puede resultar en desperdiciar tiempo considerable "limpiando" y estructurando los datos para hacerlos utilizables.
+
+### ¿Cómo debe verse un conjunto de datos?
+
+La mayoría de conjuntos de datos consisten en tablas rectangulares de **valores** (usualmente números o texto). Cada valor pertenece a una **variable** y a una **observación**. Una variable consiste en valores del mismo tipo (p. ej., temperatura, duración o abundancia). Una observación consiste en todos los valores medidos en la misma unidad (p. ej., parcela o individuo). La convención es almacenar las variables en columnas y las observaciones en filas.
+
+
+![](Data_entry_image.jpg)
+
+Aquí hay un conjunto de datos abreviado de muestreo de insectos que muestra el formato deseado. Consiste en cinco variables y datos de las primeras nueve observaciones de réplica. Tenga en cuenta que la primera fila consta de un **encabezado** que enumera los nombres de cada variable en cada columna. Las variables son:
+
+1. **Sitio**, con dos valores posibles que reflejan el tipo de hábitat (bosque o selva tropical).
+2. **Método**, con dos valores posibles que reflejan la técnica de muestreo (hojarasca o trampa de luz).
+3. **Insecto**, con los valores posibles que reflejan el tipo de insecto (hormiga, escarabajo, colémbolo, avispa, polilla o termita).
+4. **Número**, con valores que reflejan la abundancia de cada insecto en cada observación.
+5. **Grupo**, con un valor posible que refleja la identidad del recolector (A, B, C, etc.).
+
+
+```{r, echo = FALSE, results = 'asis'}
+Insect <- c("ant", "beetle", "springtail", "beetle", "wasp", "moth", "ant", "termite", "springtail")
+Number <- c(26, 8, 6, 8, 1, 1, 16, 2, 63)
+Site <- c("woodland", "woodland", "woodland", "woodland", "woodland", "woodland", "rainforest", "rainforest", "rainforest")
+Method <- c("leaflitter", "leaflitter", "leaflitter", "lighttrap", "lighttrap", "lighttrap", "leaflitter", "leaflitter", "leaflitter")
+Group <- c("A", "A", "A", "A", "A", "A", "A", "A", "A")
+raw_dat <- tibble::tibble(Site, Method, Insect, Number, Group)
+```
+
+```{r,echo=FALSE}
+raw_dat
+```
+ 
+Esta tabla está estructurada de tal manera que se pueden agregar nuevos datos con facilidad. Por ejemplo, es posible que deseemos combinar los datos de múltiples 'grupos de recolección', en cuyo caso es sencillo agregar nuevas filas al conjunto de datos existente. Si un conjunto adicional de muestras tiene nuevas especies de insectos, no es necesario agregar nuevas columnas para cada nueva especie, solo nuevos valores para la variable Insecto. Esto se conoce como formato largo. Algunos análisis (por ejemplo, contrastes de composición de especies) requerirán que cada especie se presente como una columna separada. Consulte nuestra sección de [Manipulación de datos](/data-manipulation/reshaping-data/) para obtener ayuda sobre cómo cambiar entre formatos largos y anchos.
+
+### 6 reglas de oro de la entrada de datos
+
+**1.** Cada columna debe contener solo un tipo de información (es decir, texto, números, fechas, booleanos). Por ejemplo, si se inserta texto dentro o debajo del conjunto de datos, R u otro software de análisis intentará interpretar el texto como un **valor** en la columna correspondiente. De manera similar, si se proporciona texto de resumen sobre los datos (un error común), esto se interpretará como la primera línea o encabezado de los datos reales.
+
+**2.** Los metadatos extensos (por ejemplo, descripciones de sitios) deben documentarse por lo general en un archivo separado, pero si son lo suficientemente breves, puede ser útil incluir esta información en su propia columna en la tabla de datos.
+
+**3.** Solo se deben utilizar caracteres ASCII (letras mayúsculas y minúsculas del alfabeto inglés, números y signos de puntuación comunes) para los nombres de archivo, los nombres de variables y los valores de datos.
+
+**4.** Aunque no afectará los análisis, para ayudar con la visualización de los datos en bruto, es una buena práctica ordenar las variables fijas primero, seguidas de las variables medidas. En la Tabla 1, **Sitio** y **Método** son fijos en el sentido de que los conocemos antes de la recopilación de datos, mientras que **Insecto** y **Número** son medidas. Sin embargo, esta no es una regla estricta. Por ejemplo, podemos querer ordenar **Grupo** al final, ya que esta información generalmente se tratará como metadatos en lugar de datos de interés real para el análisis.
+
+**5.** No manipule los datos en bruto una vez digitalizados. Idealmente, los datos en bruto deben tratarse como "solo lectura" y cualquier otra transformación o manipulación debe realizarse mediante scripts R guardados (o un lenguaje de programación alternativo). Esto evita insertar errores accidentalmente en los datos en bruto cada vez que se desea ajustar algo.
+
+**6.** Por último, siempre almacene los datos como <font face="monospace">.csv</font> o <font face="monospace">.txt</font> **NO** en otros formatos propietarios como <font face="monospace">.xls</font>, <font face="monospace">.xlsx</font> u otros, ya que no se pueden leer fácilmente en R o compartir con colaboradores. Los archivos de texto no requieren un software específico para leerlos.
+
+### Ayuda adicional
+Una vez que sus datos estén en formato .csv o .txt, consulte [Importación de datos](/getting-started-with-r/importing-data)  para obtener ayuda sobre cómo importarlos a R.
+
+<p style="margin-left:.5in;text-indent:-.5in">Borer, ET, EW Seabloom, MB Jones & M Schildhauer. 2009. Algunas pautas simples para la gestión efectiva de datos. *Bulletin of the Ecological Society of America*, 90: 205-214. [enlace](http://dx.doi.org/10.1890/0012-9623-90.2.205)</p>
+<p style="margin-left:.5in;text-indent:-.5in">Wickham, H. 2014. Tidy data. *Journal of Statistical Software*, 59:(10). [enlace](http://www.jstatsoft.org/v59/i10/paper)</p>
+
+**Autor:** Andrew Letten
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
