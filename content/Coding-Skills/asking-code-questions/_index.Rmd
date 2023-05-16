@@ -1,38 +1,37 @@
 ---
 weight: 5
-title: "Asking Code Questions"
+title: "Preguntas sobre código"
 output: html_document
 aliases: /asking-code-questions/
 ---
-
-When you started to learn R, one of the first things you probably figured out was how to get your data into R. You had to use some method to read your lovely excel datasets into R so you could achieve what you wanted. Maybe ```read.csv``` or ```read.table```, or maybe you use Hadley Wickham's recent package ```readr```.
-
-This tutorial is intended to 'go back to the basics' a little bit, and learn how to 'create' our own data.
-  
-
-### Why would you want to create your own data?
  
-You probably already have your data in a nice fancy excel document and, as such, there may seem like no good reason to 'make up' data. There are, however, a number of good reasons that this can come in handy:
+Cuando comenzaste a aprender R, una de las primeras cosas que probablemente descubriste fue cómo importar tus datos a R. Tuviste que utilizar algún método para leer tus adorables conjuntos de datos de Excel en R para poder lograr lo que querías. Tal vez utilizaste `read.csv` o `read.table`, o tal vez utilizaste el paquete reciente de Hadley Wickham, `readr`.
 
-**1. To work on small-scale problems before using all your data  
-**2. You might want to run some sort of simulation study  
-**3. You might want to simulate data you expect to collect, to ensure you have the right methods listed in your proposal
-**4. You might get stuck and want to ask for help  
+Este tutorial tiene la intención de "volver a lo básico" un poco y aprender a "crear" nuestros propios datos.
 
-The focus here will be on the last point. It is pretty inevitable you'll get stuck with some sort of coding problem. We all do! When this happens, and you want to send some code to a friend, colleague, or even ask a question on the internet, you need to provide a [reproducible example](https://stackoverflow.com/help/mcve)! 
+### ¿Por qué querrías crear tus propios datos?
 
-By doing this, you avoid the need to send your code file and entire data set as attachments to a friend or colleague to have a look. A reproducible example means that someone can quickly, and efficiently copy and paste just the code that you send and reproduce your error or issue you are having. 
+Probablemente ya tengas tus datos en un hermoso documento de Excel y, como tal, puede que no parezca haber una buena razón para "inventar" datos. Sin embargo, hay varias buenas razones por las que esto puede ser útil:
 
-It's important to note here that in order for someone to help you, they don't need the whole dataset. They only need to be able to see the problem and have the associated question to fix/solve!
+**1.** Trabajar en problemas a pequeña escala antes de utilizar todos tus datos.
+**2.** Es posible que desees realizar algún tipo de estudio de simulación.
+**3.** Es posible que desees simular datos que esperas recopilar para asegurarte de tener los métodos correctos enumerados en tu propuesta.
+**4.** Es posible que te quedes atascado y quieras pedir ayuda.
+
+El enfoque aquí estará en el último punto. Es bastante inevitable que te encuentres con algún tipo de problema de programación. ¡Todos lo hacemos! Cuando esto sucede y deseas enviar algún código a un amigo, colega o incluso hacer una pregunta en internet, debes proporcionar un [ejemplo reproducible](https://stackoverflow.com/help/mcve).
+
+Al hacer esto, evitas la necesidad de enviar tu archivo de código y todo el conjunto de datos como adjuntos a un amigo o colega para que lo revisen. Un ejemplo reproducible significa que alguien puede copiar y pegar rápidamente solo el código que envías y reproducir tu error o el problema que tienes.
+
+Es importante tener en cuenta aquí que para que alguien pueda ayudarte, no necesitan todo el conjunto de datos. Solo necesitan poder ver el problema y tener la pregunta asociada para solucionarlo.
 
 ![](https://cdn.shopify.com/s/files/1/1202/6984/files/1nenhs_large.jpg?v=1565849932)
 
-This tutorial is intended to help people who are relatively new to R create a reproducible example and also make fake data for other purposes.
-  
+Este tutorial tiene la intención de ayudar a las personas que son relativamente nuevas en R a crear un ejemplo reproducible y también a generar datos falsos para otros propósitos.
 
-### So, how do you create a 'fake' dataset?
- 
-In the simplest case, you can create multiple [vectors](http://www.r-tutor.com/r-introduction/vector) and then combine them into a data.frame.
+### Entonces, ¿cómo se crea un conjunto de datos 'falso'?
+
+En el caso más sencillo, puedes crear múltiples [vectores](http://www.r-tutor.com/r-introduction/vector) y luego combinarlos en un data.frame.
+
 
 ```{r}
 factor <- c("a", "b", "c", "d", "e")
@@ -44,7 +43,9 @@ df <- data.frame(factor, value)
 df
 ```
 
-Alternatively, you can do it all in one step (noting that you are now using '=', not '<-' when specifying the vectors with a data.frame call:
+
+Alternativamente, puedes hacerlo todo en un solo paso (ten en cuenta que ahora estás utilizando `=` en lugar de `<-` al especificar los vectores con una llamada a `data.frame`):
+
 
 ```{r}
 df <- data.frame(
@@ -55,12 +56,11 @@ df <- data.frame(
 df
 ```
 
+Esta técnica puede funcionar para una variedad de situaciones, pero también puede ser demasiado simple en ocasiones. Por ejemplo, si tienes múltiples vectores, puede resultar complicado crear muchos vectores y luego combinarlos, o si tienes un diseño experimental complicado (como un diseño jerárquico en bloques) que te gustaría replicar.
 
-This technique may work for a variety of situations, but it also may be too simple at times. For instance, if you have multiple vectors it may be complicated to make many of vectors and then combine them, or if you have some complicated experimental design (like a hierarchical blocked design) that you would like to replicate.
+Un atajo útil es usar `sample`, `rnorm` o `runif` para crear algunos datos.
 
-A nice shortcut is to use ```sample```, ```rnorm```, or ```runif``` to create some data.
-
-**```sample```** creates RANDOM data from the specified size with or without replacement. For example, 10 random numbers without replacement:
+**`sample`** crea datos ALEATORIOS del tamaño especificado con o sin reemplazo. Por ejemplo, 10 números aleatorios sin reemplazo:
 
 ```{r}
 data <- sample(10)
@@ -68,14 +68,16 @@ data <- sample(10)
 data
 ```
 
-Or, 10 random numbers with replacement:
+O, 10 números aleatorios con reemplazo:
+
 ```{r}
 data <- sample(10, replace = TRUE)
 
 data
 ```
 
-You can  create a vector and then sample from it:
+Puedes crear un vector y luego realizar una muestra de él:
+
 ```{r}
 factor <- c("a", "b", "c", "d", "e")
 
@@ -84,7 +86,7 @@ data <- sample(factor, replace = TRUE)
 data
 ```
 
-You can also sample n number of times, making it a very convenient function. For example, draw from the four suits of cards, 100 times:
+También puedes realizar muestras n veces, lo cual hace que sea una función muy conveniente. Por ejemplo, tomar muestras de los cuatro palos de cartas, 100 veces:
 
 ```{r}
 suits <- c("Hearts", "Spades", "Clubs", "Hearts")
@@ -92,28 +94,29 @@ suits <- c("Hearts", "Spades", "Clubs", "Hearts")
 cards <- sample(suits, size = 100, replace = TRUE)
 ```
 
-Note that in the above examples, it doesn't return data frames, which may or may not matter. Use ```as.data.frame``` for this, if necessary.
+
+Ten en cuenta que en los ejemplos anteriores, no devuelve data frames, lo cual puede ser o no importante. Utiliza `as.data.frame` para esto, si es necesario.
 
 ```{r}
 data <- as.data.frame(sample(10))
 ```
 
+**Creando datos a partir de una distribución conocida**
 
-**Creating data from a known distribution**
-
-```rnorm``` creates data from a normal distribution
+```rnorm``` crea datos a partir de una distribución normal.
 
 ```{r}
 data <- rnorm(100)
 ```
 
-By default, ```rnorm``` draws from a population with mean = 0, and sd = 1. We can change either of these to get a sample from a normal distribution with specified mean and standard deviaition. For example, to get 100 numbers from a normal distribution with a mean of 25 and s.d. of 1.5:
+Por defecto, ```rnorm``` extrae de una población con media = 0 y desviación estándar = 1. Podemos cambiar cualquiera de estos valores para obtener una muestra de una distribución normal con una media y desviación estándar especificadas. Por ejemplo, para obtener 100 números de una distribución normal con una media de 25 y una desviación estándar de 1.5:
+
 
 ```{r}
 data <- rnorm(100, mean = 25, sd = 1.5)
 ```
 
-```runif``` creates data from a uniform distribution
+```runif``` crea datos a partir de una distribución uniforme.
 
 ```{r}
 data <- runif(100)
@@ -121,46 +124,51 @@ data <- runif(100)
 head(data)
 ```
 
-Similarly to above, ```runif``` draws from a distribution with min=0 and max=1. We can change this to whatever we want. For example, to get 100 random numbers between -10 and 5:
+Al igual que arriba, ```runif``` genera valores de una distribución con min = 0 y max = 1. Podemos cambiar esto a lo que queramos. Por ejemplo, para obtener 100 números aleatorios entre -10 y 5:
+
 
 ```{r}
 data <- runif(100, min = -10, max = -5)
 ```
 
 
-Luckily, R has just about every distribution built in to draw from. This is really helpful if you are theorizing data before you start collection of data! A comprehensive list is [here](http://www.stat.umn.edu/geyer/old/5101/rlook.html). 
-  
+Afortunadamente, R tiene prácticamente todas las distribuciones incorporadas para generar muestras. ¡Esto es realmente útil si estás teorizando datos antes de comenzar la recopilación de datos! Una lista completa se encuentra [aquí](http://www.stat.umn.edu/geyer/old/5101/rlook.html).
 
-### What if your problem is a little more complicated?
+### ¿Y si tu problema es un poco más complicado?
 
-For instance, what if  your data come from four replicates from each of five sites and you want to recreate a vector for the repeating factor values.
+Por ejemplo, ¿qué sucede si tus datos provienen de cuatro réplicas de cada uno de los cinco sitios y deseas recrear un vector para los valores de factor repetidos?
 
-You could do this:
+Podrías hacer esto:
+
+
 ```{r}
 site <- c("a", "a", "a", "a", "b", "b", "b", "b", "c", "c", "c", "c", "d", "d", "d", "d", "e", "e", "e", "e")
 ```
 
-Much better, is to take advantage of the ```rep``` function. It replicates values in a vector or list. The same outcome as above is achieved with this.
+Mucho mejor es aprovechar la función ```rep```. Esta función replica valores en un vector o lista. Se logra el mismo resultado que se mostró anteriormente con esto.
+
 ```{r}
 site <- c(rep("a", 4), rep("b", 4), rep("c", 4), rep("e", 4))
 ```
 
-Alternatively:
+Alternativamente:
+
 ```{r}
 site <- rep(c("a", "b", "c", "d"), each = 4)
 ```
 
-Or, you can replicate until a certain length of the vector is reached. To get 50 replicates from each of the four sites, we would use:
+O, puedes replicar hasta alcanzar una cierta longitud del vector. Para obtener 50 réplicas de cada uno de los cuatro sitios, usaríamos lo siguiente:
+
 ```{r}
 site <- rep(c("a", "b", "c", "d"), length = 50)
 ```
 
-This becomes increasingly valuable as you increase the number of repetitions and/or factors to include!
-  
+¡Esto se vuelve cada vez más valioso a medida que aumentas el número de repeticiones y/o factores a incluir!
 
-### Creating all combinations of multiple categorical factors
- 
-```expand.grid``` is very useful for creating a data frame that has every combination of all levels from multiple factors. For example, if we had sampled four sites from each of four regions in each of three states, we could use this to create 
+### Creando todas las combinaciones de múltiples factores categóricos
+
+```expand.grid``` es muy útil para crear un marco de datos que contenga todas las combinaciones de todos los niveles de múltiples factores. Por ejemplo, si hubiéramos muestreado cuatro sitios de cada una de las cuatro regiones en cada uno de los tres estados, podríamos usar esto para crear 
+
 
 ```{r}
 study <- expand.grid(
@@ -170,45 +178,48 @@ study <- expand.grid(
 )
 ```
 
-We could then add some data to simluate species richness at each site:
+Luego podríamos agregar algunos datos para simular la riqueza de especies en cada sitio:
+
 ```{r}
 study$richness <- rnorm(nrow(study), mean = 15, sd = 3)
 ```
 
-The ```nrow``` argument is used in order to replace the correct amount of data into the dataframe (in this case, 48, the number of rows in your study design).
-  
+El argumento ```nrow``` se utiliza para reemplazar la cantidad correcta de datos en un data.frame (en este caso, 48, que es el número de filas en tu diseño de estudio).
 
-### What are some other options to make a reproducible example?
- 
-You could use a built in dataset that is loaded in base R, in order to reproduce your problem. You can quickly see the list of built-in datasets.
+### ¿Cuáles son algunas otras opciones para crear un ejemplo reproducible?
+
+Podrías usar un conjunto de datos incorporado que se carga en R base para reproducir tu problema. Puedes ver rápidamente la lista de conjuntos de datos incorporados.
 
 ```{r, eval=FALSE}
 library(help = "datasets")
 ```
 
-Then load a dataset using:
+Luego carga un conjunto de datos utilizando:
+
 ```{r}
 data(iris)
 ```
 
-### What if you **NEED** to use your own data?
+### ¿Y si **NECESITAS** utilizar tus propios datos?
 
-Maybe you have ultra-complicated data and can't figure out how to reproduce the problem using fake data. Well, that's what ```dput``` is for. ```dput``` is commonly used to write an object to a file or to recreate it.
+Tal vez tengas datos ultra complicados y no puedas encontrar la forma de reproducir el problema utilizando datos falsos. Bueno, para eso sirve ```dput```. Esta función se utiliza comúnmente para escribir un objeto en un archivo o para recrearlo.
 
-Let's give an example. Say you are working with the ```quakes``` dataset.
+Veamos un ejemplo. Supongamos que estás trabajando con el conjunto de datos ```quakes```.
+
+
 ```{r}
 data(quakes)
 
 head(quakes)
 ```
 
-If it was just the structure of the data that we wanted to reproduce, then we could just use ```head``` combined with ```dput```.
+Si solo queremos reproducir la estructura de los datos, podríamos utilizar ```head``` en combinación con ```dput```.
 
 ```{r}
 dput(head(quakes))
 ```
 
-We can then copy and paste this output into an email, etc. However, be sure to name the df first in order to create an object for whoever will be using it!
+Podemos luego copiar y pegar esta salida en un correo electrónico, etc. Sin embargo, asegúrate de nombrar primero el data.frame para crear un objeto para quien lo vaya a utilizar.
 
 ```{r}
 reproduced_df <- structure(list(lat = c(-20.42, -20.62, -26, -17.97, -20.42, -19.68), long = c(181.62, 181.03, 184.1, 181.66, 181.96, 184.31), depth = c(
@@ -223,49 +234,49 @@ reproduced_df <- structure(list(lat = c(-20.42, -20.62, -26, -17.97, -20.42, -19
 ), row.names = c(NA, 6L), class = "data.frame")
 ```
 
-What if its only certain rows we are having trouble with?
+¿Qué sucede si solo tenemos problemas con ciertas filas?
+
 ```{r}
 tmp <- quakes[30:40, ]
 dput(tmp)
 ```
 
-This is a really great way to send code to someone to ask for help!
-  
+¡Esta es una excelente forma de enviar código a alguien para pedir ayuda!
 
-### What about really complex problems?
- 
-This tutorial is mainly intended for new R users, and it is likely the tips and tricks above will help other people to help you a large majority of the time. However, in the case it doesn't, it might be necessary to give some extra information.```sessionInfo()``` gives a summary of the R version currently running, the operating system and which packages are loaded
+### ¿Y qué sucede con los problemas realmente complejos?
+
+Este tutorial está principalmente destinado a nuevos usuarios de R, y es probable que los consejos y trucos mencionados anteriormente ayuden a otras personas a ayudarte en la gran mayoría de los casos. Sin embargo, en caso de que no sea así, podría ser necesario proporcionar información adicional. ```sessionInfo()``` proporciona un resumen de la versión de R que se está ejecutando actualmente, el sistema operativo y los paquetes que están cargados.
 
 ```{r}
 sessionInfo()
 ```
   
+**Otros puntos importantes**
 
-**Other important notes**
-1. Be sure to clearly define what you are after. Do you have a purely statistics question, or do you have a coding question?
-2. It is a good idea to include any neccessary packages that you are using in which the problem occurs.
-3. You should always note what you have already tried, as far as code, and/or any reference sites you are using.
+1. Asegúrate de definir claramente lo que estás buscando. ¿Tienes una pregunta puramente estadística o una pregunta de programación?
+2. Es una buena idea incluir los paquetes necesarios que estás utilizando y en los cuales ocurre el problema.
+3. Siempre debes indicar lo que has intentado hasta ahora en cuanto a código y/o cualquier sitio de referencia que estés utilizando.
 
-**Concluding remarks**  
-1. There are a number of reasons we may want to use fake data.  
-2. It is pretty easy to create fake data.  
-3. If you send the easiest possible reproducible example to someone, the greater the likelihood they will help you, and more efficiently.  
-4. A lot of the time, by simplifying the problem, you may even solve it yourself!  
-5. Learn how to use ```dput```, but don't forget to name the object when copying the code from the R console.  
-  
+**Conclusiones**
 
-## Where can you get further help?
- 
-All of this information isn't really useful unless you have someone to answer your question after you've made your nice reproducible example. One alternative to asking for help from colleagues and friends is to use online websites, such as [Stack Overflow](https://stackoverflow.com/). The tips in this tutorial will help you to ask a question that is not removed or banned. Also, when you [ask a question](http://www.wikihow.com/Ask-a-Question-on-Stack-Overflow) be sure to show you have done previous research.
+1. Hay varias razones por las que podemos querer usar datos falsos.
+2. Es bastante fácil crear datos falsos.
+3. Si envías el ejemplo reproducible más sencillo posible a alguien, hay una mayor probabilidad de que te ayuden de manera más eficiente.
+4. Muchas veces, al simplificar el problema, incluso puedes resolverlo tú mismo.
+5. Aprende a usar ```dput```, pero no olvides nombrar el objeto al copiar el código desde la consola de R.
+
+## ¿Dónde puedes obtener más ayuda?
+
+Toda esta información no es realmente útil a menos que tengas a alguien que responda tu pregunta después de haber creado tu buen ejemplo reproducible. Una alternativa para solicitar ayuda a colegas y amigos es utilizar sitios web en línea, como [Stack Overflow](https://stackoverflow.com/). Los consejos de este tutorial te ayudarán a formular una pregunta que no sea eliminada o prohibida. Además, cuando [hagas una pregunta](http://www.wikihow.com/Ask-a-Question-on-Stack-Overflow), asegúrate de mostrar que has realizado investigaciones previas.
 
 <center>![](stack.png)</center>
 
-There is more help on the web for making reproducible examples. For instance, see [here](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example), [here](http://clayford.github.io/dwir/dwr_12_generating_data.html), [here](http://adv-r.had.co.nz/Reproducibility.html), or [here](https://www.r-bloggers.com/minimal-reproducible-examples/). 
-  
+Hay más ayuda en la web para crear ejemplos reproducibles. Por ejemplo, consulta [aquí](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example), [aquí](http://clayford.github.io/dwir/dwr_12_generating_data.html), [aquí](http://adv-r.had.co.nz/Reproducibility.html) o [aquí](https://www.r-bloggers.com/minimal-reproducible-examples/).
 
-**Author**: Corey T. Callaghan
- 
-**Year:** 2017
+**Autor**: Corey T. Callaghan
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año**: 2017
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
+
 
