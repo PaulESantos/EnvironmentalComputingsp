@@ -9,51 +9,45 @@ output: html_document
 library(formatR)
 ```
 
+Cuando se emprende cualquier proyecto que involucre análisis de datos en R, es una muy buena idea guardar todo el código necesario para ejecutar cualquier análisis o crear cualquier gráfico en un script de R.
 
-When undertaking any project that involves data analyses in R, it is a very good idea to save all the code needed to run any analyses or make any figures in an R script.
-
-R scripts are very useful when collaborating with others as you can share your methods. We also tend to reuse and adapt scripts for future projects, so you may need to read a script you wrote months or even years ago.  It is important to format your script for easy transfer across computers and for easy interpretation by others (and yourself). It is the digital equivalent of being organised and avoiding the problem of never knowing where anything is.
+Los scripts de R son muy útiles cuando se colabora con otros, ya que puedes compartir tus métodos. También tendemos a reutilizar y adaptar scripts para proyectos futuros, por lo que es posible que necesites leer un script que escribiste hace meses o incluso años. Es importante formatear tu script para facilitar su transferencia entre computadoras y para una fácil interpretación por parte de otros (y por ti mismo). Es el equivalente digital de estar organizado y evitar el problema de nunca saber dónde está cada cosa.
 
 ![](Good_script_practice_image.jpg)
   
+Si nunca has creado un script en R, primero lee [Introducción a R](/../getting-started-with-r/).
 
-If you have never made an R script, first read [Getting started with R](/../getting-started-with-r/).
-  
+### Crear un directorio de proyecto
 
-### Creating a project directory
- 
+Las buenas prácticas de gestión de scripts y datos a menudo comienzan antes de abrir RStudio. Para cada proyecto, debes comenzar creando una carpeta de proyecto en tu computadora. Aquí es donde guardarás todos tus datos, scripts y resultados (gráficos y tablas) y se referirá como tu directorio de proyecto. Algunas personas prefieren organizar aún más los directorios de proyectos creando carpetas adicionales como `Datos`, `Scripts_R` o `Resultados`. La forma en que gestiones tu directorio de proyecto depende de ti.
 
-Good script and data management practices often start before you even open R-Studio. For every project you should start by creating a project folder on your computer. This is where you keep all your data, scripts and outputs (plots and tables) and will be referred to as your project directory. Some people like to further organise project directories by creating more folders such as `Data`, `R_scripts` or `Outputs`, how you manage your project directory is up to you.
+**Integridad de los datos.** Una vez que se haya completado la entrada de datos y se hayan guardado en tu directorio de proyecto (consulta [Entrada de datos](/../getting-started-with-r/data-entry/)), esta debería ser la última vez que veas los datos sin procesar. Cualquier manipulación, eliminación de valores atípicos, cambio de nombres de variables, etc., se debe realizar en R. Esto mantiene la integridad de tus datos originales y proporciona un registro en tu script de R de los cambios realizados en tu conjunto de datos.
 
-**Data integrity.** Once data entry is completed and saved in your project directory (see [Data entry](/../getting-started-with-r/data-entry/), this should be the last time you lay eyes on the raw data. Any manipulation, removal of outliers, renaming variables etc should be conducted in R. This maintains the integrity of your original data and provides a record in your R script of exactly what changes have been made to your dataset. 
-  
+### Formato general del script
 
-### General script format
- 
+Las siguientes notas describen el diseño general y el orden que debes seguir al escribir tus scripts. Si todos utilizan el mismo formato general, será mucho más fácil leer y entender los scripts propios y de los demás.
 
-The following notes outline the general layout and ordering you should follow when writing your scripts. If everyone is using the same general format, reading and understanding each other's (and your own) scripts will be much easier.
-
-Firstly, all scripts should start with  a title,  author details, a brief description of the scripts purpose and the data being used and copyright and legal stuff (Probably not while in university, but later in life you'll want to remember this). For example,
+En primer lugar, todos los scripts deben comenzar con un título, detalles del autor, una breve descripción del propósito del script y los datos que se están utilizando, y derechos de autor y cuestiones legales (probablemente no mientras estés en la universidad, pero más adelante en la vida querrás recordar esto). Por ejemplo,
 
 ```{r}
-# title: Time series analyses
-# Author details: Author: John Smith, Contact details: John.Smith@unsw.edu.au
-# Script and data info: This script performs a time series analyses on count data.  
-# Data consists of counts of bird species.
-# Data was collected in the hunter valley region between 1990 and 1991. 
-# Copyright statement: This script is the product of UNSW etc.
+# título: Análisis de series temporales
+# Detalles del autor: Autor: John Smith, Detalles de contacto: John.Smith@unsw.edu.au
+# Información del script y los datos: Este script contiene codigo para desarrollar un análisis de series temporales en datos de conteo.
+# Los datos consisten en recuentos de especies de aves.
+# Los datos fueron recolectados en la región de Hunter Valley entre 1990 y 1991.
+# Declaración de derechos de autor: Este script es producto de UNSW, etc.
 ```
 
-All comments need to start with `#` to distinguish them from executable code.
+Todos los comentarios deben comenzar con `#` para distinguirlos del código ejecutable.
 
-You should then include some code that will set your working directory and import your data. Ideally, setting your working directory as your project directory. 
+Luego, debes incluir algún código que establezca tu directorio de trabajo e importe tus datos. Idealmente, debes establecer tu directorio de trabajo como tu directorio de proyecto.
 
 ```{r, eval = F, echo = T}
 setwd("C:/Users/JohnSmith/My_project_directory")
 my.data <- read.csv("my_data.csv", sep = ",", header = T, check.names = FALSE)
 ```
 
-To save time later and avoid annoying error messages, ensure all the packages and functions needed for you analyses are loaded into R, this includes libraries or any function scripts you have written yourself. Each package is loaded with the `library`. 
+Para ahorrar tiempo más adelante y evitar mensajes de error molestos, asegúrate de cargar en R todos los paquetes y funciones necesarios para tus análisis. Esto incluye bibliotecas o cualquier script de funciones que hayas escrito tú mismo. Cada paquete se carga con el comando `library`.
 
 ```{r, eval = F, echo = T}
 library(car)
@@ -63,9 +57,9 @@ library(ggplot2)
 source("R_scripts/myfunctions.R")
 ```
 
-Finally, before you start running any data analyses you may need to conduct some housekeeping on your data (checking the structure of the data set, looking for missing values, changing variable types etc). See [Data structure](/../getting-started-with-r/data-types-structure/) and [Importing data](/../getting-started-with-r/importing-data/) for help with these issues.
+Finalmente, antes de comenzar a ejecutar cualquier análisis de datos, es posible que debas realizar algunas tareas de limpieza en tus datos (verificar la estructura del conjunto de datos, buscar valores faltantes, cambiar tipos de variables, etc.). Consulta [Estructura de datos](/../getting-started-with-r/data-types-structure/) y [Importación de datos](/../getting-started-with-r/importing-data/) para obtener ayuda con estos problemas.
 
-Putting all this together, the beginning of a script will look something like the following. 
+Al juntar todo esto, el comienzo de un script se verá algo como lo siguiente.
 
 ```{r, eval = F, echo = T}
 # title: Time series analyses
@@ -97,37 +91,33 @@ my.data[6, 4] <- 46.01  # replace value 4601 with 46.01.
 
 # begin data analyses.
 ```
-  
 
-### Style guide
- 
+### Guía de estilo
 
-"*Good coding is like using correct punctuation. You can manage without it, but it sure makes things easier to read*." - Hadley Wickham. 
+"*Escribir buen código es como usar una puntuación correcta. Puedes arreglártelas sin ella, pero ciertamente facilita la lectura*." - Hadley Wickham.
 
-There are many different styles of coding (none of which are better or worse). The point of style guides is to have a common vocabulary. When working with others, its a good idea to agree on a common style before the project gets too far along. 
- 
-The following guide is based on the [Google's R style guide](https://google.github.io/styleguide/Rguide.html) and Hadley Wickham's [Style Guide](http://adv-r.had.co.nz/Style.html). If you haven't already adopted a consistent coding style these are good places to start. 
-  
+Existen muchos estilos diferentes de codificación (ninguno de los cuales es mejor o peor). El objetivo de las guías de estilo es tener un vocabulario común. Cuando se trabaja con otras personas, es una buena idea acordar un estilo común antes de que el proyecto avance demasiado.
 
-### Notation and naming 
- 
+La siguiente guía se basa en la [guía de estilo de R de Google](https://google.github.io/styleguide/Rguide.html) y en la [Guía de estilo de Hadley Wickham](http://adv-r.had.co.nz/Style.html). Si aún no has adoptado un estilo de codificación consistente, estos son buenos lugares para comenzar.
 
-**File and folder names**
- 
-When naming your project folders, data files, script files, or any other files for that matter, there are number of things that need to be considered.  Files may be copied or transferred across different operating systems (e.g Windows, Mac,  or UNIX ) and we need to name our files for transfer-ability. In addition, file names must be unique and indicative of what the file contains. Consider the following rules when naming your own folders and files.
+### Notación y nombres
 
-Firstly, avoid "special" characters. Special characters include things such as file separators (e.g.  colons,  forward-slash, and  backslash), non-alphabetical and non-numerical symbols ( e.g., ? T $ ?), punctuation marks ( e.g., full stops, commas, parentheses, quotations marks, and operators ) and, the most common mistake, avoid white space characters (spaces, tabs, new lines and embedded returns).
+**Nombres de archivos y carpetas**
 
-Give your files meaningful names; avoid filenames such as "project1" and "project2" or "data1.csv" and "data2.csv", instead use things like "bird_movement.csv", "snail_feeding.csv" or "diurnal_movement_data.csv" and "yearly_movement_data.csv". For R scripts, file names should end in .R (i.e., "predict_diurnal_movements.R").
+Cuando nombres tus carpetas de proyectos, archivos de datos, archivos de script o cualquier otro archivo, hay varias cosas que deben tenerse en cuenta. Los archivos pueden copiarse o transferirse entre diferentes sistemas operativos (por ejemplo, Windows, Mac o UNIX) y necesitamos nombrar nuestros archivos para que sean transferibles. Además, los nombres de archivo deben ser únicos e indicativos de lo que contiene el archivo. Considera las siguientes reglas al nombrar tus propias carpetas y archivos.
 
-Although current file systems allow 255 character limits, it is good practice to shorten files names. Try keep file names between 1 and 3 words long. If you add dates to a filename, remember to avoid using special characters, consider underscore or dashes to separate out days-months-years.
+En primer lugar, evita los caracteres "especiales". Los caracteres especiales incluyen cosas como separadores de archivos (por ejemplo, dos puntos, barra diagonal y barra invertida), símbolos no alfabéticos y no numéricos (por ejemplo, ?, $), signos de puntuación (por ejemplo, puntos, comas, paréntesis, comillas y operadores) y, el error más común, evita los caracteres de espacio en blanco (espacios, tabulaciones, saltos de línea y retornos incrustados).
 
-It is absolutely crucial that file names be unique, especially if you work in a collaborative environment, and especially if you frequently copy files to a server. If you don't have a system for how you keep file names unique, you risk overwriting them and losing all your data.
-  
+Dale a tus archivos nombres significativos; evita nombres de archivos como "proyecto1" y "proyecto2" o "datos1.csv" y "datos2.csv", en su lugar usa cosas como "movimiento_aves.csv", "alimentación_caracol.csv" o "datos_movimiento_diurno.csv" y "datos_movimiento_anual.csv". Para scripts de R, los nombres de archivo deben terminar en .R (es decir, "predecir_movimientos_diurnos.R").
 
-**Object names in R**
- 
-Variable names should all be in lower case with words separated by dots where as Function names have initial capital letters and no dots. Generally, variables names should be nouns and function names should be verbs. For ease of typing, it is OK to shorten words and use abbreviations so long as they still identify and describe the object they are naming. Strive for names that are concise and meaningful, refrain from calling variable names single letters and, where possible, avoid using existing function and variable names.   
+Aunque los sistemas de archivos actuales permiten límites de 255 caracteres, es una buena práctica acortar los nombres de los archivos. Intenta mantener los nombres de archivo entre 1 y 3 palabras de longitud. Si agregas fechas a un nombre de archivo, recuerda evitar el uso de caracteres especiales, considera usar guiones bajos o guiones para separar días-meses-años.
+
+Es absolutamente crucial que los nombres de archivo sean únicos, especialmente si trabajas en un entorno colaborativo y, especialmente, si copias archivos con frecuencia a un servidor. Si no tienes un sistema para mantener los nombres de archivo únicos, corres el riesgo de sobrescribirlos y perder todos tus datos.
+
+**Nombres de objetos en R**
+
+Los nombres de las variables deben estar en minúsculas y separar las palabras con puntos, mientras que los nombres de las funciones deben tener letras iniciales en mayúsculas y no usar puntos. En general, los nombres de las variables deben ser sustantivos y los nombres de las funciones deben ser verbos. Para facilitar la escritura, está bien acortar palabras y usar abreviaturas siempre y cuando sigan identificando y describiendo el objeto al que hacen referencia. Procura que los nombres sean concisos y significativos, evita utilizar nombres de variables de una sola letra y, siempre que sea posible, evita usar nombres de funciones y variables existentes.
+
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
@@ -155,27 +145,25 @@ S <- function (x){ # S is uninformative.
 }
 ```
   
+### Directrices para agregar comentarios
 
-### Guidelines for adding comments
- 
+**Agregar comentarios a tu script**
 
-**Adding comments to your script**
- 
-When you go back and edit or work on projects in the future it is surprising how much you'll forget. It is thus essential to accurately comment your code for both solo and team projects.  However, you can have too many comments. Descriptive and informative names and expressive code can abolish the need for many comments and over commenting can scripts that are  messy and hard to read. This is a skill that develops over time and with practice. As you get better at coding you will find yourself commenting less and less - "Code doesn't lie, but comments can".
+Cuando vuelvas y edites o trabajes en proyectos en el futuro, es sorprendente cuánto olvidarás. Por lo tanto, es esencial comentar de manera precisa tu código tanto para proyectos en solitario como en equipo. Sin embargo, se pueden tener demasiados comentarios. Nombres descriptivos e informativos y un código expresivo pueden eliminar la necesidad de muchos comentarios, y sobrecomentar puede hacer que los scripts sean desordenados y difíciles de leer. Esta es una habilidad que se desarrolla con el tiempo y la práctica. A medida que mejore tu habilidad para programar, te encontrarás comentando cada vez menos: "El código no miente, pero los comentarios sí".
 
-In general, comments should NOT state the obvious, they should be consistent with what they describe, it should be clear what line or block of code they are referring to and they should be readable by any future handler. 
+En general, los comentarios NO deben indicar lo obvio, deben ser coherentes con lo que describen, debe quedar claro a qué línea o bloque de código se refieren y deben ser legibles para cualquier persona que los maneje en el futuro.
 
-Entire commented lines should begin with # and one space; short comments can be placed after code proceeded by two spaces, # and then one space.  
+Las líneas comentadas completas deben comenzar con # y un espacio; los comentarios cortos se pueden colocar después del código precedido por dos espacios, # y luego un espacio.
 
-Tip: Use commented lines of # ------ to break up your script into readable chunks. 
+Consejo: Usa líneas comentadas de # ------ para dividir tu script en secciones legibles.
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
 bird.count <- 10
 
-# Creates histogram of frequency of bird counts.
+# Histograma.
 hist(bird_movement$counts,
-     breaks = "scott",  # method for choosing number of buckets
+     breaks = "scott",  # método para elegir el número de contenedores.
      main   = "Histogram: bird counts")
 ```
 
@@ -189,12 +177,11 @@ hist(bird_movement$counts,
 # Creates histogram of frequency of bird counts. - place comment before code. 
 ```
  
+**Agregando comentarios a las funciones**
 
-**Adding comments to functions**
- 
-Function comments should contain, a brief description of the function (one sentence), a list of function arguments with a description of each (including data type) and a description of the return value. Function comments should be written immediately below the function definition line.
+Los comentarios de las funciones deben contener una breve descripción de la función (una oración), una lista de argumentos de la función con una descripción de cada uno (incluyendo el tipo de datos) y una descripción del valor de retorno. Los comentarios de las funciones deben escribirse inmediatamente debajo de la línea de definición de la función.
 
-See [Writing functions](/../coding-skills/writing-functions/) for help on creating functions in R.
+Consulta [Escritura de funciones](/../coding-skills/writing-functions/) para obtener ayuda sobre cómo crear funciones en R.
 
 <span style="color:green"> Good example
 ```{r, eval = FALSE, echo = T}
@@ -212,13 +199,12 @@ CalculateStandardError <- function (x){
 }
 ```
   
+### Sintaxis
 
-### Syntax 
- 
+**Asignación**
 
-**Assignment**
- 
-Always use `<-` when assigning names to objects and avoid using `=` for assignment. Even though this distinction doesn't matter for the majority of the time, it is a good habit to use `<-` as this can be used anywhere, whereas the operator `=` is only allowed at the top level. In addition `=` closely resembles `==`, which is the logical operator for equals to. 
+Siempre utiliza `<-` al asignar nombres a objetos y evita usar `=` para la asignación. Aunque esta distinción no importa la mayoría de las veces, es una buena práctica utilizar `<-`, ya que se puede usar en cualquier lugar, mientras que el operador `=` solo está permitido en el nivel superior. Además, `=` se asemeja mucho a `==`, que es el operador lógico para "igual a".
+
 
 <span style="color:green"> Good example
 ```{r, eval = FALSE, echo = T}
@@ -230,19 +216,19 @@ bird.count <- bird.mvments$counts
 bird.count = bird.mvments$counts
 ```
  
+**Longitud de línea**
 
-**Line length**
- 
-The maximum line length should be 80 characters. This fits comfortable on a printed page with a reasonably sized font. If you find yourself running out of space, you may need to condense some of the work into a separate function. 
+La longitud máxima de una línea debe ser de 80 caracteres. Esto se ajusta cómodamente en una página impresa con una fuente de tamaño razonable. Si te encuentras quedándote sin espacio, es posible que necesites condensar parte del trabajo en una función separada.
+
 
 ```{r, eval = FALSE, echo = T}
 This is how long 80 characters is. Try not to type more than 80 on a single line.
 ```
  
+**Espaciado**
 
-**Spacing** 
- 
-Place spaces around all binary operators (=, +, -, <-, ==, ! = ), the exception to this is colons (:) and commas(,). Just like regular English, always put a space after a comma and never before. 
+Debes colocar espacios alrededor de todos los operadores binarios (=, +, -, <-, ==, !=), con la excepción de los dos puntos (:) y las comas (,). Al igual que en inglés, siempre debes poner un espacio después de una coma y nunca antes.
+
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
@@ -260,7 +246,7 @@ bird.var <- bird.mvments[ ,4 : 10]  # space goes after comma not before, remove 
 bird.var<-bird.mvments[, 4:10]  # space needed around <-. 
 ```
 
-Place a space before parentheses, except in a function call. Do not place space around code within parentheses or square brackets except after a comma.
+Coloca un espacio antes de los paréntesis, excepto en una llamada de función. No coloques espacios alrededor del código dentro de paréntesis o corchetes, excepto después de una coma.
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
@@ -284,10 +270,9 @@ mean( bird.mvments$bird.count )  # remove space around code.
 bird.mvments[2,]  # needs a space after comma. 
 ```
   
+**Llaves de llave {}**
 
-**Curley braces {}**
- 
-Curly braces are used in loops and to set up logical conditions. An opening curly brace should never go on its own line and should always be followed by a new line. A closing curly brace should always go on its own line, unless followed by `else`, which should be contained within outward facing curly braces `>}else{`. Always indent the code within curly braces.
+Las llaves de llave se utilizan en bucles y para establecer condiciones lógicas. Una llave de apertura nunca debe ir en su propia línea y siempre debe ir seguida de una nueva línea. Una llave de cierre siempre debe ir en su propia línea, a menos que sea seguida por `else`, que debe estar contenido dentro de llaves de llave orientadas hacia afuera `>}else{`. Siempre indenta el código dentro de las llaves de llave.
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
@@ -317,11 +302,9 @@ if (y == 0) {
     y ^ x
 }
 ```
-  
+**Indentación**
 
-**Indentation**
- 
-Never use tabs or mix tabs and spaces when indenting your code. When indenting, use two spaces, except when using parentheses where you align a new line with the first character within the parenthesis or square brackets.
+Nunca uses tabulaciones ni mezcles tabulaciones y espacios al indentar tu código. Al indentar, utiliza dos espacios, excepto cuando uses paréntesis, donde alineas una nueva línea con el primer carácter dentro del paréntesis o corchetes cuadrados.
 
 <span style="color:green"> Good examples
 ```{r, eval = FALSE, echo = T}
@@ -352,9 +335,14 @@ For more info see [Hadley Wickham's style guide](http://adv-r.had.co.nz/Style.ht
 
 You may now be thinking about all the scripts that you have made that need to be be reformatted. As is commonplace in R, someone has created a package to help with this. The [formatR](https://cran.r-project.org/web/packages/formatR/index.html) package by Yihui Xie has a neat little function called `tidy_source()`. This isn't a fix all, but can go a long way in making horrible scripts look legible. See [An introduction to format R](http://yihui.name/formatR/) or type `?tidy_source()` for details on how to use this package.
   
+### Más ayuda
 
-**Author**: Keryn F Bain
- 
-**Year:** 2017
+Para obtener más información, consulta [la guía de estilo de Hadley Wickham](http://adv-r.had.co.nz/Style.html), que se basa en la [guía de estilo de Google](https://google.github.io/styleguide/Rguide.html).
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+Ahora es posible que estés pensando en todos los scripts que has creado y que necesitan ser reformateados. Como es común en R, alguien ha creado un paquete para ayudar con esto. El paquete [formatR](https://cran.r-project.org/web/packages/formatR/index.html) de Yihui Xie tiene una pequeña y útil función llamada `tidy_source()`. Esto no soluciona todos los problemas, pero puede hacer que los scripts horribles sean legibles. Consulta [Una introducción a formatR](http://yihui.name/formatR/) o escribe `?tidy_source()` para obtener detalles sobre cómo utilizar este paquete.
+
+**Autor**: Keryn F Bain
+
+**Año**: 2017
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
