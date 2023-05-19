@@ -1,19 +1,21 @@
 ---
-title: "Reshaping data"
+title: "Reorganización de datos"
 weight: 5
 output: html_document
 aliases: /reshaping-data/
 ---
 
-Learning how to format data is an essential skill to allow you to easily produce figures and run analyses. You should always aim for data that are formatted with each observation as a row and each variable as a column (see help on [Data entry](/../getting-started-with-r/data-entry/)). For some types of variables, however, there are choices to be made about how you input the data.
+Aprender cómo formatear datos es una habilidad esencial que te permitirá producir fácilmente gráficos y ejecutar análisis. Siempre debes buscar que los datos estén formateados de manera que cada observación sea una fila y cada variable sea una columna (consulta la ayuda sobre [Entrada de datos](/../getting-started-with-r/data-entry/)). Sin embargo, para algunos tipos de variables, hay decisiones que debes tomar sobre cómo ingresar los datos.
 
-For example, it is very common in the biological sciences that we record the abundance of many species of organisms from each of our replicate observations (transects, quadrats, surveys etc). We then have two choices for how to input that data:  
-1. a separate column for every species that records its abundance, or,  
-2. two columns - one that identifies the species and one that records the abundance.
+Por ejemplo, es muy común en las ciencias biológicas que registremos la abundancia de muchas especies de organismos en cada una de nuestras observaciones de replicación (transectos, cuadrantes, encuestas, etc.). Luego, tenemos dos opciones para ingresar esos datos:
+1. Una columna separada para cada especie que registre su abundancia.
+2. Dos columnas: una que identifique la especie y otra que registre la abundancia.
+
 
 ![](Reshaping_data_image.jpg)
 
-Consider a data set that recorded the abundance of fish from each of three transects that were set up on two reefs in two separate months. First, import this sample data set, [ReefFish.csv](/datasets/ReefFish.csv), to see the way it is formatted.
+
+Considera un conjunto de datos que registra la abundancia de peces en cada uno de tres transectos que se establecieron en dos arrecifes en dos meses diferentes. Primero, importa este conjunto de datos de muestra, [ReefFish.csv](/datasets/ReefFish.csv), para ver cómo está formateado.
 
 ```{r}
 ReefFish <- read.csv(file = "ReefFish.csv", header = T)
@@ -23,87 +25,100 @@ ReefFish <- read.csv(file = "ReefFish.csv", header = T)
 head(ReefFish)
 ```
 
-This data frame is arranged in a **long format** with one variable that identifies the fish species, and one variable that holds the abundance data. The other three variables identify each transect (Site, Month and Transect),
 
-This format is efficient for data entry as you only need to have rows for the species that were present in that particular transect, and don't have to keep adding columns every time a new species is recorded. You would need the data in this format if you wanted to use a plot to contrast the abundance of fish among the three species.
+Este marco de datos está organizado en un **formato largo** con una variable que identifica la especie de pez y otra variable que contiene los datos de abundancia. Las otras tres variables identifican cada transecto (Sitio, Mes y Transecto).
 
-If, however, you would like to contrast the abundance of one of the species, or create a species by sample matrix that is required by the various multivariate analyses that contrast species composition, the data will need to be manipulated in some way.
+Este formato es eficiente para la entrada de datos, ya que solo necesitas tener filas para las especies que estuvieron presentes en ese transecto en particular, y no tienes que seguir agregando columnas cada vez que se registre una nueva especie. Necesitarías los datos en este formato si quisieras utilizar un gráfico para contrastar la abundancia de peces entre las tres especies.
 
-Fortunately, there are some very handy packages in R that make this possible. If you have ever used pivot tables in Excel, they are doing similar things.
-  
+Sin embargo, si deseas contrastar la abundancia de una de las especies o crear una matriz de especies por muestra que se requiere en los diversos análisis multivariados que contrastan la composición de especies, los datos deberán manipularse de alguna manera.
 
-### Reshaping from long to wide format
- 
-In this example, we will use the package [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html) to convert this data frame to a **wide format** that will allow further data exploration. First, install and load the package.
+Afortunadamente, hay paquetes muy útiles en R que hacen esto posible. Si alguna vez has utilizado tablas dinámicas en Excel, hacen cosas similares.
+
+### Transformar de formato largo a formato ancho
+
+En este ejemplo, utilizaremos el paquete [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html) para convertir este marco de datos a un **formato ancho** que permitirá una exploración adicional de los datos. Primero, instala y carga el paquete.
 
 ```{r,warning=F}
 library(tidyr)
 ```
 
-To convert this data set into a wide format with a separate column for each fish species, we use the function `spread`.
+Para convertir este conjunto de datos en un formato amplio con una columna separada para cada especie de pez, utilizamos la función `pivot_wider()`.
 
 ```{r}
-ReefFish.wide <- spread(ReefFish, Species, Abundance, fill = 0)
+ReefFish.wide <- pivot_wider(ReefFish,
+                             names_from = Species,
+                             values_from =  Abundance,
+                             values_fill = 0)
 ```
 
-The arguments of `spread` are:  
-* The data frame you would like to convert (in this case, ReefFish)  
-* The variable whose levels are being converted to new columns (in this case, Species)  
-* The variable that holds the values that will fill in the new columns (in this case, Abundance)  
-* `fill=0` tells `spread` to fill in a zero for when a species was missing from a given transect.
+Los argumentos de `pivot_wider` son:
+* El data frame que deseas convertir (en este caso, ReefFish)
+* La variable cuyos niveles se convertirán en nuevas columnas (en este caso, Species)
+* La variable que contiene los valores que llenarán las nuevas columnas (en este caso, Abundance)
+* `values_fill=0` indica a `pivot_wider` que complete con cero cuando falta una especie en un transecto determinado.
 
 
 ```{r,echo =F}
 head(ReefFish.wide)
 ```
 
-Note that the wide format of this data now has a column for each species with all the abundance values. You would get as many columns as you had unique levels in the Species column. You get as many rows as you have unique combinations of the variables that are not being split up (Site, Month and Transect in this example).
+Ten en cuenta que el formato amplio de estos datos ahora tiene una columna para cada especie con todos los valores de abundancia. Obtendrías tantas columnas como niveles únicos en la columna Species. Obtendrías tantas filas como combinaciones únicas de las variables que no se están dividiendo (Sitio, Mes y Transecto en este ejemplo).
 
-You can now plot or analyse any single species against possible predictor variables of Site or Month. Multivariate analyses of species composition against possible predictor variables also need each of the species to be in separate columns. You can select them from this data frame with the `select` function of dplyr (see [Subsetting data](/../data-manipulation/subsetting-data/)).
+Ahora puedes graficar o analizar cualquier especie individual en relación con posibles variables predictoras como Sitio o Mes. Los análisis multivariables de la composición de especies en relación con posibles variables predictoras también requieren que cada especie esté en columnas separadas. Puedes seleccionarlas de este data frame con la función `select` de dplyr (ver [Subsetting data](/../data-manipulation/subsetting-data/)).
 
-*Note that if you had a transect with no fish observations, you would need to add a row to the original data set, perhaps with a species code of "none". If you didn't, that replicate observation would be missing from the wide format - needed if you want to contrast abundance across reefs etc.
-  
+*Ten en cuenta que si tuvieras un transecto sin observaciones de peces, necesitarías agregar una fila al conjunto de datos original, tal vez con un código de especie de "ninguna". De lo contrario, esa observación de replicación faltaría en el formato amplio, lo cual es necesario si deseas comparar la abundancia entre arrecifes, etc.
 
-### Reshaping from wide to long format
- 
-The function `gather` will convert data from the wide format to a long format.
+### Transformación de un formato amplio a un formato largo
 
-Here, we can use this code to get our original data set back from the wide format data set we just made.
+La función `pivot_longer` convertirá los datos del formato amplio a un formato largo.
+
+Aquí, podemos utilizar este código para obtener nuestro conjunto de datos original a partir del conjunto de datos en formato amplio que acabamos de crear.
+
 
 ```{r}
-ReefFish.long <- gather(ReefFish.wide, Species, Abundance, 4:6)
+ReefFish.long <- pivot_longer(ReefFish.wide, 
+                             cols = 4:6,
+                              names_to = "Species", 
+                              values_to = "Abundance")
 ```
 
 ```{r,echo =F}
 head(ReefFish.long)
 ```
+Los argumentos de `pivot_longer()` son:
+* El data frame que deseamos convertir
+* Los nombres de las columnas a convertir (por nombre o por número de columna)
+* `names_to =` - el nombre de la nueva variable que contendrá los nombres de las variables (en este caso, Species)
+* `values_to =` - el nombre de la nueva variable que contendrá los valores de las variables (en este caso, Abundance)
 
-The arguments of `gather` are:  
-* The data frame that we would like to convert  
-* key - the name of the new variable that will hold the names of the variables being gathers (in this case, Species)  
-* value - the name of the new variable that will hold the values from the variables being gathered (in this case, Abundance)  
-* the names of the columns to be gathered (by name or by column number)  
+En ese código, elegimos las tres variables con los datos de especies por sus números de columna (4 a 6). También podríamos usar sus nombres o la primera y última columna en una secuencia de columnas. Por ejemplo,
 
-In that code, we chose the three variables with the species data by their column numbers (4 to 6). We could also just use their names, or the first and last column in a sequence of columns. For example,
 
 ```{r,eval=F}
-ReefFish.long <- gather(ReefFish.wide, Species, Abundance, BlackFish, BlueFish, RedFish)
+ReefFish.long <- pivot_longer(ReefFish.wide, 
+                              cols = c("BlackFish", "BlueFish", "RedFish",
+                              names_to = "Species", 
+                              values_to = "Abundance")
 
-ReefFish.long <- gather(ReefFish.wide, Species, Abundance, BlackFish:RedFish)
+ReefFish.long <- pivot_longer(ReefFish.wide,
+                              cols = BlackFish:RedFish,
+                              names_to = "Species",
+                              values_to = "Abundance")
 ```
 
-We have now recreated our original data set. The only difference is that the rows have been sorted and that species that were absent from a given transect have their own row with an abundance value of zero.
-  
+Hemos recreado nuestro conjunto de datos original. La única diferencia es que las filas se han ordenado y las especies que estaban ausentes de un transecto dado tienen su propia fila con un valor de abundancia de cero.
 
-### Reshaping with reshape2
- 
-The package [reshape2](https://cran.r-project.org/web/packages/reshape2/) also allows us to reshape data, and has a few extra capabilities that are not present in tidyr. 
+### Reorganizando con reshape2
+
+El paquete [reshape2](https://cran.r-project.org/web/packages/reshape2/) también nos permite reorganizar datos y tiene algunas capacidades adicionales que no están presentes en tidyr.
+
 
 ```{r,warning=F,message=F}
 library(reshape2)
 ```
 
-Instead of `spread`, `dcast` is used to go from a long to wide format. This code will do the same as we saw above.
+En lugar de `pivot_wider`, se utiliza `dcast` para convertir de un formato largo a ancho. Este código hará lo mismo que vimos anteriormente.
+
 
 ```{r}
 ReefFish.wide <- dcast(ReefFish,
@@ -112,15 +127,15 @@ ReefFish.wide <- dcast(ReefFish,
 )
 ```
 
-The arguments of `dcast` are:  
-* The data frame you would like to convert (in this case, ReefFish)  
-* The variable(s) you would like to include unchanged as columns in the new data frame are to the left of the ~ (Site, Month and Transect)  
-* The variable(s) that is being converted to new columns are to the right of the ~ (in this case, Species)  
-* The variable that holds the values that will fill in the new columns (specified by `value.var`, in this case, Abundance.  
-* `fill=0` tells `dcast` to fill in zeroes for when a species was missing from a given transect.
+Los argumentos de `dcast` son:
+* El marco de datos que deseas convertir (en este caso, ReefFish)
+* Las variable(s) que deseas incluir sin cambios como columnas en el nuevo marco de datos están a la izquierda de ~ (Site, Month y Transect)
+* Las variable(s) que se están convirtiendo en nuevas columnas están a la derecha de ~ (en este caso, Species)
+* La variable que contiene los valores que se llenarán en las nuevas columnas (especificada por `value.var`, en este caso, Abundance)
+* `fill=0` indica a `dcast` que rellene con ceros cuando una especie esté ausente de un transecto dado.
 
+En lugar de `pivot_longer`, se utiliza `melt` para convertir de un formato ancho a largo.
 
-Instead of `gather`, `melt` is used to go from a wide to long format.
 
 ```{r}
 ReefFish.long <- melt(ReefFish.wide,
@@ -130,18 +145,18 @@ ReefFish.long <- melt(ReefFish.wide,
 )
 ```
 
-The arguments of `melt` are:  
-* The data frame that we would like to convert  
-* `id.vars` specifies the columns that remain unchanged (here the predictor variables that label each replicate observation)  
-* `measure.vars` specifies which variables hold the data that will go into the new column 
-* `variable.name` and `value.name` provide the names of the new column.  
+Los argumentos de `melt` son:
+* El marco de datos que deseamos convertir
+* `id.vars` especifica las columnas que permanecen sin cambios (aquí las variables predictoras que etiquetan cada observación repetida)
+* `measure.vars` especifica qué variables contienen los datos que irán en la nueva columna
+* `variable.name` y `value.name` proporcionan los nombres de la nueva columna.
 
+Lo que reshape2 puede hacer y tidyr no puede es la capacidad de **resumir datos mientras reorganizas de formato largo a ancho**.
 
-What reshape2 can do that tidyr cannot is the ability to **summarise data as you reshape from long to wide**.
+En el ejemplo anterior, solo había una fila que pertenecía a cada combinación de Site, Month y Transect. Si hay filas duplicadas para cada combinación de las variables que deseas mantener en el nuevo marco de datos (las que están a la izquierda de ~), debes indicarle a `dcast` cómo quieres tratar los duplicados (por ejemplo, sumarlos o calcular su media).
 
-In the above example, there was only one row that belonged to each combination of Site, Month and Transect. If there are duplicate rows for each combination of the variables that you want to keep in the new data frame (the ones to the left of the ~) you need to tell `dcast` how you would like to deal with the duplicates (e.g., add them up or calculate their mean)
+Por ejemplo, si quisiéramos combinar los transectos de cada estudio, podríamos eliminar Transect de la lista de variables a incluir en el nuevo marco de datos y agregar un argumento (`fun.aggregate = sum`) para indicarle a `dcast` que queremos sumar los valores de los tres transectos en cada combinación de Site/Month.
 
-For example, if we wanted to pool the transects from each survey, we could remove Transect from the list of variables to include in the new data frame and add an argument (`fun.aggregate = sum`) to tell `dcast` that we would like to add up the values from the three transects in each Site/Month combination. 
 
 ```{r}
 ReefFish.wide_sum <- dcast(ReefFish,
@@ -155,7 +170,7 @@ ReefFish.wide_sum <- dcast(ReefFish,
 head(ReefFish.wide_sum)
 ```
 
-If we wanted the mean of the three transects, we can use `fun.aggregate = mean`.
+Si queremos la media de los tres transectos, podemos usar `fun.aggregate = mean`.
 
 ```{r}
 ReefFish.wide_mean <- dcast(ReefFish,
@@ -164,7 +179,8 @@ ReefFish.wide_mean <- dcast(ReefFish,
 )
 ```
 
-You can also put more complex expressions in the reshape formula to create new variables that are combinations of old ones. For example, you could create a new column for each of the combinations of Species and Month by adding both variables to the right of the ~
+También puedes incluir expresiones más complejas en la fórmula de reshape para crear nuevas variables que sean combinaciones de las antiguas. Por ejemplo, podrías crear una nueva columna para cada combinación de Especie y Mes agregando ambas variables a la derecha del **~**.
+
 
 ```{r}
 ReefFish.wide_combined <- dcast(ReefFish,
@@ -177,22 +193,21 @@ ReefFish.wide_combined <- dcast(ReefFish,
 head(ReefFish.wide_combined[, 1 - 4])
 ```
   
+### Ayuda adicional
 
-### Further help
- 
-Type `?gather` and `?spread` to get the R help for these tidyr functions.
+Escribe `?pivot_wider` y `?pivot_longer` para obtener ayuda en R sobre estas funciones de tidyr.
 
-Type `?dcast` and `?melt` to get the R help for these reshape2 functions.
+Escribe `?dcast` y `?melt` para obtener ayuda en R sobre estas funciones de reshape2.
 
-[Data wrangling with dplyr and tidyr cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) produced by Rstudio.
+[Cheat sheet de manipulación de datos con dplyr y tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) producido por Rstudio.
 
 [Data wrangling with dplyr and tidyr](https://rpubs.com/bradleyboehmke/data_wrangling)
 
 [An introduction to reshape2](http://seananderson.ca/2013/10/19/reshape.html)
   
 
-**Author**: Alistair Poore
+**Autor**: Alistair Poore
  
-**Year:** 2016
+**Año:** 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

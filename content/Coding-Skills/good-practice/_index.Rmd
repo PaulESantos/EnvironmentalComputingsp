@@ -327,17 +327,10 @@ return(se)
 bird.mvments[which(bird.mvments$counts == max(bird.mvments$counts)), 
   10:ncols(bird.mvments)]  # align with the square brackets. 
 ```
-  
 
-### Further help
- 
-For more info see [Hadley Wickham's style guide](http://adv-r.had.co.nz/Style.html) which is based of the [Google style guide](https://google.github.io/styleguide/Rguide.html).
-
-You may now be thinking about all the scripts that you have made that need to be be reformatted. As is commonplace in R, someone has created a package to help with this. The [formatR](https://cran.r-project.org/web/packages/formatR/index.html) package by Yihui Xie has a neat little function called `tidy_source()`. This isn't a fix all, but can go a long way in making horrible scripts look legible. See [An introduction to format R](http://yihui.name/formatR/) or type `?tidy_source()` for details on how to use this package.
-  
 ### Más ayuda
 
-Para obtener más información, consulta [la guía de estilo de Hadley Wickham](http://adv-r.had.co.nz/Style.html), que se basa en la [guía de estilo de Google](https://google.github.io/styleguide/Rguide.html).
+Para obtener más información, consulta [Hadley Wickham's style guide](http://adv-r.had.co.nz/Style.html), que se basa en la [Google style guide](https://google.github.io/styleguide/Rguide.html).
 
 Ahora es posible que estés pensando en todos los scripts que has creado y que necesitan ser reformateados. Como es común en R, alguien ha creado un paquete para ayudar con esto. El paquete [formatR](https://cran.r-project.org/web/packages/formatR/index.html) de Yihui Xie tiene una pequeña y útil función llamada `tidy_source()`. Esto no soluciona todos los problemas, pero puede hacer que los scripts horribles sean legibles. Consulta [Una introducción a formatR](http://yihui.name/formatR/) o escribe `?tidy_source()` para obtener detalles sobre cómo utilizar este paquete.
 

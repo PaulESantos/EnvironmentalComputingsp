@@ -1,30 +1,30 @@
 ---
 weight: 1
-title: "Making New Variables"
+title: "Creación de nuevas variables"
 output: html_document
 aliases: /making-new-variables/
 ---
 
-Being able to make new variables from those already in your data set is an essential skill for data manipulation prior to making graphs or doing analyses. These new variables could be a transformed variable that you would like to analyse, a new variable that is a function of existing ones, or a new set of labels for your samples.
+Crear nuevas variables a partir de las que ya están en tu conjunto de datos es una habilidad esencial para la manipulación de datos antes de realizar gráficos o análisis. Estas nuevas variables pueden ser una variable transformada que deseas analizar, una nueva variable que es una función de las existentes, o un nuevo conjunto de etiquetas para tus muestras.
 
-To demonstrate a few of the commonly used functions in R for doing this, let's consider a data set on the feeding specificity of marine herbivores on five species of macroalgae. Twenty replicate individuals of each of seven species of macroalgae were collected from Sydney Harbour, and the abundance of seven species of herbivorous crustacean recorded from each replicate sample (data from [Poore *et al*. 2000)](http://www.int-res.com/abstracts/meps/v208/p183-196/).
+Para demostrar algunas de las funciones comúnmente utilizadas en R para hacer esto, consideremos un conjunto de datos sobre la especificidad alimentaria de herbívoros marinos en cinco especies de macroalgas. Se recolectaron veinte individuos replicados de cada una de las siete especies de macroalgas en el puerto de Sydney, y se registró la abundancia de siete especies de crustáceos herbívoros en cada muestra replicada (datos de [Poore *et al*. 2000)](http://www.int-res.com/abstracts/meps/v208/p183-196/)).
+
 
 ![](MDS_image.jpg)
 
-Download the data set, [Herbivore_specialisation.csv](/datasets/Herbivore_specialisation.csv), and load into R.
+Descarga el conjunto de datos, [Herbivore_specialisation.csv](/datasets/Herbivore_specialisation.csv), y cárgalo en R.
 
 ```{r}
 Herbivores <- read.csv(file = "Herbivore_specialisation.csv", header = TRUE)
 ```
 
-The first two columns are categorical variables that label the samples as coming from each of the five habitats or as being collected during the day or the night. The third column is the replicate number per combination of habitat and day/night. The fourth column is the biomass of the habitat sampled and the rest of the columns are the counts of each herbivore species in each sample.
-  
+Las dos primeras columnas son variables categóricas que etiquetan las muestras como provenientes de cada uno de los cinco hábitats o como recolectadas durante el día o la noche. La tercera columna es el número de réplica por combinación de hábitat y día/noche. La cuarta columna es la biomasa del hábitat muestreado y el resto de las columnas son las cuentas de cada especie de herbívoro en cada muestra.
 
-### Adding a new variable
- 
+### Agregar una nueva variable
+
 ![](Making_new_variables_image.jpg)
 
-Adding a new variable to an existing data frame can be done by assigning the outcome of a given function to a new variable name in the following fashion.
+Agregar una nueva variable a un marco de datos existente se puede hacer asignando el resultado de una función determinada a un nuevo nombre de variable de la siguiente manera.
 
 ```{r, eval = FALSE}
 Herbivores$log_Mass <- log(Herbivores$Mass)
@@ -32,17 +32,17 @@ Herbivores$log_Mass <- log(Herbivores$Mass)
 Herbivores$Ampithoe <- Herbivores$Ampithoe_caddi + Herbivores$Ampithoe_kava + Herbivores$Ampithoe_ngana
 ```
 
-The first line creates a new variable called log_Mass which is the log of the variable Mass from the Herbivores data frame.
+La primera línea crea una nueva variable llamada **log_Mass**, que es el logaritmo de la variable **Mass** del data frame **Herbivores**.
 
-The second line creates a new variable called Ampithoe which is the sum of the abundances for each of the three species of Ampithoe in the data set.
+La segunda línea crea una nueva variable llamada **Ampithoe**, que es la suma de las abundancias de cada una de las tres especies de **Ampithoe** en el conjunto de datos.
 
-Having to reference both the data frame and the variable name in these expressions can get pretty messy, so we recommend using functions from the package [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) which allow us to just use variable names. First, load the package:
+Tener que hacer referencia tanto al marco de datos como al nombre de la variable en estas expresiones puede volverse bastante confuso, por lo que recomendamos utilizar funciones del paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) que nos permiten utilizar solo los nombres de las variables. Primero, carga el paquete:
 
 ```{r, warning=F,message=F}
 library(dplyr)
 ```
 
-The function `mutate` is then used to create new variables. To achieve the same result as the above code, we would use:
+La función `mutate` se utiliza para crear nuevas variables. Para obtener el mismo resultado que el código anterior, usaríamos:
 
 ```{r}
 Herbivores <- mutate(Herbivores, log_Mass = log(Mass))
@@ -50,97 +50,93 @@ Herbivores <- mutate(Herbivores, log_Mass = log(Mass))
 Herbivores <- mutate(Herbivores, Ampithoe = Ampithoe_caddi + Ampithoe_kava + Ampithoe_ngana)
 ```
 
-Even neater is to run several things at once. We could create both of those new variables and many others with single block of code. For example:
+Incluso mejor es ejecutar varias cosas a la vez. Podríamos crear tanto esas nuevas variables como muchas otras con un solo bloque de código. Por ejemplo:
 
 ```{r}
 Herbivores <- mutate(Herbivores,
-  log_Mass = log(Mass), # log of Mass
-  Ampithoe = Ampithoe_caddi + Ampithoe_kava + Ampithoe_ngana, # sum of three columns
-  Total_abundance = rowSums(Herbivores[, 5:12]), # sum of columns 5-12 with all abundance data
-  Total_abundance_perGram = Total_abundance / Mass # abundance as numbers per g of habitat
+  log_Mass = log(Mass), # logaritmo de la Masa
+  Ampithoe = Ampithoe_caddi + Ampithoe_kava + Ampithoe_ngana, # suma de tres columnas
+  Total_abundance = rowSums(Herbivores[, 5:12]), # suma de las columnas 5 a 12 con todos los datos de abundancia
+  Total_abundance_perGram = Total_abundance / Mass # abundancia en números por gramo de hábitat
 )
 ```
 
-The arguments of `mutate` are simply the name of the data frame followed by any number of expressions that create new variables.
+]Los argumentos de `mutate` son simplemente el nombre del data frame seguido de cualquier número de expresiones que creen nuevas variables.
 
-In the above examples, note that the new variables have been added to the existing data frame, and all old variables have been kept. You can use `transmute` if you want to drop the original variables.
+En los ejemplos anteriores, ten en cuenta que las nuevas variables se han agregado al data frame existente y se han mantenido todas las variables antiguas. Puedes usar `transmute` si deseas eliminar las variables originales.
 
-These functions become especially powerful when combined with some of the others in dplyr. See our pages on [subsetting](/../data-manipulation/subsetting-data/) and [summarising](/../data-manipulation/summarising-data/) data. 
-  
+Estas funciones se vuelven especialmente poderosas cuando se combinan con algunas de las otras en dplyr. Consulta nuestras páginas sobre [subsetting](/../data-manipulation/subsetting-data/) y [summarising](/../data-manipulation/summarising-data/) data.
 
-### Renaming a variable
- 
-dplyr offers a straightforward function, `rename`, to change the name of any variable. For example, to change Mass to Biomass, we simply use:
+### Renombrar una variable
+
+dplyr ofrece una función sencilla, `rename`, para cambiar el nombre de cualquier variable. Por ejemplo, para cambiar "Mass" a "Biomass", simplemente utilizamos:
+
 
 ```{r}
 Herbivores <- rename(Herbivores, Biomass = Mass)
 ```
   
+### Unir varias columnas en una sola
 
-### Uniting several columns into one
- 
 ![](Unite_image.jpg)
 
-Combining the content of several columns into a single column can be useful to provide a different set of labels for rows in your data set, or new levels of a categorical variable that you may want to use in graphs. The function `unite` in the package [tidyr](https://blog.rstudio.org/2014/07/22/introducing-tidyr/) allows us to do this very easily. First, install and load this package into R.
+Combinar el contenido de varias columnas en una sola columna puede ser útil para proporcionar un conjunto diferente de etiquetas para las filas de tu conjunto de datos, o nuevos niveles de una variable categórica que puedas querer usar en gráficos. La función `unite` en el paquete [tidyr](https://blog.rstudio.org/2014/07/22/introducing-tidyr/) nos permite hacer esto de manera muy fácil. Primero, instala y carga este paquete en R.
 
 ```{r}
 library(tidyr)
 ```
 
-If we wanted to make a new categorical variable where each level was the unique combination of habitat and day/night, we would use:
+Si quisiéramos crear una nueva variable categórica donde cada nivel fuera la combinación única de hábitat y día/noche, usaríamos:
 
 ```{r,eval=FALSE}
 Herbivores <- unite(Herbivores, "Habitat_DayNight", c(Habitat, DayNight), sep = "_")
 ```
 
-The arguments of `unite' are: 
-* the data frame to be used (in this case Herbivores) 
-* the name of the new variable (in this case "Habitat_DayNight") 
-* the columns to be united, within `c()` 
-* the character used to separate the values in each column being united (in this case "_") 
+Los argumentos de `unite` son:
+* el data frame que se utilizará (en este caso **Herbivores**)
+* el nombre de la nueva variable (en este caso **Habitat_DayNight**)
+* las columnas a unir, dentro de `c()`
+* el carácter utilizado para separar los valores en cada columna que se une (en este caso **"_"**)
 
-View the data frame again and you will notice the new variable, and the fact that the old ones have been removed. It is a better idea to keep them, by adding `remove=FALSE`
+Visualiza nuevamente el data frame y notarás la nueva variable, y el hecho de que las antiguas hayan sido eliminadas. Es mejor idea mantenerlas, agregando `remove=FALSE`.
 
 ```{r}
 Herbivores <- unite(Herbivores, "Habitat_DayNight", c(Habitat, DayNight), sep = "_", remove = FALSE)
 ```
   
-
-### Separating one column into several
+### Separar una columna en varias
  
 ![](Separate_image.jpg)
 
-Separating content from one column into several separate variables is also very useful if the levels of categorical variables in the original data set are actually combinations of more than one variable. The function `separate` in tidyr does this.
+Separar el contenido de una columna en varias variables separadas también es muy útil si los niveles de las variables categóricas en el conjunto de datos original son en realidad combinaciones de más de una variable. La función `separate` en tidyr hace esto.
 
-For example, if we wanted to contrast the abundance of herbivores among the genera of algae being used as habitat (rather than individual species), we would need to make a new variable that held only the genus names. We can use `separate` to make two new columns, one for genus and one for species, from the values in the Habitat variable.
+Por ejemplo, si quisiéramos contrastar la abundancia de herbívoros entre los géneros de algas utilizados como hábitat (en lugar de especies individuales), necesitaríamos crear una nueva variable que contenga solo los nombres de los géneros. Podemos usar `separate` para crear dos nuevas columnas, una para el género y otra para la especie, a partir de los valores en la variable **Habitat**.
 
 ```{r}
 Herbivores <- separate(Herbivores, Habitat, c("Genus", "species"), sep = "_", remove = FALSE)
 ```
 
-The arguments of `separate' are: 
-* the data frame to be used (in this case Herbivores) 
-* the name of the new variable to be separated (in this case "Habitat") 
-* the names of the new variables, within `c()` (in this case "Genus" and "species") 
-* the character used to separate the values in the column being separated (in this case "_")  
-* the `remove=FALSE` means we keep the variable being separated in the new version of the data frame 
+Los argumentos de `separate` son:
+* El data frame que se utilizará (en este caso **Herbivores**).
+* El nombre de la nueva variable a separar (en este caso **Habitat**).
+* Los nombres de las nuevas variables, dentro de `c()` (en este caso **Genus** y **species**).
+* El carácter utilizado para separar los valores en la columna que se está separando (en este caso "_").
+* El `remove=FALSE` significa que mantenemos la variable que se está separando en la nueva versión del data frame.
 
-Note that this was only possible because there was a character separating the two variables in the text of the one to be separated (e.g., we couldn't do this is if the species names in the Habitat variable were originally GenusSpecies, rather than Genus_species).
-  
+Ten en cuenta que esto solo fue posible porque había un carácter que separaba las dos variables en el texto de aquella que se iba a separar (por ejemplo, no podríamos hacer esto si los nombres de las especies en la variable **Habitat** fueran originalmente **GenusSpecies** en lugar de **Genus_species**).
 
-### Further help
- 
-Type `?mutate`, `?unite`, and `?separate` for the R help for these functions.
+### Más ayuda
 
-[Data wrangling with dplyr and tidyr cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) produced by Rstudio. Some images above were sourced from this document.
+Escribe `?mutate`, `?unite` y `?separate` en la consola de R para obtener ayuda sobre estas funciones.
+
+[Cheat sheet de manipulación de datos con dplyr y tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) producida por Rstudio. Algunas imágenes anteriores fueron obtenidas de este documento.
 
 [Introducing tidyr](https://blog.rstudio.org/2014/07/22/introducing-tidyr/)
-  
 
-**Author:** Alistair Poore
- 
-**Year:** 2016
+**Autor:** Alistair Poore
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
 
 

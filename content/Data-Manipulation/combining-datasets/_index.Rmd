@@ -1,25 +1,27 @@
 ---
 weight: 4
-title: "Combining datasets"
+title: "Combinando conjuntos de datos."
 aliases: /combining-data-sets/
 output: html_document
 ---
 
-Combining data sets is an essential task for many projects. For example, we may have data on the abundance of species, but also a data set from external sources on the environmental conditions during our observations (e.g., temperature, rainfall, elevation, vegetation type). 
+Combinar conjuntos de datos es una tarea esencial para muchos proyectos. Por ejemplo, podemos tener datos sobre la abundancia de especies, pero también un conjunto de datos de fuentes externas sobre las condiciones ambientales durante nuestras observaciones (por ejemplo, temperatura, precipitación, elevación, tipo de vegetación).
 
 ![](Combining_data_image.jpg)
 
-We will use the package [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) which has many convenient functions for combining data sets, First, load the package:
+Utilizaremos el paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html), el cual tiene muchas funciones convenientes para combinar conjuntos de datos. Primero, carga el paquete:
+
 
 ```{r, warning=F,message=F}
 library(dplyr)
 ```
 
-As with the help page for [Subsetting data](/../data-manipulation/subsetting-data/), we will use a dataset where bats were sampled across regrowth forest in south-eastern Australia which has been thinned to reduce the density of trees.
 
-We will also read in a dataset giving geographic locations for each site (for example, downloaded from a GPS) and nightly weather data (in this case downloaded and summarised from the Bureau of Meteorology data online).
+Al igual que en la página de ayuda para [Subconjunto de datos](/../data-manipulation/subsetting-data/), utilizaremos un conjunto de datos donde se muestrearon murciélagos en un bosque de regeneración en el sureste de Australia que ha sido adelgazado para reducir la densidad de árboles.
 
-Download the three sample data sets ([Bats_data.csv](/datasets/Bats_data.csv), [Geo_data.csv](/datasets/Geo_data.csv), and [Weather_vars.csv](/datasets/Weather_vars.csv)) and import into R.
+También leeremos un conjunto de datos que proporciona las ubicaciones geográficas de cada sitio (por ejemplo, descargado de un GPS) y los datos meteorológicos nocturnos (en este caso, descargados y resumidos de los datos en línea de la Oficina de Meteorología).
+
+Descarga los tres conjuntos de datos de muestra ([Bats_data.csv](/datasets/Bats_data.csv), [Geo_data.csv](/datasets/Geo_data.csv) y [Weather_vars.csv](/datasets/Weather_vars.csv)) e impórtalos en R.
 
 ```{r}
 Bats <- read.csv(file = "Bats_data.csv")
@@ -27,43 +29,42 @@ Geo <- read.csv(file = "Geo_data.csv")
 Weather <- read.csv(file = "Weather_vars.csv")
 ```
 
-### Joining data
- 
-dplyr has a function for simply adding all columns from one data set (z) to another (y):
+### Unir datos
+
+dplyr tiene una función para agregar simplemente todas las columnas de un conjunto de datos (z) a otro (y):
 
 ```{r,eval=F}
 bind_cols(y, z)
 ```
 
-This is only useful if the two data sets have the same number of rows and the rows are arranged in the same order (it just matches up rows by their position).  
+Esto solo es útil si los dos conjuntos de datos tienen el mismo número de filas y las filas están ordenadas de la misma manera (simplemente empareja las filas por su posición).
 
-In this case, we have two quite different datasets that we want to join to our main dataset on bat abundance. The data set of geographic locations has been measured at the site-scale, so each separate site has a separate measurement of latitude and longitude. 
+En este caso, tenemos dos conjuntos de datos bastante diferentes que queremos unir a nuestro conjunto de datos principal sobre la abundancia de murciélagos. El conjunto de datos de ubicaciones geográficas se ha medido a nivel de sitio, por lo que cada sitio separado tiene una medición separada de latitud y longitud.
 
-The second dataset with weather information has used the same weather station for all sites, but has been measured for each separate survey night. Therefore we will use the Site column to join the Geo dataset and the Date column to join the Weather dataset. 
+El segundo conjunto de datos con información meteorológica ha utilizado la misma estación meteorológica para todos los sitios, pero se ha medido para cada noche de encuesta por separado. Por lo tanto, utilizaremos la columna "Sitio" para unir el conjunto de datos "Geo" y la columna "Fecha" para unir el conjunto de datos "Weather".
 
-The function `left_join` will add matching rows from a second dataset onto a first, specifying which variable in the first is used to make the match.
+La función `left_join` agregará filas coincidentes de un segundo conjunto de datos al primero, especificando qué variable en el primero se utiliza para hacer la coincidencia.
 
-To add the geographic locations to the Bats data set, using the Site column to match the rows, we would use:
+Para agregar las ubicaciones geográficas al conjunto de datos de Murciélagos, utilizando la columna "Sitio" para coincidir las filas, utilizaríamos:
 
 ```{r}
 Bats_withGeo <- left_join(Bats, Geo, by = "Site")
 ```
 
-The `by="Site"` part is actually optional, and if you leave it out `left_join` will search for columns with the same name to use as the matching column, and you'll be told this in a message back from the function. This is equivalent to the line above: 
+La parte `by="Site"` en realidad es opcional, y si la omites, `left_join` buscará columnas con el mismo nombre para usar como columna de coincidencia, y recibirás un mensaje al respecto de la función. Esto es equivalente a la línea de arriba:
+
 
 ```{r}
 Bats_withGeo <- left_join(Bats, Geo)
 ```
 
-
-We encourage specifying the matching column though, just to be more explicit about the desired behavior of the match.  To now add the weather data to that new data set, using the Date variable to match rows, we would use:
+Sin embargo, recomendamos especificar la columna de coincidencia para ser más explícitos acerca del comportamiento deseado de la coincidencia. Para agregar ahora los datos climáticos a ese nuevo conjunto de datos, utilizando la variable **Fecha** para coincidir filas, usaríamos:
 
 ```{r}
 Bats_withGeoWeather <- left_join(Bats_withGeo, Weather, by = "Date")
 ```
 
-You can check what has happened by viewing the data set, using the function `dim`, to find the dimensions of our datasets, or `colnames` to see a list of column names.
-
+Puedes verificar lo que ha sucedido al ver el conjunto de datos utilizando la función `dim`, para encontrar las dimensiones de nuestros conjuntos de datos, o `colnames` para ver una lista de nombres de columnas.
 
 ```{r,eval=F}
 dim(Bats)
@@ -72,14 +73,13 @@ colnames(Bats_withGeo)
 colnames(geo.weather.join)
 ```
 
-You will see that the new dataset,  Bats_withGeoWeather has the same number of rows as the original, Bats, but an additional four columns: "Latitude", "Longitude", "Mean_temperature" and "Mean_humidity".
-  
+Verás que el nuevo conjunto de datos, **Bats_withGeoWeather**, tiene el mismo número de filas que el original, Bats, pero con cuatro columnas adicionales: "Latitud", "Longitud", "Temperatura_media" y "Humedad_media".
 
-### Dealing with messy datasets
- 
-That was a nice neat example, where we have all of the codes in our main dataset (Bats) matching up to codes in the data sets we wanted to join on. There are also a series of functions that help with messier data situations. 
+### Tratando con conjuntos de datos desordenados
 
-Let's simulate a couple of messy datasets. Imagine you have bat activity data for five sites and tree density data for five sites, but only two of those sites (D and E) contain measurements for both variables. This may happen when you are using datasets collected by different people or for different purposes in the same study. 
+Ese fue un ejemplo agradable y ordenado, donde todos los códigos en nuestro conjunto de datos principal (Bats) coincidían con los códigos en los conjuntos de datos en los que queríamos hacer la unión. También existen una serie de funciones que ayudan en situaciones de datos desordenados.
+
+Vamos a simular un par de conjuntos de datos desordenados. Imagina que tienes datos de actividad de murciélagos para cinco sitios y datos de densidad de árboles para cinco sitios, pero solo dos de esos sitios (D y E) contienen mediciones para ambas variables. Esto puede ocurrir cuando utilizas conjuntos de datos recopilados por diferentes personas o con diferentes propósitos en el mismo estudio.
 
 ```{r}
 Bat_sim <- as.data.frame(cbind(
@@ -98,14 +98,14 @@ print(Bat_sim)
 print(Tree_sim)
 ```
 
-If we want to combine data sets for only rows where we have both bat activity AND tree density measured and don't care about the rest of the data, we can use `inner_join`.
+Si queremos combinar conjuntos de datos solo para las filas donde tengamos medidas tanto de actividad de murciélagos como de densidad de árboles y no nos importa el resto de los datos, podemos usar `inner_join`.
 
 ```{r}
 Bat_withTree_inn.join <- inner_join(Bat_sim, Tree_sim, by = "Site")
 print(Bat_withTree_inn.join)
 ```
 
-If we are interested primarily in the bat dataset, we can use <font face="monospace">left_join()</font> as above to keep all of the bat measurements and add tree densities where we have them. The missing tree density data will be NA.
+Si estamos principalmente interesados en el conjunto de datos de murciélagos, podemos usar <font face="monospace">left_join()</font> como se mencionó anteriormente para mantener todas las mediciones de murciélagos y agregar densidades de árboles donde las tengamos. Los datos faltantes de densidad de árboles serán **NA**.
 
 ```{r}
 Bat_withTree_left.join <- left_join(Bat_sim, Tree_sim, by = "Site")
@@ -115,7 +115,7 @@ Bat_withTree_left.join <- left_join(Bat_sim, Tree_sim, by = "Site")
 print(Bat_withTree_left.join)
 ```
 
-Conversely if we are primarily interested in tree densities, we can use `right_join` to keep all the tree density data and include bat activity where we have measured it. The missing bat data will be NA.
+Por otro lado, si estamos principalmente interesados en las densidades de árboles, podemos usar `right_join` para mantener todos los datos de densidad de árboles e incluir la actividad de murciélagos donde la hemos medido. Los datos faltantes de murciélagos serán **NA**.
 
 ```{r}
 Bat_withTree_right.join <- right_join(Bat_sim, Tree_sim, by = "Site")
@@ -125,7 +125,7 @@ Bat_withTree_right.join <- right_join(Bat_sim, Tree_sim, by = "Site")
 print(Bat_withTree_right.join)
 ```
 
-Alternatively, if we want to keep ALL of the data and decide for ourselves what to exclude later, we can use `full_join`.
+Alternativamente, si queremos mantener **TODOS** los datos y decidir más adelante qué excluir, podemos usar `full_join`.
 
 ```{r}
 Bat_withTree_full.join <- full_join(Bat_sim, Tree_sim, by = "Site")
@@ -135,7 +135,7 @@ Bat_withTree_full.join <- full_join(Bat_sim, Tree_sim, by = "Site")
 print(Bat_withTree_full.join)
 ```
 
-Finally, we can interrogate which rows of our data do or don't have matches in another table. For example, we can use `semi_join` to print only the rows of bat measurements that have a matching site where trees were measured, or use`anti_join` to find the opposite, where trees were not measured.
+Finalmente, podemos consultar qué filas de nuestros datos tienen o no tienen coincidencias en otra tabla. Por ejemplo, podemos usar `semi_join` para imprimir solo las filas de las mediciones de murciélagos que tienen un sitio coincidente donde se midieron árboles, o usar `anti_join` para encontrar lo contrario, donde no se midieron árboles.
 
 ```{r}
 Bat_inTree <- semi_join(Bat_sim, Tree_sim, by = "Site")
@@ -153,13 +153,13 @@ Bat_notinTree <- anti_join(Bat_sim, Tree_sim, by = "Site")
 print(Bat_notinTree)
 ```
   
+### Más ayuda
 
-### Further help
- 
-This tutorial was based on the excellent [Data wrangling with dplyr and tidyr cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) produced by Rstudio. Images were sourced from the same document. You can use `?dplyr` to get help with this package.
+Este tutorial se basó en la excelente [Hoja de referencia de manipulación de datos con dplyr y tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) producida por Rstudio. Las imágenes fueron obtenidas del mismo documento. Puedes utilizar `?dplyr` para obtener ayuda con este paquete.
 
-**Author**: Rachel V. Blakey
+**Autor**: Rachel V. Blakey
 
-**Year:** 2016 updated 2022 by Will Cornwell
+**Año**: 2016, actualizado en 2022 por Will Cornwell
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
+
