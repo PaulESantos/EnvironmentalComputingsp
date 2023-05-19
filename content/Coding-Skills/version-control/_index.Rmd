@@ -1,127 +1,134 @@
 ---
 weight: 4
-title: "Version Control"
+title: "Control de versiones"
 output: html_document
 aliases: /version-control/
 ---
-### Advantages, disadvantages and solutions
- 
-Fundamental to project organization is maintaining a consistent, uniform and simple set of working files that can be understood by your future self, collaborators and interested folks wanting to reproduce your analyses or re-use code or your data. However, for complex projects with many collaborators maintaining tidiness and keeping track of changing files can be very challenging!
 
-While file sharing services like Dropbox are easy to use and can maintain a consistent file set on your computer(s) and/or among collaborators, it has some serious disadvantages. Specifically, it can't tell you what has changed within files. It also can't deal with conflicts between files when you and your collaborators are working at the same time on the same things. This often leads to a build up of files that no one seems to know what are for or how they differ. Its limited capacity for tracking deleted files also leads to a build up of "too afraid to delete" files. As projects develop, theses become papers and go through countless rounds of revisions. A little bit of organizing can keep chaos from compounding and maintain reproducibility (for both you and others) through all the changes.   
+### Ventajas, desventajas y soluciones
 
-Ideally, it would be nice to easily see the current (and hopefully best) set of files, but be able to see who has changed them and what specific parts of the files have been modified. Keeping a record of the evolution of a particular project is also important to be able to quickly solve problems when (not if) they arise. Setting up your projects under a version control system basically allows you to do all of the above and more.
+Fundamental para la organización de proyectos es mantener un conjunto consistente, uniforme y simple de archivos de trabajo que puedan ser comprendidos por tu futuro yo, colaboradores y personas interesadas que deseen reproducir tus análisis o reutilizar tu código o datos. Sin embargo, ¡para proyectos complejos con muchos colaboradores, mantener la limpieza y hacer un seguimiento de los cambios en los archivos puede ser muy desafiante!
 
-**Advantages.** The major advantages of using verison control over just using Dropbox include:
+Si bien los servicios de intercambio de archivos como Dropbox son fáciles de usar y pueden mantener un conjunto consistente de archivos en tu(s) computadora(s) y/o entre colaboradores, tienen algunas desventajas graves. Específicamente, no pueden decirte qué ha cambiado dentro de los archivos. Tampoco pueden manejar conflictos entre archivos cuando tú y tus colaboradores están trabajando al mismo tiempo en las mismas cosas. Esto a menudo lleva a acumular archivos que nadie parece saber para qué son o en qué se diferencian. Su capacidad limitada para rastrear archivos eliminados también lleva a una acumulación de archivos "demasiado temerosos para eliminar". A medida que los proyectos se desarrollan, estos se convierten en documentos y pasan por innumerables rondas de revisiones. Un poco de organización puede evitar que el caos se agrave y mantener la reproducibilidad (tanto para ti como para otros) a través de todos los cambios.
 
-1. It keeps track of all files relevant to a specific project and/or that are necessary for its reproducibility by assigning them a unique identifier. 
+Idealmente, sería bueno poder ver fácilmente el conjunto actual (y esperemos que el mejor) de archivos, pero también poder ver quién los ha cambiado y qué partes específicas de los archivos se han modificado. Mantener un registro de la evolución de un proyecto en particular también es importante para poder resolver rápidamente los problemas cuando (no si) surjan. Configurar tus proyectos bajo un sistema de control de versiones te permite hacer todo lo anterior y más.
 
-2. It documents the evolution of every file in a project, including data, manuscripts and code, by permitting the user to assign a commit tag describing how the file was changed.
+**Ventajas.** Las principales ventajas de usar control de versiones en lugar de simplemente usar Dropbox incluyen:
 
-3. It automatically indicates who, when and where a specific file was modified, identifying the in text locations that have changed.
+1. Hace un seguimiento de todos los archivos relevantes para un proyecto específico y/o que son necesarios para su reproducibilidad al asignarles un identificador único.
 
-4. It keeps a recorded history of all the changed files, allowing you to move back in time to look at older version of files or the state of the project at an earlier time. 
+2. Documenta la evolución de cada archivo en un proyecto, incluidos datos, manuscritos y código, al permitir al usuario asignar una etiqueta de confirmación que describe cómo se modificó el archivo.
 
-5. It auto merges files that you and collaborators are working on at the same time and introduces conflict markers in the text of the file if the same lines have been edited. This forces one to deal with and correct conflicts immediately.
+3. Indica automáticamente quién, cuándo y dónde se modificó un archivo específico, identificando las ubicaciones dentro del texto que han cambiado.
 
-6. It makes running analyses and scripts on servers much easier. 
+4. Mantiene un historial registrado de todos los archivos modificados, lo que te permite retroceder en el tiempo para ver versiones antiguas de archivos o el estado del proyecto en un momento anterior.
 
-7. It promotes easier collaboration between lab members and co-authors by keeping files in sync and annotated across diverse platforms. 
+5. Fusiona automáticamente archivos en los que tú y tus colaboradores están trabajando al mismo tiempo e introduce marcadores de conflicto en el texto del archivo si se han editado las mismas líneas. Esto te obliga a lidiar y corregir los conflictos de inmediato.
 
-8. Makes it much easier at the end of a project to quickly share and store data and code relevant for reproducing the project (analyses, paper etc) which is often a necessary pre-requisite for publishing. 
+6. Facilita la ejecución de análisis y scripts en servidores.
 
-9. Makes it easier to correct mistakes within a project by allowing you to track down the relevant colleague (or vise versa) when issues arise after updates or changes. 
+7. Promueve una colaboración más fácil entre los miembros del laboratorio y los coautores al mantener los archivos sincronizados y anotados en diversas plataformas.
 
-10. Forces you to think about the relevant parts of the project that are essential for it's reproducibility and allows you to customize what is tracked.
+8. Facilita mucho al final de un proyecto compartir y almacenar rápidamente los datos y el código relevantes para reproducir el proyecto (análisis, artículo, etc.), lo cual es a menudo un requisito previo necesario para su publicación.
 
-**Disadvantages.** While the above is definitely appealing, version control and git do have some disadvantages. First, you will at some point need to spend a bit of time coding before and after a days work. Although, the small time investment to do this pays off a lot down the line. Second, the additional coding can make it challenging to get collaborators up and running on a version control system. Not everyone will be as familiar with the terminal or command line and this can create barriers to entry. 
+9. Facilita corregir errores dentro de un proyecto al permitirte localizar al colega relevante (o viceversa) cuando surgen problemas después de actualizaciones o cambios.
 
-**Solutions.** Fortunately, there are some very easy and simple solutions to many of the problems above. For example, there are now very useful and easy to use graphical user interfaces (GUI's) like [SourceTree](https://www.sourcetreeapp.com) that remove the need to use the command line all together, make it easy and seamless to set up repositories and are cross platform (i.e., Windows, Mac etc). 
-  
-
-### How it works
- 
-Given that not everyone will want to use the command line, we'll show some basics using both the command line and a GUI (SourceTree). We'll do this because we believe that the benefits of using version control far outweigh the costs of not using it, and so this should ensure mostly people can get started straight away.
-
-We will also demonstrate how the command line relates to the GUI. We will not cover important topics like [setting up SSH keychains](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/), [setting up a gitconfig file](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup), [dealing with conflicts](https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line/) all of which are covered thoroughly elsewhere. Rather, we provide a basic overview of how to set up a repository and the day-to-day workings of tracking project files. 
-
-**Setting up a repository.**
-
-To begin tracking files for a project, we need to set up a project repository that keeps all the relevant files (i.e., data, meta-data, code, functions, manuscript etc) in one place. The project directory will form the basis of a reproducible project (see [project management](/../getting-started-with-r/project-management) for more details).
-
-To take full advantage of version control, we want to have both a local (on your computer) and remote (cloud) copy of our repository. There are a number of hosting sites that will allow you to create an cloud repository including [GitHub](https://github.com) and [BitBucket](https://bitbucket.org). Bitbucket allows you to create private repositories for free, whereas anything on GitHub is open (although you can pay for private repositories).
-
-To set up a remote server, you will need to first create an account on one of these hosting sites. Once you have finished that you will also need to download and install [Git](https://git-scm.com) (if using the command line), which is the version control system we'll be using. Creating a repository on line is easy, log on to your account and go to `Repositories` -> `Create new repository`. Give it a name and then that's it, if you're on bitbucket it will literally tell you what to do next on the command line (Figure 1 & 2).
-
-![**Figure 1** - Setting up a repository for a project on Bitbucket](Version_control_Fig1.png)
-
-![**Figure 2** - Bitbucket's explanation of how to link the repository on the server to a local repository. See also Figure 4 below](Version_control_Fig1B.png)
+10. Te obliga a pensar en las partes relevantes del proyecto que son esenciales para su reproducibilidad y te permite personalizar lo que se rastrea.
 
 
-If you're using the command line, you can literally just navigate to the place you want the folder and type in the commands in Figure 2 above. It will also take you through a few important steps on how Git works, but we'll get to those later. The **key component** from this repository that is needed to set it up and connect it to a folder on your computer is the ssh or http pathname: 
+**Desventajas.** Aunque lo anterior es definitivamente atractivo, el control de versiones y git tienen algunas desventajas. Primero, en algún momento necesitarás dedicar un poco de tiempo a programar antes y después del trabajo diario. Aunque la pequeña inversión de tiempo para hacer esto vale mucho la pena a largo plazo. Segundo, la programación adicional puede dificultar que los colaboradores se familiaricen y comiencen a utilizar un sistema de control de versiones. No todos estarán tan familiarizados con la terminal o la línea de comandos, lo que puede crear barreras de entrada.
 
-**`https://UNSW_EnvComp@bitbucket.org/UNSW_EnvComp/unsw_envcomp.git`**. 
+**Soluciones.** Afortunadamente, existen soluciones muy fáciles y simples para muchos de los problemas mencionados anteriormente. Por ejemplo, ahora hay interfaces de usuario gráficas (GUI) muy útiles y fáciles de usar, como [SourceTree](https://www.sourcetreeapp.com), que eliminan la necesidad de utilizar la línea de comandos por completo, facilitan y simplifican la configuración de repositorios y son multiplataforma (es decir, Windows, Mac, etc.).
 
-This path name will make the connection between a local project folder (i.e. a folder on your computer) and the existing one on the server (i.e. Bitbucket). It will also allow you to clone the entire repository on your computer if needed. If you want to clone the repository on your computer, use the command line to navigate to where you want the folder and type in the following: 
+### Cómo funciona
+
+Dado que no todos querrán usar la línea de comandos, mostraremos algunos conceptos básicos utilizando tanto la línea de comandos como una GUI (SourceTree). Haremos esto porque creemos que los beneficios de utilizar el control de versiones superan con creces los costos de no utilizarlo, por lo que esto debería permitir que la mayoría de las personas comiencen de inmediato.
+
+También demostraremos cómo se relaciona la línea de comandos con la GUI. No cubriremos temas importantes como [configurar claves SSH](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/), [configurar un archivo gitconfig](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup), [resolver conflictos](https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line/), los cuales se explican detalladamente en otros lugares. En cambio, proporcionaremos una descripción general básica de cómo configurar un repositorio y el funcionamiento diario del seguimiento de archivos del proyecto.
+
+
+**Configuración de un repositorio.**
+
+Para comenzar a rastrear archivos de un proyecto, necesitamos configurar un repositorio de proyecto que mantenga todos los archivos relevantes (es decir, datos, metadatos, código, funciones, manuscritos, etc.) en un solo lugar. El directorio del proyecto será la base de un proyecto reproducible (consultar [gestión de proyectos](/../getting-started-with-r/project-management) para más detalles).
+
+Para aprovechar al máximo el control de versiones, queremos tener tanto una copia local (en tu computadora) como una copia remota (en la nube) de nuestro repositorio. Hay varios sitios de alojamiento que te permitirán crear un repositorio en la nube, incluyendo [GitHub](https://github.com) y [BitBucket](https://bitbucket.org). Bitbucket te permite crear repositorios privados de forma gratuita, mientras que todo en GitHub es público (aunque puedes pagar por repositorios privados).
+
+Para configurar un servidor remoto, primero deberás crear una cuenta en uno de estos sitios de alojamiento. Una vez que hayas terminado, también deberás descargar e instalar [Git](https://git-scm.com) (si usas la línea de comandos), que es el sistema de control de versiones que utilizaremos. Crear un repositorio en línea es fácil, inicia sesión en tu cuenta y ve a `Repositories` -> `Create new repository`. Dale un nombre y eso es todo, si estás en Bitbucket, literalmente te dirá qué hacer a continuación en la línea de comandos (Figura 1 y 2).
+
+![**Figura 1** - Configuración de un repositorio para un proyecto en Bitbucket](Version_control_Fig1.png)
+
+![**Figura 2** - Explicación de Bitbucket sobre cómo vincular el repositorio en el servidor a un repositorio local. Ver también la Figura 4 a continuación](Version_control_Fig1B.png)
+
+
+
+Si estás usando la línea de comandos, simplemente navega hasta el lugar donde deseas que se encuentre la carpeta y escribe los comandos de la Figura 2 anterior. También te guiará a través de algunos pasos importantes sobre cómo funciona Git, pero abordaremos eso más adelante. El **componente clave** de este repositorio que se necesita para configurarlo y conectarlo a una carpeta en tu computadora es la ruta de acceso ssh o http:
+
+**`https://UNSW_EnvComp@bitbucket.org/UNSW_EnvComp/unsw_envcomp.git`**.
+
+Este nombre de ruta de acceso establecerá la conexión entre una carpeta de proyecto local (es decir, una carpeta en tu computadora) y la existente en el servidor (es decir, Bitbucket). También te permitirá clonar el repositorio completo en tu computadora si es necesario. Si deseas clonar el repositorio en tu computadora, usa la línea de comandos para navegar hasta donde deseas que se encuentre la carpeta y escribe lo siguiente:
 
 ```git clone https://UNSW_EnvComp@bitbucket.org/UNSW_EnvComp/unsw_envcomp.git```
 
-This will effectively copy down from the server your entire repository in the location you desire and is nearly identical to the commands suggested in Figure 2. It will also automatically create a connection between your local directory and the server. You can also provide this pathname to collaborators, and provided they are given access to reading and writing the repository (can be changed in repository settings online), they can grab everything from the server as well in the same way described above. 
+Esto copiará efectivamente desde el servidor todo tu repositorio en la ubicación que desees y es casi idéntico a los comandos sugeridos en la Figura 2. También creará automáticamente una conexión entre tu directorio local y el servidor. También puedes proporcionar esta ruta a tus colaboradores, y siempre que se les dé acceso de lectura y escritura al repositorio (se puede cambiar en la configuración del repositorio en línea), también podrán obtener todo desde el servidor de la misma manera descrita anteriormente.
 
-Creating a repository in SourceTree is also quite easy. Once you have the pathname for your repository, go into source tree, click ```New Repository``` -> ```Clone from URL``` (Figure 3). Add in the ssh or http:// pathname, decide where you want the repository to live on your computer and then click ```clone```. This will then bring down the contents of the repository (if it is not empty) and set this connection up in SourceTree for you to begin tracking and pushing to the server. If the repository already exists on your computer and you want to add it to SourceTree, just click ```Add existing local repository``` instead of ```Clone from URL```.
+Crear un repositorio en SourceTree también es bastante fácil. Una vez que tengas la ruta para tu repositorio, ve a SourceTree, haz clic en ```"New Repository"``` -> ```"Clone from URL"``` (Figura 3). Agrega la ruta ssh o http://, decide dónde deseas que viva el repositorio en tu computadora y luego haz clic en ```"clone"```. Esto descargará los contenidos del repositorio (si no está vacío) y configurará esta conexión en SourceTree para que puedas comenzar a rastrear y enviar al servidor. Si el repositorio ya existe en tu computadora y deseas agregarlo a SourceTree, simplemente haz clic en ```"Add existing local repository"``` en lugar de ```"Clone from URL"```.
 
-![**Figure 3** - Setting up a repository in your computer in SourceTree](Version_control_Fig31.png)
-  
+![**Figura 3** - Configurando un repositorio en tu computadora en SourceTree](Version_control_Fig31.png)
 
-### Tracking files and pushing to the cloud
- 
-Now that you are set up and have cloned or initiated a repository in a local folder, the trick is to keep track of important files, such as data, R code and manuscripts (i.e., .Rmd, .md, .txt etc.). How does Git do this? Well, there are basically a set of key commands that are needed and that are continually implemented to keep track a new or modified files. You use these commands at the end of your working day, or when you have made huge progress and want to get the changes to the server ASAP. The key commands and their order of execution are as follows:
 
-1) Get a large cup of coffee (or tea)
+### Rastreo de archivos y envío a la nube
 
-2) This command pulls new files from the server.
-  + *```git pull ```*
+Ahora que estás configurado y has clonado o iniciado un repositorio en una carpeta local, el truco está en hacer un seguimiento de los archivos importantes, como datos, código R y documentos (es decir, .Rmd, .md, .txt, etc.). ¿Cómo hace esto Git? Bueno, básicamente hay un conjunto de comandos clave que se necesitan y que se implementan continuamente para realizar un seguimiento de los archivos nuevos o modificados. Utilizas estos comandos al final de tu día de trabajo o cuando hayas realizado un gran avance y quieras enviar los cambios al servidor lo antes posible. Los comandos clave y su orden de ejecución son los siguientes:
 
-3) Do a whole bunch of things to files in the project then check out what has changed
+1) Consigue una taza grande de café (o té).
+
+2) Este comando obtiene los nuevos archivos del servidor.
+  + *```git pull```*
+
+3) Realiza una serie de acciones en los archivos del proyecto y luego verifica qué ha cambiado.
   + *```git status```*
 
-4) Add a modified or untracked file to the staging area. Replace ```filename``` with the path and name of the file (e.g. ```/R/function.R```). You can also add many files at once using ```--all``` in replace of  ```filename```.
-  + *```git add filename ```*
+4) Agrega un archivo modificado o no rastreado al área de preparación. Reemplaza ```"nombre de archivo"``` con la ruta y el nombre del archivo (por ejemplo, ```"/R/function.R"```). También puedes agregar muchos archivos a la vez usando ```"--all"``` en lugar de ```"nombre de archivo"```.
+  + *```git add nombre_de_archivo```*
 
-5) Once added, leave a message about what the file does, how it was changed etc
-  + *```git commit -m "add a message about the changes to file"```*
+5) Una vez agregado, deja un mensaje sobre qué hace el archivo, cómo ha cambiado, etc.
+  + *```git commit -m "agrega un mensaje sobre los cambios en el archivo"```*
 
-6) Push the changes to the server
+6) Envía los cambios al servidor.
   + *```git push```*
-
-7) Go home and relax--your project is under version control!
-
-The step-by-step procedures above is used whenever you want to track changes, and these commands are literally typed in the command line in the order presented (See Figure 4).  Step 2 is only needed when beginning work in the directory, and will pull any changes that collaborators may have made that you do not yet know about. If you're the only one working on the project and you only use one computer, then step 2 is optional because your local directory will always have the most up-to-date files. 
-
-![**Figure 4** - Example of sequence of steps in the Terminal window. The commands are highlighted in blue, and demonstrate how to initialize a new repository, checkout untracked files, add these files and commit and push these to the server.](Version_control_Fig3.png)
-
-SourceTree makes the above way easier by just providing you with a bunch of click boxes and buttons that you can use to do all this very quickly. To add a file to be tracked just click the boxes of the relevant files (or all of them) in the "Unstaged files" area (Figure 5). Once you have clicked all the boxes, the files will be in the "Staged files" area. This is equivalent to *```git add```* from the command line. They are now ready to be committed, and you can leave a commit message in the window at the bottom of the screen and click the ```Commit``` button in the right corner. This is equivalent to the ```git commit -m "message"``` in the command line. 
-
-![**Figure 5** - Example of how add, commit and push in SourceTree](Version_control_Fig4.png)
-
-Once your files have been committed, the files that are ready to be pushed will show up in the "Push" button at the top of the screen (Figure 5). Click this and they will be moved to the server. As you edit and add files, new files will appear in the staging area and you can just repeat the above sequence to add, commit and push these to the server. The "Pull" button corresponds to step two in the Git sequence above and should always be used at the start of a day if you're working with collaborators.
-
-**Ignoring files you don't want to track**
-
-In many cases there will be files within a project that you do not want to track. This could be because they are not necessary for the reproducibility of the project, or are just files for you and not needed for your collaborators. These could include helpful notes relevant only to you, papers you are interested in or even large output files. Files such as these don't need to be tracked - for example, there may be no need to track figures and tables as in many instances these can be re-generated from the project code and they take a lot of space on the server. Ignoring these files is easy using what is called a ```.gitignore``` file. The "." in front of the file means that it is hidden and will not be shown in a normal working directory. Fortunately, Git and SourceTree will recognize these files. The ```.gitignore``` is a file that remains in the main directory of your project folder and is usually tracked. You can create a ```.gitignore``` file in the command line easily using a few lines of code (Figure 6). 
-
-![**Figure 6** - Example of how create a .gitignore file and ignore the photos/ folder of the imaginary Git repository](Version_control_Fig5.png)
-
-In Figure 6, I've ignored a "photos/" folder. We can see that this now disappears (compare with Figure 4) from our staging area in the Terminal window. We can just add any file or folder we don't want tracked here before adding it so that Git ignores them. If we want to start tracking a file we have ignore, just open the .gitignore file up in a text editor and remove the file you want to track. Save the .gitignore file and then add, commit and push this as above.
   
+7) ¡Ve a casa y relájate! Tu proyecto está bajo control de versiones.
 
-### Further help
- 
-Version control systems, and Git in particular, can do quite a lot more then what we have covered above. We have just provided an brief introduction on how to get started and use Git to track your project files. If you want to know more about how to create branches, deal with conflicts and many other useful features you can visit the [Git](https://git-scm.com) web page where you can fins all the relevant information to do more advanced stuff.
-  
+Los procedimientos paso a paso mencionados anteriormente se utilizan cuando deseas realizar un seguimiento de los cambios, y estos comandos se escriben literalmente en la línea de comandos en el orden presentado (ver Figura 4). El Paso 2 solo es necesario al comenzar a trabajar en el directorio y recuperará cualquier cambio que los colaboradores hayan realizado y que aún no conozcas. Si eres el único que trabaja en el proyecto y solo usas una computadora, entonces el Paso 2 es opcional porque tu directorio local siempre tendrá los archivos más actualizados.
 
-**Author**: Daniel Noble
- 
-**Year:** 2016
+![**Figura 4** - Ejemplo de secuencia de pasos en la ventana de la Terminal. Los comandos están resaltados en azul y muestran cómo inicializar un nuevo repositorio, hacer seguimiento de archivos no rastreados, agregar esos archivos y confirmarlos y enviarlos al servidor.](Version_control_Fig3.png)
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+
+
+SourceTree hace todo esto mucho más fácil al proporcionarte una serie de casillas de selección y botones que puedes utilizar para hacer todo esto muy rápidamente. Para agregar un archivo para realizar su seguimiento, simplemente haz clic en las casillas de los archivos relevantes (o en todas) en el área de "Archivos sin preparar" (Figura 5). Una vez que hayas seleccionado todas las casillas, los archivos estarán en el área de "Archivos preparados". Esto es equivalente a *```git add```* en la línea de comandos. Ahora están listos para ser confirmados, y puedes dejar un mensaje de confirmación en la ventana en la parte inferior de la pantalla y hacer clic en el botón ```Commit``` en la esquina derecha. Esto es equivalente a ```git commit -m "mensaje"``` en la línea de comandos.
+
+![**Figura 5** - Ejemplo de cómo agregar, confirmar y enviar en SourceTree](Version_control_Fig4.png)
+
+
+Una vez que tus archivos hayan sido confirmados, los archivos listos para ser enviados aparecerán en el botón "Push" en la parte superior de la pantalla (Figura 5). Haz clic en esto y serán movidos al servidor. A medida que edites y agregues archivos, nuevos archivos aparecerán en el área de preparación y simplemente puedes repetir la secuencia anterior para agregar, confirmar y enviar estos al servidor. El botón "Pull" corresponde al paso dos en la secuencia de Git mencionada anteriormente y siempre debe ser utilizado al inicio del día si estás trabajando con colaboradores.
+
+**Ignorar archivos que no deseas rastrear**
+
+En muchos casos, habrá archivos dentro de un proyecto que no deseas rastrear. Esto puede ser porque no son necesarios para la reproducibilidad del proyecto, o son archivos solo para ti y no necesarios para tus colaboradores. Estos podrían incluir notas útiles relevantes solo para ti, documentos en los que estás interesado o incluso archivos de salida grandes. Estos archivos no necesitan ser rastreados, por ejemplo, puede que no haya necesidad de rastrear figuras y tablas, ya que en muchos casos se pueden regenerar a partir del código del proyecto y ocupan mucho espacio en el servidor. Ignorar estos archivos es fácil usando lo que se llama un archivo `.gitignore`. El "." al inicio del archivo significa que está oculto y no se mostrará en un directorio de trabajo normal. Afortunadamente, Git y SourceTree reconocerán estos archivos. El `.gitignore` es un archivo que se mantiene en el directorio principal de la carpeta de tu proyecto y generalmente se rastrea. Puedes crear un archivo `.gitignore` fácilmente en la línea de comandos utilizando algunas líneas de código (Figura 6).
+
+![**Figura 6** - Ejemplo de cómo crear un archivo .gitignore e ignorar la carpeta de fotos/ del repositorio imaginario de Git](Version_control_Fig5.png)
+
+
+
+
+En la Figura 6, he ignorado una carpeta "photos/". Podemos ver que ahora desaparece (comparado con la Figura 4) de nuestra área de preparación en la ventana de Terminal. Simplemente podemos agregar cualquier archivo o carpeta que no queremos rastrear aquí antes de agregarlo para que Git los ignore. Si queremos comenzar a rastrear un archivo que hemos ignorado, simplemente abre el archivo .gitignore en un editor de texto y elimina el archivo que deseas rastrear. Guarda el archivo .gitignore y luego agrega, commit y push como se menciona anteriormente.
+
+### Ayuda adicional
+
+Los sistemas de control de versiones, y Git en particular, pueden hacer mucho más de lo que hemos cubierto anteriormente. Hemos proporcionado una breve introducción sobre cómo comenzar y usar Git para rastrear los archivos de tu proyecto. Si deseas saber más sobre cómo crear ramas, manejar conflictos y muchas otras características útiles, puedes visitar la página web de [Git](https://git-scm.com), donde encontrarás toda la información relevante para realizar tareas más avanzadas.
+
+**Autor**: Daniel Noble
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

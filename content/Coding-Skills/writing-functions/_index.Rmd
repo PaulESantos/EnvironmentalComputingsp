@@ -1,112 +1,121 @@
 ---
 weight: 2
-title: "Writing Functions"
+title: "Escribiendo Funciones"
 aliases: /writing-simple-functions/
 output: html_document
 ---
 
-<!-- ## Goals for this post
-1. Understand *why* to move code from in-place into a function.
-2. Understand R's function syntax (argument lists, defaults, return
-   semantics) and scoping rules.
+<!-- ## Metas de esta publicación
+1. Comprender *por qué* mover el código de su lugar original a una función.
+2. Comprender la sintaxis de las funciones en R (listas de argumentos, valores predeterminados, semántica de retorno) y las reglas de ámbito.
  -->
 
-A function is a self contained chunk of code which performs a specified task. Think of them as "mini-scripts" that are written separately from your main script.
+Una función es un fragmento de código independiente que realiza una tarea específica. Piensa en ellas como "mini-scripts" que se escriben por separado de tu script principal.
 
-Well-written code uses lots of functions. This likely includes:
+El código bien escrito utiliza muchas funciones. Esto incluye:
 
-- functions from base R, 
-- functions from packages you have installed, and 
-- functions you have written yourself. 
+- funciones de R base,
+- funciones de paquetes que hayas instalado, y
+- funciones que hayas escrito tú mismo.
 
-It's hard to do anything in R without using some of the built-in functions, but have you written you're own functions? If not, it's time to start.
+Es difícil hacer algo en R sin utilizar algunas de las funciones incorporadas, pero ¿has escrito tus propias funciones? Si no es así, es hora de empezar.
 
-Below we spend some time outlining the two main [*types* of function](#types), [*why* use functions](#why), and then [*how* they are constructed](#how).
+A continuación, dedicaremos algo de tiempo a describir los dos principales [*tipos* de función](#tipos), [*por qué* usar funciones](#por-qué) y luego [*cómo* se construyen](#cómo).
 
-To illustrate our examples, we will use a sample data set containing a series of different measurements from replicated algal samples. You can read the data into R directly from the web:
+Para ilustrar nuestros ejemplos, utilizaremos un conjunto de datos de muestra que contiene una serie de medidas diferentes de muestras de algas replicadas. Puedes leer los datos directamente en R desde la web:
+
 
 ```{r, message=FALSE, warning=FALSE, results="hide"}
 library(tidyverse)
 algae <- read_csv("Algal_traits.csv")
 ```
 
-(or if you like download the data set, [Algal_traits.csv](/datasets/Algal_traits.csv)). 
-Taking a look we see a bunch of variables like height, weight etc
+
+(o si prefieres descargar el conjunto de datos, [Algal_traits.csv](/datasets/Algal_traits.csv)).
+Al echar un vistazo, vemos un montón de variables como altura, peso, etc.
+
 
 ```{r, echo=FALSE}
 algae
 ```
  
+## Tipos de función <a id="tipos"></a>
 
-## Types of function <a id="types"></a>
+En términos generales, existen dos tipos principales de función:
 
-Broadly, there are two main types of function:
+En primer lugar, están las **funciones que hacen algo y devuelven un objeto**. Estas funciones toman algunos valores de entrada especificados, realizan algunas manipulaciones/operaciones y luego te devuelven un objeto. Ejemplos incluyen `mean()` (calcula la media de un vector), `lm()` (ajusta un modelo lineal) o `read.csv` (carga una tabla de datos).
 
-First are **functions that do something and return an object**. These functions take some specified inputs, do some manipulations / operations, then return an object back to you.  Examples include `mean()` (takes mean of a vector), `lm()` (fits a linear model), or `read.csv` (loads a table of data). 
+En segundo lugar, están las **funciones que tienen algún efecto externo en tu computadora o entorno de trabajo**. Estas funciones *hacen algo* pero no devuelven ningún objeto. Ejemplos incluyen funciones como `write.csv()` (escribe un archivo en el disco), `plot()` (genera un gráfico), `library()` (carga un paquete).
 
-Second are  **functions that have some external effect on your computer or working environment**.  These functions *do something* but don't return any objects. Examples include things like `write.csv()` (writes a file to disk), `plot()` (makes a plot), `library()` (loads a package).
+Para el primer tipo, a menudo guardarás el resultado en una variable y lo manipularás aún más. Por ejemplo, supongamos que queremos calcular el promedio de la variable `altura` de las muestras en los datos de `algae`. Podemos usar la función `mean`:
 
-For the first type, you'll often save the output in a variable and manipulate it further.  For example, let's say we want to calculate the average of the variable `height` of the samples in the `algae` data. We can use the function `mean`:
 
 ```{r, eval = TRUE}
 mean_height <- mean(algae$height)
 ```
-This code takes the mean of `algae$height` and stores it in the variable `mean_height`. We can query the answer by running the variable name:
+
+Este código calcula el promedio de `algae$altura` y lo guarda en la variable `mean_height`. Podemos consultar la respuesta ejecutando el nombre de la variable:
+
 
 ```{r, eval = TRUE}
 mean_height
 ```
 
-We can also run the function without assigning the output to a variable. The output is still returned, this time to the console - after which it is printed and lost. 
+
+También podemos ejecutar la función sin asignar la salida a una variable. La salida aún se devuelve, esta vez en la consola, se imprime y se pierde.
+
 
 ```{r, eval = TRUE}
 mean(algae$height)
 ```
 
-By contrast, output from the second type of function does not need to be assigned to a variable. Moreover, the function doesn't print anything to screen either. E.g.
+En cambio, la salida del segundo tipo de función no necesita ser asignada a una variable. Además, la función no imprime nada en la pantalla. Por ejemplo:
+
 
 ```{r, eval = FALSE}
 write.csv(Algae, "data.csv")
 ```
 
-## Why use functions? <a id="why"></a>
+## ¿Por qué usar funciones? <a id="por-que"></a>
 
-So why is it so useful to divide your script into many separate, but cooperating, functions? Why not write one big, long script? There are multiple ways in which writing functions can improve your coding. 
+Entonces, ¿por qué es tan útil dividir tu script en muchas funciones separadas pero que colaboran entre sí? ¿Por qué no escribir un solo script grande y largo? Hay varias formas en las que escribir funciones puede mejorar tu código.
 
+### El código con funciones es más fácil de leer
 
-### Code with functions is easier to read
+Escribir funciones es una buena forma de organizar tus métodos analíticos en fragmentos autocontenidos. Generalmente, el código escrito de esta manera es mucho más fácil de leer.
 
-Writing functions is a good way of organising your analytical methods into self contained chunks. Generally, code written in this way is much easier to read. 
+Considera algunas de las funciones que ya has utilizado en R. Por ejemplo, `mean()`.
 
-Consider some of the functions that you have already used within R.  For example, `mean()`.
-
-This function is already predefined within the R base package, meaning that you didn't have to tell the computer how to compute the mean, and because that programming job has already been done, you can simply use the function in your own script. Imagine if every time you needed a mean you had to write the following:
+Esta función ya está predefinida dentro del paquete base de R, lo que significa que no tuviste que decirle al ordenador cómo calcular la media, y debido a que ese trabajo de programación ya se ha realizado, simplemente puedes usar la función en tu propio script. Imagina si cada vez que necesitaras calcular una media tuvieras que escribir lo siguiente:
 
 
 ```{r, eval = FALSE}
 sum(x) / length(x)
 ```
 
-Even this line of script uses two functions: the `sum` function and `length` function. If these weren't available, you would need to write out the full method every time you needed a mean. 
+Incluso esta línea de código utiliza dos funciones: la función `sum` y la función `length`. Si estas no estuvieran disponibles, tendrías que escribir el método completo cada vez que necesitaras calcular un promedio.
+
 
 ```{r, eval = FALSE}
 (x[1] + x[2] + x[3] + x[4] + x[5]) / 5
 ```
 
-Instead, we simply use `mean` without giving it two thoughts. 
 
-Importantly, it is much easier to tell what `mean(x)` is doing than the line above. **Reading the code you know exactly what is happening**. Using the full formula, it would be less obvious what was happening every time you wanted to calculate the mean of a different variable.
+En cambio, simplemente usamos `mean` sin pensarlo dos veces.
 
-Which raises an important point: **functions should have a clear and informative name**, that tells you what the function does.
+Es importante destacar que es mucho más fácil entender qué hace `mean(x)` que la línea anterior. **Al leer el código, sabes exactamente qué está sucediendo**. Usando la fórmula completa, sería menos obvio qué estaba sucediendo cada vez que quisieras calcular el promedio de una variable diferente.
 
-Functions quickly increase the ease of which you can read and interpret the code. 
+Lo cual plantea un punto importante: **las funciones deben tener un nombre claro e informativo** que indique qué hace la función.
 
-It is not obvious what the code `sqrt(var(algae$height)/length(algae$height))` what this is doing, whereas it is immediately obvious what the code `standard_error(x)` is doing.
+Las funciones aumentan rápidamente la facilidad con la que puedes leer e interpretar el código.
+
+No es obvio qué hace el código `sqrt(var(algae$height)/length(algae$height))`, mientras que es inmediatamente obvio qué hace el código `standard_error(x)`.
 
 
-### Organise your workflow
+### Organiza tu flujo de trabajo
 
-Building on the idea of making code easier to read, functions can help organise your whole workflow and make it easier to follow. Often people have a big long analysis script, which is difficult to interpret. When you use functions, your analysis script might end up looking much simpler:
+Basándonos en la idea de hacer que el código sea más fácil de leer, las funciones pueden ayudar a organizar todo tu flujo de trabajo y facilitar su seguimiento. A menudo, las personas tienen un largo script de análisis que es difícil de interpretar. Cuando usas funciones, tu script de análisis puede verse mucho más simple:
+
 
 ```{r, eval = FALSE}
 data <- read_csv("Algal_traits.csv")
@@ -122,32 +131,35 @@ make_plot_spatial(stats_spatial)
 save_output(stats_species)
 ```
 
-Here all the functions like `fit_model_species` are ones that you've written yourself.
+Aquí, todas las funciones como `fit_model_species` son aquellas que has escrito tú mismo.
 
-Wow, how much easier is that to engage with, than some long script with 100's of lines?
+¡Qué fácil es interactuar con eso en comparación con un largo script con cientos de líneas!
+
 
 ![](Functions_image.jpg)
 
 
-### Reuse code (a.k.a. "Don't repeat yourself")
+### Reutiliza código (también conocido como "No te repitas")
 
-Not only is using the `mean` function more informative (its easier to tell what your line of code is doing) it's also reusable. Once a function is defined it can be used over and over again, not only within the same script but within other scripts too. 
+No solo usar la función `mean` es más informativo (es más fácil entender qué hace tu línea de código), sino que también es reutilizable. Una vez que se define una función, se puede usar una y otra vez, no solo dentro del mismo script, sino también en otros scripts.
 
-To further highlight this, we will go through an example of writing our own function to calculate the standard error of a bunch of variables. R has built in functions for the mean of a vector (`mean(x)`) and standard deviation (`sd(x)`) but not the standard error.  To calculate standard error,
+Para resaltar aún más esto, vamos a través de un ejemplo de cómo escribir nuestra propia función para calcular el error estándar de un grupo de variables. R tiene funciones incorporadas para el promedio de un vector (`mean(x)`) y la desviación estándar (`sd(x)`), pero no para el error estándar. Para calcular el error estándar,
 
 $$SE_\bar{x}= \sqrt{\frac{var}{n}}$$ 
 
-we need the **variance** and sample size, **n**. These are relatively easy to calculate using other base functions in R.  `var` will calculate the variance and `length` gives the length of the vector and thus the sample size (n). 
+necesitamos la **varianza** y el tamaño de la muestra, **n**. Estos son relativamente fáciles de calcular usando otras funciones básicas en R. `var` calculará la varianza y `length` proporcionará la longitud del vector y, por lo tanto, el tamaño de la muestra (n).
 
-Let's say we first wanted the mean and standard error of height. This is given by
+Digamos que primero queríamos el promedio y el error estándar de la altura. Esto se obtiene mediante
+
 
 ```{r}
 sqrt(var(algae$height) / length(algae$height))
 ```
 
-Imagine now that you wanted to calculate these same statistics on a different variable (e.g., dry weight). When faced with wanting to use this piece of code twice, we may be tempted to just copy-and-paste it to a new place, thus having two copies of the above snippet in our code. However, a much more elegant (and benifitial in the long-term) approach is to make it into a function and call that function twice. 
 
-If we first define a function for standard error: 
+Imagine ahora que deseas calcular las mismas estadísticas en una variable diferente (por ejemplo, peso seco). Cuando te enfrentas a la necesidad de usar este código dos veces, es posible que te tientes a copiar y pegarlo en un nuevo lugar, lo que resultaría en dos copias del fragmento anterior en nuestro código. Sin embargo, un enfoque mucho más elegante (y beneficioso a largo plazo) es convertirlo en una función y llamar a esa función dos veces.
+
+Si primero definimos una función para el error estándar:
 
 ```{r,}
 standard_error <- function(x) {
@@ -155,7 +167,8 @@ standard_error <- function(x) {
 }
 ```
 
-we simply use `standard_error` like we would any other function.  
+
+simplemente usamos `standard_error` como lo haríamos con cualquier otra función.
 
 ```{r,}
 standard_error(algae$height)
@@ -171,13 +184,23 @@ There are at least two ways functions reduce the chance of errors.
 
 **First, copy and paste leads to errors**. Without a function, you may copy and past code all over the place. For example, if I wanted to  calcualte the standard error of a bunch of variables (without using our new `standard_error` function)
 
+
+### Reducir la posibilidad de errores
+
+Envolviendo el código en funciones se reduce la posibilidad de cometer errores inadvertidos. Estos errores pueden no hacer que tu código falle, pero pueden causar que los resultados sean incorrectos. Este tipo de errores son los más difíciles de encontrar y pueden hacer que nuestros resultados carezcan de sentido.
+
+Hay al menos dos formas en las que las funciones reducen la posibilidad de errores.
+
+**Primero, copiar y pegar conduce a errores**. Sin una función, es posible que copies y pegues código por todas partes. Por ejemplo, si quisiera calcular el error estándar de varias variables (sin usar nuestra nueva función `standard_error`):
+
+
 ```{r}
 sqrt(var(algae$height) / length(algae$height))
 sqrt(var(algae$dryweight) / length(algae$dryweight))
 sqrt(var(algae$length) / length(algae$dryweight))
 ```
 
-Did you notice the mistake? I forgot to change the second variable on the third line!!!!! The code will run but give the wrong results. This is less likely if we write: 
+¿Notaste el error? ¡Olvidé cambiar la segunda variable en la tercera línea! El código se ejecutará pero dará resultados incorrectos. Esto es menos probable si escribimos:
 
 ```{r,}
 standard_error(algae$height)
@@ -185,7 +208,8 @@ standard_error(algae$dryweight)
 standard_error(algae$length)
 ```
 
-**Second, functions limit the scope of variables and enforce cleanup**. When calculating something, it's common to create new variables. As an example, Let's say we calculated standard error as follows
+
+**Segundo, las funciones limitan el alcance de las variables y aplican una limpieza**. Al calcular algo, es común crear nuevas variables. Por ejemplo, digamos que calculamos el error estándar de la siguiente manera:
 
 ```{r, eval=TRUE}
 var_x <- var(algae$height)
@@ -193,24 +217,27 @@ n <- length(algae$height)
 sqrt(var_x / n)
 ```
 
-Note you now have two new objects in your environment: `var_x` and `n`:
+
+Ten en cuenta que ahora tienes dos nuevos objetos en tu entorno: `var_x` y `n`:
+
 
 ```{r, eval=TRUE}
 var_x
 n
 ```
 
-You can get rid of them by running: 
+Puedes deshacerte de ellos ejecutando:
 
 ```{r, eval=TRUE}
 rm(var_x, n)
 ```
 
-(the function `rm()` "removes", i.e. deletes, objects from the environment). 
+(la función `rm()` "remueve", es decir, elimina, objetos del entorno).
 
-But what if you forget? There's a real danger that later you accidentally reuse the variable `n` or `var_x`, thinking they're something that they're not. And if they have non-specific names like `n` the risk of this happening is high.
+Pero, ¿qué pasa si olvidas hacerlo? Existe un verdadero peligro de que más adelante reutilices accidentalmente la variable `n` o `var_x`, pensando que son algo que no son. Y si tienen nombres no específicos como `n`, el riesgo de que esto ocurra es alto.
 
-If instead you put the code above into a function, as follows, this danger disappears. 
+En cambio, si colocas el código anterior dentro de una función, como se muestra a continuación, este peligro desaparece.
+
 
 ```{r, eval=TRUE}
 standard_error <- function(x) {
@@ -220,35 +247,33 @@ standard_error <- function(x) {
 }
 ```
 
-When you run:
+Cuando ejecutas:
 
 ```{r, eval=TRUE}
 standard_error(algae$height)
 ```
 
-The result is returned but variables `var_x` and `n` are nowhere to be seen. That's because they were automatically cleaned up when the function exited. 
+El resultado se devuelve, pero las variables `var_x` y `n` no se ven en ningún lugar. Esto se debe a que se eliminaron automáticamente cuando la función terminó.
 
-Any variables created within a function get automatically cleaned up at the end of the function. So using functions leaves us with a nice clean workspace. Moreover, the environment within the function is much safer than the global env, because we're less likely to grab random variables from elsewhere.
+Cualquier variable creada dentro de una función se elimina automáticamente al finalizar la función. Por lo tanto, el uso de funciones nos deja con un espacio de trabajo limpio y ordenado. Además, el entorno dentro de la función es mucho más seguro que el entorno global, porque es menos probable que obtengamos variables aleatorias de otro lugar.
 
+### Ayuda a tu cerebro a resolver problemas grandes
 
-### Help your brain to solve big problems
+La mejor manera de resolver problemas grandes y complejos es dividirlos en una serie de problemas más pequeños. Es bien sabido que nuestros cerebros no pueden lidiar con más de aproximadamente 5-10 bits de información a la vez.
 
-The best way to solve big complex problems is to divide it into a series of smaller problems. It's well known that our brains cannot cope with more than about 5-10 bits of information at any one time.
+Escribir funciones nos permite identificar una serie de problemas más pequeños y resolverlos uno por uno, utilizando todo nuestro poder cognitivo.
 
-Writing functions allows us to identify a series of smaller problems and solve these one by one, using all of our cognitive power. 
+Cuando observo la función `standard_error` definida anteriormente, puedo pensar en las operaciones que se realizan (suma, división, raíz cuadrada) de forma aislada del problema más amplio que estoy resolviendo (estudiar algas).
 
-When I look at the function `standard_error` as defined above, I can think about the operations being performed (addition, division, square root)in isolation from the broader problem I'm solving (studying algae).
+Como regla general, **una buena función hace una cosa bien**. Si esa una cosa es complicada, puede estar compuesta por un conjunto de funciones más pequeñas (es decir, pasos), cada una haciendo una cosa bien.
 
-As a general rule, **a good function does one thing well**. If that  one thing is complicated, it be made up a bunch smaller functions (i.e. steps), each doing one thing well.
+## Escribiendo tus propias funciones <a id="how"></a>
 
+Ahora veamos más de cerca la mecánica de escribir una función.
 
-## Writing your own functions <a id="how"></a>
+### La sintaxis de una función
 
-Now let's look more closely at the mechanics of writing a function.
-
-### The syntax of a function 
-
-A function definition has the following form:
+Una definición de función tiene la siguiente forma:
 
 ```{r, eval = FALSE}
 function_name <- function(arg1, arg2, ...) {
@@ -257,15 +282,17 @@ function_name <- function(arg1, arg2, ...) {
 }
 ```
 
-**function_name**: The function's name. Can be any valid text *without a space*, but you should avoid using names that are used elsewhere in R. Check to see if your name is already used as a keyword by asking for the help page `?function_name` (no 100% guarantee, but a good check). Also, aim for names that describe what the function does. A long name like `calculate_standard_error` is much better than something short and unintuitive like `f`.
 
-**arg1, arg2, ...**: The arguments of the function. You can write a function with any number of arguments, with those being any R objects (numeric, strings, characters, data.frames, matrices, other functions).
+**function_name**: El nombre de la función. Puede ser cualquier texto válido *sin espacios*, pero debes evitar usar nombres que ya estén en uso en R. Verifica si tu nombre ya está siendo utilizado como una palabra clave preguntando por la página de ayuda `?function_name` (no es una garantía del 100%, pero es una buena verificación). Además, trata de utilizar nombres que describan lo que hace la función. Un nombre largo como `calcular_error_estandar` es mucho mejor que algo corto e intuitivo como `f`.
 
-**function body**: The code between the `{}` is the function body and run every time the function is called. This is the code that is doing all the useful stuff and is called the function body.
+**arg1, arg2, ...**: Los argumentos de la función. Puedes escribir una función con cualquier número de argumentos, los cuales pueden ser cualquier objeto de R (numérico, cadenas de texto, caracteres, data.frames, matrices, otras funciones).
 
-**return value**: The last line of code is the object to be returned. Some times you'll see people write `return(object)`, though it's enough to write `object`.  
+**cuerpo de la función**: El código entre las `{}` es el cuerpo de la función y se ejecuta cada vez que se llama a la función. Este es el código que realiza todas las tareas útiles y se denomina cuerpo de la función.
 
-Using this format, a function to calculate the standard error of the values in the object `x` would be:  
+**valor de retorno**: La última línea de código es el objeto que se debe devolver. A veces verás a las personas escribir `return(objeto)`, aunque es suficiente con escribir `objeto`.
+
+Utilizando este formato, una función para calcular el error estándar de los valores en el objeto `x` sería:
+
 
 ```{r}
 standard_error <- function(x) {
@@ -273,33 +300,34 @@ standard_error <- function(x) {
 }
 ```
 
-To be able to use the function, you need to run that code into your console. Once defined we can call the function like we would any other function.  
+
+Para poder usar la función, necesitas ejecutar ese código en tu consola. Una vez definida, podemos llamar a la función como lo haríamos con cualquier otra función.
 
 ```{r}
 standard_error(algae$height)
 ```
 
-### Default arguments
+### Argumentos predeterminados
 
-Let's take a closer look at the function `mean`. Typing `?mean` into the console brings up the relevant "help" details. Note the structure
+Echemos un vistazo más de cerca a la función `mean`. Escribir `?mean` en la consola muestra los detalles relevantes de "help". Observa la estructura:
 
 ```{r, eval=F}
 mean(x, trim = 0, na.rm = FALSE, ...)
 ```
 
-The first argument `x` is our vector of numbers. To use the function we need to specify something for `x`, e.g.
+El primer argumento `x` es nuestro vector de números. Para usar la función, necesitamos especificar algo para `x`, por ejemplo:
 
 ```{r, results="hide"}
 mean(x = algae$height)
 ```
 
-or just
+o simplemente
 
 ```{r, results="hide"}
 mean(algae$height)
 ```
 
-The first version makes it explicit that the values in `algae$height` outside of the function are *passed* to the variable `x` within the function. The second version does the same thing, but less explictly.  It works because R takes the values of `height` and maps it onto the first unnamed argument in our function call onto the first unnamed argument in the function definition. So the following will also work:
+La primera versión deja explícito que los valores en `algas$altura` fuera de la función son *pasados* a la variable `x` dentro de la función. La segunda versión hace lo mismo, pero de manera menos explícita. Funciona porque R toma los valores de `altura` y los asigna al primer argumento sin nombre en nuestra llamada de función, que se asigna al primer argumento sin nombre en la definición de la función. Entonces, lo siguiente también funcionará:
 
 ```{r, results="hide"}
 mean(na.rm = TRUE, x = algae$height)
@@ -310,33 +338,42 @@ But what are those are other arguments in the function definition: `trim` and `n
 
 Try running the `mean()` function on the *strength* variable. 
 
+Pero, ¿qué son esos otros argumentos en la definición de la función: `trim` y `na.rm`?. Estos son argumentos opcionales, con valores predeterminados especificados. La función necesita un valor para ejecutarse, pero a menos que lo especifiques, utilizará el valor predeterminado.
+
+Intenta ejecutar la función `mean()` en la variable *strength*.
+
+
 ```{r,}
 mean(algae$strength)
 ```
 
-Notice we get `NA`, this is because by default the function doesn't know how to deal with missing values (`NA` is a missing value) and there is one in that column of the data. How you deal with missing values is highly dependent on what you are trying to calculate (see the help module on [importing data](/../getting-started-with-r/importing-data/)), but in this case, we're happy remove `NA`s before calculating the mean. This can be achieved by setting the argument for `na.rm` to `TRUE`:
+
+Observa que obtenemos `NA`, esto se debe a que por defecto la función no sabe cómo tratar los valores faltantes (`NA` es un valor faltante) y hay uno en esa columna de datos. Cómo tratar los valores faltantes depende en gran medida de lo que estés tratando de calcular (consulta el módulo de ayuda sobre [importación de datos](/../getting-started-with-r/importing-data/)), pero en este caso, nos gustaría eliminar los `NA` antes de calcular la media. Esto se puede lograr estableciendo el argumento `na.rm` en `TRUE`:
+
 
 ```{r,}
 mean(algae$strength, na.rm = TRUE)
 ```
 
-The functions `mean`, `var`, `sd`, `sum` all behave similarly. **Without specifying the argument, the functions all use their default value**, which in this case is `na.rm=FALSE`. So these give the same result
+Las funciones `mean`, `var`, `sd`, `sum` se comportan de manera similar. **Sin especificar el argumento, las funciones utilizan su valor predeterminado**, que en este caso es `na.rm=FALSE`. Por lo tanto, estos dan el mismo resultado.
+
 
 ```{r,}
 mean(algae$strength)
 mean(algae$strength, na.rm = FALSE)
 ```
 
-But, we can override this if that's what we want:
+Sin embargo, podemos anular esto si es lo que deseamos:
 
 ```{r,}
 mean(algae$strength, na.rm = TRUE)
 ```
 
-**You'll notice that many functions have arguments with default values set**.
 
+**Notarás que muchas funciones tienen argumentos con valores predeterminados**.
 
-Going back to our new function `standard_error`, let's add a new argument `na.rm` so that it behaves like `mean` and the other function listed above:
+Volviendo a nuestra nueva función `standard_error`, agreguemos un nuevo argumento `na.rm` para que se comporte como `mean` y las otras funciones mencionadas anteriormente:
+
 
 ```{r,}
 standard_error <- function(x, na.rm = FALSE) {
@@ -344,9 +381,10 @@ standard_error <- function(x, na.rm = FALSE) {
 }
 ```
 
-Like the other functions, we've set the default behaviour of `na.rm` to `FALSE`. 
+Al igual que las otras funciones, hemos establecido el comportamiento predeterminado de `na.rm` en `FALSE`.
 
-Now, let's try out our new function on the strength variable with missing data, alternating `na.rm = TRUE` and `na.rm = FALSE`.
+Ahora, probemos nuestra nueva función en la variable de fuerza con datos faltantes, alternando entre `na.rm = TRUE` y `na.rm = FALSE`.
+
 
 ```{r,}
 standard_error(algae$strength)
@@ -354,12 +392,13 @@ standard_error(algae$strength, na.rm = FALSE)
 standard_error(algae$strength, na.rm = TRUE)
 ```
 
-Within the function the value for `na.rm` that is received by the function is passed into the `var` function. The `var` function already has a `na.rm` argument already built within it (see help file `?var`), but `length` does not. We can use the code function `sum(!is.na(x)` to calculate `n`. The function `is.na` will test each value of the vector, `x`, to see if it is missing. If it not missing (the `!` means NOT), then it returns a `TRUE` for that position, and by counting the values returned as `TRUE` with `sum`, we are effectively counting only values that are not missing.
 
- 
-### Functions that extend functions
+Dentro de la función, el valor para `na.rm` que se recibe se pasa a la función `var`. La función `var` ya tiene un argumento `na.rm` incorporado en ella (ver archivo de ayuda `?var`), pero `length` no lo tiene. Podemos usar la función `sum(!is.na(x))` para calcular `n`. La función `is.na` probará cada valor del vector `x` para ver si falta. Si no falta (el `!` significa NO), entonces devuelve un `TRUE` para esa posición, y al contar los valores devueltos como `TRUE` con `sum`, estamos contando efectivamente solo los valores que no faltan.
 
-Let's say you have a script where you continually want to set `na.rm=TRUE` and get sick of typing this everywhere:
+### Funciones que extienden funciones
+
+Digamos que tienes un script donde constantemente deseas establecer `na.rm=TRUE` y te cansaste de escribirlo en todas partes:
+
 
 ```{r, eval=FALSE}
 standard_error(algae$height, na.rm = TRUE)
@@ -367,9 +406,10 @@ standard_error(algae$strength, na.rm = TRUE)
 ...
 ```
 
-(Besides, we're also repeating ourselves a lot and so increasing the risk of errors -- what if we forget?)
 
-One approach here is to define a new function that builds of our previous function but with the desired behaviour. E.g. 
+(Además, nos estamos repitiendo mucho y aumentando el riesgo de errores, ¿qué sucede si olvidamos?)
+
+Un enfoque aquí es definir una nueva función que se base en nuestra función anterior pero con el comportamiento deseado. Por ejemplo,
 
 ```{r,}
 standard_error_narm <- function(x) {
@@ -377,18 +417,23 @@ standard_error_narm <- function(x) {
 }
 ```
 
-We can now call the new function and the the same result as the above specifying `na.rm=TRUE`
+
+Podemos llamar ahora a la nueva función y obtener el mismo resultado que se muestra arriba especificando `na.rm=TRUE`
+
 
 ```{r,}
 standard_error_narm(algae$strength)
 ```
 
-While the example with `standard_error` is perhaps a bit trivial, you can take this approach all over the place. For example, a function that makes a style of plot with defaults set just the way you like them.
+
+Si bien el ejemplo con `standard_error` tal vez sea un poco trivial, puedes aplicar este enfoque en muchos casos. Por ejemplo, una función que crea un tipo de gráfico con los valores predeterminados configurados exactamente como te gustan.
 
 
-### What's the `...` argument for?
+### ¿Para qué sirve el argumento `...`?
 
-Notice the argument `...` in the definition of the mean function above? What's that about? The `...`, or ellipsis, element in the function definition allows for other arguments to be passed into the function, and passed onto to another function within the function being called, without having to write them all out by name. For example, in the definition of the function `standard_error_narm` we could instead write
+¿Has notado el argumento `...` en la definición de la función `mean` anterior? ¿De qué se trata eso? El elemento `...`, o puntos suspensivos, en la definición de una función permite que se pasen otros argumentos a la función y se los transmita a otra función dentro de la función que se llama, sin tener que escribirlos todos por nombre. Por ejemplo, en la definición de la función `standard_error_narm` podríamos escribir en su lugar:
+
+
 
 ```{r,}
 standard_error_narm <- function(...) {
@@ -396,9 +441,11 @@ standard_error_narm <- function(...) {
 }
 ```
 
-When you call `standard_error_narm` defined like this, anything other than `na.rm` will be passed directly into the next function. This avoids repeating the arguments of one function when defining another.
 
-A less trivial example is using `plot`. I could write a function setting changing some of defaults for `plot`, so that I don't have to keep repeating these. 
+Cuando llamas a `standard_error_narm` definida de esta manera, cualquier argumento que no sea `na.rm` se pasará directamente a la siguiente función. Esto evita tener que repetir los argumentos de una función al definir otra.
+
+Un ejemplo menos trivial es el uso de `plot`. Podría escribir una función que modifique algunos de los valores predeterminados de `plot`, de modo que no tenga que repetirlos una y otra vez. 
+
 
 ```{r,}
 my_plot <- function(...) {
@@ -406,9 +453,11 @@ my_plot <- function(...) {
 }
 ```
 
-### Adding comments to your function 
 
-Before you are finished, there is one last thing to do. It is a good idea to add comments your function, as this will save you from a world of pain when you go back to fix something later on. Function comments should contain, a brief description of the function (one sentence), a list of function arguments with a description of each (including data type) and a description of the return value.  Function comments should be written immediately above or below the function definition line.
+### Agregar comentarios a tu función
+
+Antes de terminar, hay una última cosa que debes hacer. Es una buena idea agregar comentarios a tu función, ya que esto te ahorrará muchos problemas cuando tengas que corregir algo más adelante. Los comentarios de una función deben contener una breve descripción de la función (una oración), una lista de los argumentos de la función con una descripción de cada uno (incluido el tipo de dato) y una descripción del valor de retorno. Los comentarios de la función deben escribirse inmediatamente arriba o abajo de la línea de definición de la función.
+
 
 ```{r, eval = FALSE, echo = T}
 standard_error <- function(x, na.rm) {
@@ -424,21 +473,23 @@ standard_error <- function(x, na.rm) {
 }
 ```
 
-Another common way to annotate functions is using the [roxygen2 syntax](http://kbroman.org/pkg_primer/pages/docs.html). 
 
-### Storing and using functions
+Otra forma común de anotar funciones es utilizando la sintaxis de [roxygen2](http://kbroman.org/pkg_primer/pages/docs.html).
 
-Once you get into the habit of writing functions it's a good idea to keep them in a separate file containing your functions together. Why? Because otherwise you have these big clunky files clogging up your script. If you've solved the problem of how to do something, why not stuff it away somewhere you can go, but only if needed.
+### Almacenar y utilizar funciones
 
-To get get your functions out of the way, we recommend keeping all the functions for each project together in a folder called `R` within your project directory. (For more on project set up see our [post on project management](/../getting-started-with-r/project-management/).)
+Una vez que adquieras el hábito de escribir funciones, es una buena idea mantenerlas en un archivo separado que contenga todas tus funciones juntas. ¿Por qué? Porque de lo contrario, tendrás estos archivos grandes y pesados que entorpecen tu script. Si ya has resuelto un problema y sabes cómo hacer algo, ¿por qué no guardarlo en algún lugar donde puedas acceder a ello solo si es necesario?
 
-To make these functions accessible within your workflow, you then use the function `source` to read the function files into memory, e.g.
+Para mantener tus funciones fuera del camino, te recomendamos mantener todas las funciones de cada proyecto juntas en una carpeta llamada `R` dentro del directorio de tu proyecto. (Para obtener más información sobre la configuración de proyectos, consulta nuestra [publicación sobre gestión de proyectos](/../getting-started-with-r/project-management/).)
+
+Para hacer que estas funciones sean accesibles en tu flujo de trabajo, puedes usar la función `source` para cargar los archivos de funciones en la memoria, por ejemplo:
+
 
 ```{r, eval = FALSE}
 source("R/stats.R")
 ```
 
-Often, you may have a series of files
+A menudo, puedes tener una serie de archivos
 
 ```{r, eval = FALSE}
 source("R/data_cleaning.R")
@@ -446,23 +497,26 @@ source("R/stats.R")
 source("R/plots.R")
 ```
 
-It's a matter of preference whether you use a single or multiple files.
 
-### Writing functions to work with pipes `%>%` 
+Es cuestión de preferencia si utilizas un solo archivo o varios archivos.
 
-For many of us, pipes have become an essential part of our workflow. (If this is foreign to you, see our post using pipes under [data manipulation](/../data-manipulation/)).
+### Escribir funciones para trabajar con el operador de pipes `%>% - |> `
 
-Importantly, you can write functions that work with the pipe operator. All you need to do is setup your so that the first argument is the object being piped into the function. In fact, our `standard_error` already works with pipes, assuming you are passing in `x`:
+Para muchos de nosotros, los pipes se han convertido en una parte esencial de nuestro flujo de trabajo. (Si esto te resulta desconocido, consulta nuestra publicación sobre el uso de pipes en [manipulación de datos](/../data-manipulation/)).
+
+Importante, puedes escribir funciones que funcionen con el operador de pipes. Lo único que necesitas hacer es configurar tu función de modo que el primer argumento sea el objeto que se está pasando al pipe. De hecho, nuestra función `standard_error` ya funciona con pipes, asumiendo que estás pasando `x`:
+
 
 ```{r,}
 algae$height %>% standard_error()
 ```
 
-### Returning multiple arguments
+### Devolviendo múltiples argumentos
 
-The examples above all return a single item. What if I want to return multiple items from a function? The answer is to return a `list` object. Lists are helpful because you can bundle together many different items. 
+Los ejemplos anteriores devuelven un solo elemento. ¿Qué sucede si quiero devolver varios elementos desde una función? La respuesta es devolver un objeto `list`. Las listas son útiles porque puedes agrupar muchos elementos diferentes.
 
-For example, we could write a function that returns several statistics of a variable:
+Por ejemplo, podríamos escribir una función que devuelva varias estadísticas de una variable:
+
 
 ```{r,}
 summary_stats <- function(x, na.rm = TRUE) {
@@ -474,7 +528,8 @@ summary_stats <- function(x, na.rm = TRUE) {
 }
 ```
 
-If we run this function, we receive an object that has named elements:
+
+Si ejecutamos esta función, recibimos un objeto que tiene elementos nombrados:
 
 
 ```{r,}
@@ -489,7 +544,8 @@ height_stats$var
 height_stats$n
 ```
 
-In fact many functions do this, e.g. `lm()` (for fitting a linear model). Fitting a model we can check it's a list, then ask for a name of the returned elements, and start calling them by name:
+De hecho, muchas funciones hacen esto, por ejemplo, `lm()` (para ajustar un modelo lineal). Al ajustar un modelo, podemos verificar que es una lista, luego pedir los nombres de los elementos devueltos y comenzar a llamarlos por nombre:
+
 
 ```{r,}
 fit <- lm(algae$height ~ algae$dryweight)
@@ -501,43 +557,43 @@ names(fit)
 fit$coefficients
 ```
 
-## What makes a good function
 
-Finally, let's recap a few pointers on what makes a good function. 
+## Qué hace que una buena función
 
-**It's short**
-<!-- 
-<blockquote class="twitter-tweet"><p>If you've written a function whose body is 2,996 lines of code, you're doing it wrong.</p>&mdash; M Butcher (@technosophos) <a href="https://twitter.com/technosophos/status/322392537983746049">April 11, 2013</a></blockquote>
+Finalmente, repasemos algunos puntos sobre qué hace que una buena función.
+
+**Es corta**
+<!--
+<blockquote class="twitter-tweet"><p>Si has escrito una función cuyo cuerpo tiene 2,996 líneas de código, lo estás haciendo mal.</p>&mdash; M Butcher (@technosophos) <a href="https://twitter.com/technosophos/status/322392537983746049">11 de abril de 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
- -->
+-->
 
-Ideally each function does one thing well. Often this means lots of short functions. Short functions are extremely useful. Even if the code in the function body is more complex, ideally it still does one thing well. 
+Idealmente, cada función hace una sola cosa bien. A menudo, esto significa muchas funciones cortas. Las funciones cortas son extremadamente útiles. Incluso si el código en el cuerpo de la función es más complejo, idealmente aún hace una sola cosa bien.
 
-**It does one thing well**
-<!-- 
-<blockquote class="twitter-tweet"><p>The reason for writing a function is not to reuse its code, but to name the operation it performs.</p>&mdash; Tim Ottinger (@tottinge) <a href="https://twitter.com/tottinge/status/293776089099153408">January 22, 2013</a></blockquote>
+**Hace una sola cosa bien**
+<!--
+<blockquote class="twitter-tweet"><p>La razón de escribir una función no es reutilizar su código, sino darle un nombre a la operación que realiza.</p>&mdash; Tim Ottinger (@tottinge) <a href="https://twitter.com/tottinge/status/293776089099153408">22 de enero de 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
- -->
-**It has an intuitive name**
-<!-- 
-<blockquote class="twitter-tweet"><p>"The name of a variable, function, or class, should answer all the big questions." - Uncle Bob Martin, Clean Code</p>&mdash; Gustavo Rod. Baldera (@gbaldera) <a href="https://twitter.com/gbaldera/status/327063173721100288">April 24, 2013</a></blockquote>
+-->
+**Tiene un nombre intuitivo**
+<!--
+<blockquote class="twitter-tweet"><p>"El nombre de una variable, función o clase debería responder todas las preguntas importantes". - Uncle Bob Martin, Clean Code</p>&mdash; Gustavo Rod. Baldera (@gbaldera) <a href="https://twitter.com/gbaldera/status/327063173721100288">24 de abril de 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
- -->
+-->
 
-## Further help 
+## Ayuda adicional
 
-You can find more help on functions at 
+Puedes encontrar más ayuda sobre funciones en:
 
-- [DataCamp's tutorial on functions](https://www.datacamp.com/community/tutorials/functions-in-r-a-tutorial#gs.xNnAJY0)
-- [Hadley Wickam's](https://twitter.com/hadleywickham) information on [functions for intermediate and advanced users](http://adv-r.had.co.nz/Functions.html).
-- The [official R intro material on writing your own functions](http://cran.r-project.org/doc/manuals/R-intro.html#Writing-your-own-R-intro.html#Writing-your-own-functions)
+- [Tutorial de DataCamp sobre funciones](https://www.datacamp.com/community/tutorials/functions-in-r-a-tutorial#gs.xNnAJY0)
+- [Información de Hadley Wickham](https://twitter.com/hadleywickham) sobre [funciones para usuarios intermedios y avanzados](http://adv-r.had.co.nz/Functions.html).
+- El [material introductorio oficial de R sobre cómo escribir tus propias funciones](http://cran.r-project.org/doc/manuals/R-intro.html#Writing-your-own-R-intro.html#Writing-your-own-functions)
 
+**Autor**: Original de Keryn F Bain; revisado por Daniel S Falster
 
-**Author**: Original by Keryn F Bain; revised by Daniel S Falster
+**Año:** 2018
 
-**Year:** 2018
-
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
 
 
 

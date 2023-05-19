@@ -1,229 +1,252 @@
 ---
-title: "Subsetting data"
+title: "Subconjuntos de datos"
 weight: 2
 output: html_document
 aliases: /subsetting-data/
 ---
 
-We often want to subset our data, whether it's to examine particular rows or columns
-of our dataset, or to pull out observations with particular properties. We may conduct subsetting at the data exploration stage to investigate whether our response variable differs in its relationship to a particular predictor variable across categories (e.g., to look for an interaction). We may also like to pull out elements of our dataset for separate analyses. 
+A menudo queremos subconjuntar nuestros datos, ya sea para examinar filas o columnas particulares de nuestro conjunto de datos, o para extraer observaciones con propiedades específicas. Podemos realizar subconjuntos en la etapa de exploración de datos para investigar si nuestra variable de respuesta difiere en su relación con una variable predictora específica entre categorías (por ejemplo, para buscar una interacción). También podemos querer extraer elementos de nuestro conjunto de datos para análisis separados.
+
 
 ![](Subsetting_data_image.jpg)
 
-In this exercise, we will load a dataset where bats were sampled across regrowth forest in south-eastern Australia which has been thinned to reduce the density of trees. 
 
-The dataset includes measurements of total number of bat calls ("Activity") and number of bat calls that indicate foraging behaviour ("Foraging") recorded over one night for 47 sites and 173 sampling nights in total. Variables relating to forest thinning have been collected and are listed as columns ending in "thinned". As the forest studied was in a floodplain, covariates relating to water availability were also collected and are listed in columns ending "water".
+En este ejercicio, cargaremos un conjunto de datos donde se muestrearon murciélagos en un bosque de regeneración en el sureste de Australia que ha sido adelgazado para reducir la densidad de árboles.
 
-First, download the data set, [Bats_data.csv](/datasets/Bats_data.csv), and load into R.
+El conjunto de datos incluye mediciones del número total de llamadas de murciélagos ("Actividad") y el número de llamadas de murciélagos que indican comportamiento de forrajeo ("Forrajeo") registradas durante una noche en 47 sitios y un total de 173 noches de muestreo. Se han recopilado variables relacionadas con el adelgazamiento del bosque y se enumeran como columnas que terminan en "adelgazado". Como el bosque estudiado estaba en una llanura de inundación, también se recopilaron covariables relacionadas con la disponibilidad de agua y se enumeran en columnas que terminan en "agua".
+
+Primero, descarga el conjunto de datos, [Bats_data.csv](/datasets/Bats_data.csv), y cárgalo en R.
+
 
 ```{r}
 Bats <- read.csv(file = "Bats_data.csv", header = T, stringsAsFactors = F)
 ```
 
+### Fundamentos basicos para subconjuntos en R
 
-### Basics of subsetting in R
+Verifica la estructura después de haber cargado los datos con la función `str`.
 
-Check the structure after you have loaded the data with the `str` function.
+Ahora que tenemos una idea del conjunto de datos con el que estamos trabajando, podemos usar los operadores `[]` y `$` para seleccionar filas y columnas en un marco de datos. Es bastante simple: colocamos el nombre del marco de datos del cual queremos seleccionar antes de los corchetes y dentro de los corchetes colocamos una coma. Los números a la izquierda de la coma representan las filas que deseamos seleccionar y los números a la derecha de la coma representan las columnas que deseamos seleccionar.
 
-Now that we have some idea of the dataset we are working with, we can use the `[]` and `$` operators to select rows and columns in a dataframe. It's quite simple: we place the name of the dataframe we want to select from before the square brackets and inside the square brackets we place a comma. Numbers to the left of the comma represent rows we'd like to select and numbers to the left of the comma represent columns we'd like to select. 
+Por ejemplo, si quisiéramos seleccionar solo datos de las primeras tres filas y todas las columnas, usaríamos:
 
-For example, if we wanted to select only data from the first three rows and all columns, we would use:
 
 ```{r,eval=F}
 Bats[1:3, ]
 ```
 
-If we wanted only the last four columns and all rows, we would use:
+
+Si quisiéramos solo las últimas cuatro columnas y todas las filas, usaríamos:
+
 
 ```{r,eval=F}
 Bats[, 7:10]
 ```
 
-In combination, this would select data from only the first three rows from the last four columns:
+En combinación, esto seleccionaría datos solo de las primeras tres filas de las últimas cuatro columnas:
 
 ```{r, eval=F}
 Bats[1:3, 7:10]
 ```
 
-If the row and column numbers that you want do not form a sequence, we can use the `>c()` function to concatenate row or column indices. For example, let's add the sixth row and the 2^nd^ column to our selection from above:
+Si los números de fila y columna que deseas no forman una secuencia, podemos usar la función `>c()` para concatenar índices de fila o columna. Por ejemplo, agreguemos la sexta fila y la segunda columna a nuestra selección anterior:
+
 
 ```{r, eval=F}
 Bats[c(6, 1:3), c(2, 7:10)]
 ```
 
-Rather than working out which variable is in which numbered column, it is often easier to use the variable names in a data frame and select the variable using `$` operator. For example, to choose only the Site variable:
+En lugar de averiguar qué variable está en qué columna numerada, a menudo es más fácil usar los nombres de las variables en un marco de datos y seleccionar la variable usando el operador `$`. Por ejemplo, para elegir solo la variable **"Site"**:
+
 
 ```{r, eval =F}
 Bats$Site
 ```
 
-
-### Subsetting rows in dplyr 
+### Subconjunto de filas en dplyr
 
 ![](Subsetting_data_image1.jpg)
 
-The package [dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html) has many convenient functions for subsetting that can be more intuitive and quick for you. First, install then load the package:
+El paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html) tiene muchas funciones convenientes para el subconjunto de datos que pueden ser más intuitivas y rápidas para ti. Primero, instala y carga el paquete:
+
+
 
 ```{r, message=FALSE,warning =F}
 library(dplyr)
 ```
 
-**Subsetting by row numbers**
+**Subconjunto por números de fila**
 
-If you know the row numbers that you are interested in subsetting, you can easily select these rows either using square brackets as discussed above or the `slice` function in dplyr. 
+Si conoces los números de fila en los que estás interesado en hacer el subconjunto, puedes seleccionar fácilmente estas filas usando corchetes como se discutió anteriormente o la función `slice` en dplyr.
 
-For example, to select just rows 10-12 in the dataframe, you would use:
+Por ejemplo, para seleccionar solo las filas 10-12 en el marco de datos, usarías:
+
 
 ```{r}
 Bats.slice <- slice(Bats, 10:12)
 ```
 
-**Selecting rows that meet certain criteria**
+**Seleccionar filas que cumplan ciertos criterios**
 
-We can subset these rows using the `filter` function. For example, if wanted only the rows where foraging activity was recorded, we could select for rows where the count of foraging calls was greater than zero. 
+Podemos hacer un subconjunto de estas filas usando la función `filter`. Por ejemplo, si solo queremos las filas donde se registró actividad de forrajeo, podríamos seleccionar las filas donde el recuento de llamadas de forrajeo es mayor que cero.
+
 
 ```{r}
 Bats.foraging <- filter(Bats, Foraging > 0)
 ```
 
-You can experiment with a range of logical operators when using the `filter` function  
-<font face="monospace"><</font> less than  
-<font face="monospace">></font>greater than  
-<font face="monospace">==</font>equal to  
-<font face="monospace"><=</font>less than or equal to  
-<font face="monospace">>=</font>greater than or equal to  
-<font face="monospace">!=</font>not equal to  
-<font face="monospace">in.NA=</font>is NA  
-<font face="monospace">!is.na=</font>is not NA  
-and more. 
+Puedes experimentar con una variedad de operadores lógicos al usar la función `filter`  
+<font face="monospace"><</font> menor que  
+<font face="monospace">></font> mayor que  
+<font face="monospace">==</font> igual a  
+<font face="monospace"><=</font> menor o igual a  
+<font face="monospace">>=</font> mayor o igual a  
+<font face="monospace">!=</font> no igual a  
+<font face="monospace">in.NA=</font> es NA  
+<font face="monospace">!is.na=</font> no es NA  
+y más.
 
-You can use the commands `?base::Logic` and `?Comparison` to learn more about these operators. 
+Puedes usar los comandos `?base::Logic` y `?Comparison` para obtener más información sobre estos operadores.
 
-You will notice that while using the above functions, we have mostly assigned them to new objects, e.g., `Bats.foraging <-...` . This gives us the option to use the newly subsetted data for further computations. 
+Notarás que al usar las funciones anteriores, principalmente las hemos asignado a nuevos objetos, por ejemplo, `Bats.foraging <-...`. Esto nos da la opción de usar los datos recién subconjuntados para cálculos adicionales.
 
-**Taking a random selection of rows**
+**Tomar una selección aleatoria de filas**
 
-We may want to randomly select a number or fraction of rows in our dataset to validate our models. For example, we could take 50% of the data to build the model and then 50% of the model to test it against observed data. Random selection of rows is important if we are going to split the data up this way, because we don't want to bias our data to any particular properties or categories. Here we make a new dataframe "Bats.50p" which has half the number of rows of the initial dataset:
+Es posible que deseemos seleccionar aleatoriamente un número o fracción de filas en nuestro conjunto de datos para validar nuestros modelos. Por ejemplo, podríamos tomar el 50% de los datos para construir el modelo y luego el 50% del modelo para probarlo con datos observados. La selección aleatoria de filas es importante si vamos a dividir los datos de esta manera, porque no queremos sesgar nuestros datos hacia ninguna propiedad o categoría en particular. Aquí creamos un nuevo marco de datos "Bats.50p" que tiene la mitad del número de filas del conjunto de datos inicial:
 
 ```{r}
 Bats.50p <- sample_frac(Bats, size = 0.5, replace = FALSE)
 ```
 
-Similarly, we could ask for a certain number of rows to be randomly sampled from the data set. For example, to randomly sample 100 rows, we would use: 
+De manera similar, podríamos solicitar que se muestre un cierto número de filas seleccionadas al azar del conjunto de datos. Por ejemplo, para seleccionar al azar 100 filas, usaríamos:
+
 
 ```{r}
 Bats.100r <- sample_n(Bats, 100, replace = FALSE)
 ```
 
-**Selecting rows with the highest values**
+**Seleccionar filas con los valores más altos**
 
-dplyr has a neat function for selecting *n* rows with the highest values of any given column: `top_n`. Below, we identify the three rows of data which contain the greatest total bat activity per night:
+dplyr tiene una función muy útil para seleccionar *n* filas con los valores más altos de cualquier columna dada: `top_n`. A continuación, identificamos las tres filas de datos que contienen la mayor actividad total de murciélagos por noche:
 
 ```{r}
 Bats.top <- top_n(Bats, 3, Activity)
 print(Bats.top)
 ```
 
+¡Wow, más de 1000 llamadas de murciélagos en una noche!
 
-Wow, over 1000 bat calls in one night!
+**Eliminar filas duplicadas**
 
-**Removing duplicate rows**
+Otra función útil es eliminar filas duplicadas, por ejemplo, si hemos ingresado datos dos veces por accidente.
 
-Another useful function is to remove duplicate rows, for example if we have accidentally entered data twice. 
 
 ```{r}
 Bats.distinct <- distinct(Bats)
 ```
 
-We can compare the number of rows between our original dataset and our new dataset with duplicates removed and our old dataset using <`nrow`:
+Podemos comparar el número de filas entre nuestro conjunto de datos original y nuestro nuevo conjunto de datos sin duplicados y nuestro conjunto de datos anterior utilizando <`nrow`:
+
 
 ```{r}
 nrow(Bats)
 nrow(Bats.distinct)
 ```
 
-In this case, the dataframes are identical because our data doesn't have any duplicate rows. 
 
+En este caso, los dataframes son idénticos porque nuestros datos no tienen filas duplicadas.
 
-### Subsetting columns in dplyr
+### Selección de columnas en dplyr
 
 ![](Subsetting_data_image2.jpg)
 
-As discussed above, you can select one column `$` or one or more by indexing with `[]`. dplyr has the function `select` which allows you to select columns by name or by using useful helper functions.
 
-**Selecting columns by name**
+Como se mencionó anteriormente, puedes seleccionar una columna `$` o una o más mediante indexación con `[]`. dplyr tiene la función `select` que te permite seleccionar columnas por nombre o mediante el uso de funciones auxiliares útiles.
 
-For example, to select just the Site column from the data frame, or both the Site and Date columns:
+**Seleccionar columnas por nombre**
+
+Por ejemplo, para seleccionar solo la columna "Site" del marco de datos, o tanto las columnas "Site" como "Date":
+
 
 ```{r, eval=FALSE}
 Bats_subset1 <- select(Bats, Site)
 Bats_subset2 <- select(Bats, Site, Date)
 ```
 
-**Selecting several columns by their position**
+**Seleccionar varias columnas por su posición**
 
-To select a group of columns adjacent to each other use the first and last names separated by :. For example, this selects all columnns between Site and Date.
+Para seleccionar un grupo de columnas adyacentes entre sí, utiliza los nombres de la primera y última columna separados por **:**. Por ejemplo, esto selecciona todas las columnas entre "Site" y "Date".
+
 
 ```{r}
 Bats_subset3 <- select(Bats, Site:Date)
 ```
 
-**Selecting columns by their properties**
 
-The in-built helper functions within `select` allow you to select particular columns according to their properties.
+**Seleccionar columnas por sus propiedades**
 
-For example, we could select the two columns (Distance.murray.water & Distance.creek.water) by the start of the column names, or the end of the column names:
+Las funciones auxiliares incorporadas en `select` te permiten seleccionar columnas particulares según sus propiedades.
+
+Por ejemplo, podríamos seleccionar las dos columnas (**Distance.murray.water** y **Distance.creek.water**) por el inicio de los nombres de columna o por el final de los nombres de columna:
 
 ```{r,eval=F}
 Bats_subset4 <- select(Bats, starts_with("Distance"))
 Bats_subset4 <- select(Bats, ends_with("water"))
 ```
 
-If you are familiar with regular expressions, you can use the `match` helper function. For example, to select those same two columns, we could use `^` to indicate the column name starts with the following characters and `$` to indicate the column name ends with the preceding characters.
+
+Si estás familiarizado con las expresiones regulares, puedes usar la función auxiliar `match`. Por ejemplo, para seleccionar esas mismas dos columnas, podríamos usar `^` para indicar que el nombre de la columna comienza con los siguientes caracteres y `$` para indicar que el nombre de la columna termina con los caracteres precedentes.
+
 
 ```{r, eval=FALSE}
 Bats_subset4 <- select(bats, matches("^Distance"))
 Bats_subset4 <- select(bats, matches("water$"))
 ```
 
-We can use `contains` when we want to select columns that contain certain characters or words in their name.
+
+Podemos usar `contains` cuando queremos seleccionar columnas que contienen ciertos caracteres o palabras en su nombre.
+
 
 ```{r,eval=F}
 Bats_subset4 <- select(Bats, contains("water"))
 ```
 
-The helper function `one_of` will select columns that belong to a list of column names, remembering to use `c()` to concatenate the list of names. 
+La función auxiliar `one_of` seleccionará columnas que pertenezcan a una lista de nombres de columnas, recordando usar `c()` para concatenar la lista de nombres.
+
 
 ```{r, eval=FALSE}
 Bats_subset4 <- select(bats, one_of(c("Distance.murray.water", "Distance.creek.water")))
 ```
 
-Note that all the last 6 uses of `select` did exactly the same thing - pulled out the two columns, Distance.murray.water and Distance.creek.water.
 
-You can also name particular columns that you want to exclude from the selection using a minus in fron of the column name to be excluded. For example, to make a data frame that no longer has the Foraging variable:
+Ten en cuenta que los últimos 6 usos de `select` hicieron exactamente lo mismo: extrajeron las dos columnas, Distance.murray.water y Distance.creek.water.
+
+También puedes nombrar columnas específicas que deseas excluir de la selección usando un signo menos delante del nombre de la columna a excluir. Por ejemplo, para crear un marco de datos que ya no tenga la variable **Foraging**:
+
 
 ```{r, eval=FALSE}
 Bats_subset5 <- select(Bats, -Foragaing)
 ```
 
-Finally, if you have numbered columns, we can use the `numrange` helper function to select particular columns. For example, this code would select for columns named var1, var2, & var3.  
+Por último, si tienes columnas numeradas, podemos usar la función auxiliar `numrange` para seleccionar columnas específicas. Por ejemplo, este código seleccionaría las columnas llamadas var1, var2 y var3.
+
 
 ```{r, eval=FALSE}
 select(data, num_range("var", 1:3))
 ```
   
+### Ayuda adicional
 
-### Further help
+Este tutorial se basó en la excelente [hoja de referencia para el manejo de datos con dplyr y tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) producida por Rstudio. Las imágenes se obtuvieron del mismo documento.
 
-This tutorial was based on the excellent [Data wrangling with dplyr and tidyr cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) produced by Rstudio. Images were sourced from the same document.
+Puedes escribir `?dplyr` para obtener ayuda con este paquete.
 
-You can type `?dplyr` to get help with this package.
-
-[Introduction to dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
+[Introducción a dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
 
 
-**Author**: Rachel V. Blakey
+**Autor**: Rachel V. Blakey
 
-**Year:** 2016
+**Año:** 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
+
