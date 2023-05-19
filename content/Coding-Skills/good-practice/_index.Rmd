@@ -1,6 +1,6 @@
 ---
 weight: 1
-title: "Good Practices for Code"
+title: "Buenas prácticas de codificación"
 aliases: /good-practice-for-writing-scripts/
 output: html_document
 ---
