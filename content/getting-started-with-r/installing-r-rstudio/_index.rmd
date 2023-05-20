@@ -6,75 +6,78 @@ output: html_document
 ---
 
 ![](blue-125.png)
-We recommend using R Studio as a user friendly interface for using R.
 
-First, install the latest version of **R** - download from [here](http://cran.rstudio.com/) 
-Second, install the latest version of **R Studio** - download from [here](http://www.rstudio.com/products/rstudio/download/)
-  
+Recomendamos usar R Studio como una interfaz fácil de usar para usar R.
 
-### Setting the working directory
- 
-Once you have installed R and R Studio, you need to set the working directory. This is the location on your computer where any data files to imported can be found, and where any R scripts (the files that save your code) will be saved. 
+Primero, instala la última versión de **R** - descárgala desde [aquí](http://cran.rstudio.com/).
+Segundo, instala la última versión de **R Studio** - descárgala desde [aquí](http://www.rstudio.com/products/rstudio/download/).
 
-In R studio, you can set the working directory with the menus (*Session >> Set Working Directory >> Choose Directory*) or with a line of code that gives the path of the folder on your computer:
+### Establecer el directorio de trabajo
+
+Una vez que hayas instalado R y R Studio, necesitas establecer el directorio de trabajo. Este es el lugar en tu computadora donde se pueden encontrar los archivos de datos que se importarán y donde se guardarán los scripts de R (los archivos que guardan tu código).
+
+En R Studio, puedes establecer el directorio de trabajo con los menús (*Session >> Set Working Directory >> Choose Directory*) o con una línea de código que indique la ruta de la carpeta en tu computadora:
+
 
 ```{r, eval =FALSE}
 setwd("Drive:/Folder1/Folder2")
 ```
 
-If you are working with any of the example data files on this site, you will first need to download them to a folder on your computer and specify that folder as the working directory.
-  
 
-### The layout of R Studio
+Si estás trabajando con cualquiera de los archivos de datos de ejemplo en este sitio, primero deberás descargarlos a una carpeta en tu computadora y especificar esa carpeta como el directorio de trabajo.
+
+### La distribución de R Studio
+
  
 ![](Installing_R_and_R_Studio_image.jpg)
 
-R Studio has four panels:
 
-The top left panel is the editor (or script window) you can view your R script. Running code from here is a simple as Ctrl+Enter when the cursor is on the line or lines of code that you want to execute.
+**R Studio tiene cuatro paneles**:
 
-The bottom left panel is the console (or command window) where you can also run lines of code (write code next to > and press Enter), but also where any text or numerical output will appear.
+1.- El panel superior izquierdo es el editor (o ventana de script) donde puedes ver tu script de R. Ejecutar código desde aquí es tan simple como presionar Ctrl+Enter cuando el cursor esté en la línea o líneas de código que deseas ejecutar.
 
-The top right is the workspace window that lists the various R objects that you are currently using. These can be data sets or objects created by various analyses.
+2.- El panel inferior izquierdo es la consola (o ventana de comandos) donde también puedes ejecutar líneas de código (escribir código al lado de > y presionar Enter), pero también es donde aparecerá cualquier texto o resultado numérico.
 
-The panel on the bottom right has:
-*lists of the files in your working directory
-*the R packages that you are currently using
-*any graphical output in the Plots window
-*help files (accessed by ? preceding any bit of code)
+3.- El panel superior derecho es la ventana del espacio de trabajo que muestra los diferentes objetos de R que estás utilizando actualmente. Estos pueden ser conjuntos de datos u objetos creados por varios análisis.
 
-You can change the size of these by dragging the edges of the windows.
-  
+4.- El panel inferior derecho tiene:
 
-### Saving your code in a script
- 
-You should save all the code you use for a given analysis or graphic. Use the menus in R Studio to create a new R script (*File >> New >> R script*) and save that with the disk icon or menu (*File >> Save*). See [Project management](../project-management/) for advice on how to structure these files.
-  
+ - Listas de los archivos en tu directorio de trabajo
+ - Los paquetes de R que estás utilizando actualmente
+ - Cualquier salida gráfica en la ventana de gráficos
+ - Archivos de ayuda (accedidos mediante ? antes de cualquier fragmento de código)
 
-### Installing R packages
- 
+Puedes cambiar el tamaño de estos paneles arrastrando los bordes de las ventanas.
 
-If your required analyses or graphics need a package that is not in the initial installation of R, then new packages can be installed from the menus (*Tools >> Install packages*) or from the panel on the bottom right. Once installed, they can be loaded with the `library` function (recommended) or by ticking the little box next to the package name (not recommended). It is better practice to use the `library` function in your script as that will remind you what packages need to be loaded.
+### Guardar tu código en un script
 
-For example, this code will load the package `maptools` if it is installed on your computer.
+Debes guardar todo el código que uses para un análisis o gráfico determinado. Utiliza los menús en RStudio para crear un nuevo script de R (*File >> New >> R script*) y guárdalo con el ícono de disco o en el menú (*File >> Save*). Revisa [Gestión de proyectos](../project-management/) para obtener consejos sobre cómo estructurar estos archivos.
+
+
+### Instalando paquetes de R
+
+Si tus análisis o gráficos requeridos necesitan un paquete que no está incluido en la instalación inicial de R, puedes instalar nuevos paquetes desde los menús (*Tools >> Install packages*) o desde el panel en la parte inferior derecha. Una vez instalados, se pueden cargar con la función `library` (recomendado) o marcando la casilla al lado del nombre del paquete (no recomendado). Es mejor práctica utilizar la función `library` en tu script, ya que te recordará qué paquetes deben cargarse.
+
+Por ejemplo, este código cargará el paquete `maptools` si está instalado en tu computadora.
+
 
 ```{r,eval=FALSE}
 library(maptools)
 ```
   
 
-### Further help
- 
 
-Our help modules on [Good practice for writing scripts](/coding-skills/good-practice) and [Importing data and data cleaning](../importing-data)
+### Ayuda adicional
 
-[Online help with R Studio](https://support.rstudio.com/hc/en-us/sections/200107586-Using-RStudio)
+Nuestros módulos de ayuda sobre [Buenas prácticas para escribir scripts](/coding-skills/good-practice) y [Importación de datos y limpieza de datos](../importing-data).
 
-[Online training in R](https://education.rstudio.com/learn/beginner/)
-  
+[Ayuda en línea con R Studio](https://support.rstudio.com/hc/en-us/sections/200107586-Using-RStudio).
 
-**Author**: Alistair Poore & Will Cornwel
- 
-**Year:** 2016
+[Formación en línea en R](https://education.rstudio.com/learn/beginner/).
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+
+**Autor**: Alistair Poore y Will Cornwel.
+
+**Año**: 2016.
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`.

@@ -5,43 +5,51 @@ aliases: /basic-project-management/
 output: html_document
 ---
 
-Having your data files, R scripts and outputs organised is very helpful for keeping track of what you are working on and for sharing data or scripts with colleagues or supervisors. Try and avoid a folder on your computer that is a big mix of spreadsheets, images, word processing documents etc. How you organise your files is your choice, but a little bit of planning and project organization at the beginning will pay lots of dividends down the road.  Here are our suggestions for keeping your projects neatly organised.
 
-### Setting up an organised project folder
- 
-Create a folder on your computer for each project. This could be a course you are currently doing, a chapter of your thesis or a research project of any kind. Within that folder, include the following things:
+Tener tus archivos de datos, scripts de R y salidas organizados es muy útil para llevar un registro de lo que estás trabajando y para compartir datos o scripts con colegas o supervisores. Trata de evitar tener una carpeta en tu computadora que sea una mezcla de hojas de cálculo, imágenes, documentos de procesamiento de texto, etc. Cómo organices tus archivos es tu elección, pero un poco de planificación y organización de proyectos al principio te dará muchos beneficios a largo plazo. Aquí están nuestras sugerencias para mantener tus proyectos organizados de manera ordenada.
 
-* A data folder (including meta-data)
-* An outputs folder (with subfolders "Figures" and "Tables" and possibly "Supplementary Material")
-* An R script that will run the data manipulation, analyses and create figures required for the project (try to keep this R script short and readable)
-* A folder for R functions (if used) usually called "R"
-* A folder for writing and references called "Manuscripts"
+### Configurar una carpeta de proyecto
 
-The data folder should hold the raw data (usually entered in a spreadsheet program).   After you finish entering your data, you should aim to keep these data untouched; all the things you want to do with the data, such as data cleaning and [subsetting](/data-manipulation/subsetting-data), [summarising](/data-manipulation/summarising-data) data into table, running statistical [analyses](/statistics) or creating [figures](/graphics), can be done via R scripts.  This keeps a record of everything you do.  Think of this script(s) as the lab notebook for a data scientist. Intermediate outputs are good--separate these from the raw data and save them in the outputs folder.
+Crea una carpeta en tu computadora para cada uno de los proyectos que desarrolles. Esto podría ser un curso que estás realizando actualmente, un capítulo de tu tesis o cualquier tipo de proyecto de investigación. Dentro de esa carpeta, incluye lo siguiente:
 
-One goal of this project organization is that your data processing and analysis is entirely reproducible, and as such both the data and exact methods can be shared with colleagues and supervisors, who can then repeat and hopefully build on your analyses. Also, although you might know all the files and steps at the moment, think of yourself in a year once you've moved on to other jobs or projects; try to be nice to your future self and keep good notes. In contrast, if you used a point--and--click or spreadsheet program to do important steps in your analysis, you'll need to remember all the steps taken to recreate the analyses or figures.  Most analyses at some point get too complicated for this to be tractable.  
-  
+* Una carpeta de datos (incluyendo metadatos).
+* Una carpeta de salidas (con subcarpetas "Figuras" y "Tablas" y posiblemente "Material Suplementario").
+* Un script de R que ejecutará la manipulación de datos, análisis y creará las figuras requeridas para el proyecto (intenta mantener este script de R corto y legible).
+* Una carpeta para funciones de R (si se utilizan), generalmente llamada "R".
+* Una carpeta para escritura y referencias llamada "Manuscritos".
 
-### Using R Studio's project files
- 
-An easy way to access all these files is to use a project file. In R Studio, you can create a new project file with **File, New Project**. You will then be asked if you want a new directory or to associate it with an existing directory. 
+La carpeta de datos debe contener los datos sin procesar (generalmente ingresados en un programa de hojas de cálculo). Después de terminar de ingresar tus datos, debes intentar mantener estos datos intactos; todas las cosas que desees hacer con los datos, como limpiar los datos y [trabajos con subconjuntos](/data-manipulation/subsetting-data), [resumir](/data-manipulation/summarising-data) los datos en una tabla, realizar [análisis](/statistics) estadísticos o crear [figuras](/graphics), se pueden hacer mediante scripts de R. Esto mantiene un registro de todo lo que haces. Piensa en este/estos script(s) como el cuaderno de laboratorio de un científico de datos. Los resultados intermedios son buenos, sepáralos de los datos sin procesar y guárdalos en la carpeta de salidas.
+
+Uno de los objetivos de esta organización de proyectos es que tu procesamiento y análisis de datos sean completamente reproducibles, y como tal, tanto los datos como los métodos exactos pueden compartirse con colegas y supervisores, quienes luego pueden repetir y, esperamos, ampliar tus análisis. Además, aunque en este momento puedes conocer todos los archivos y pasos, piensa en ti mismo/a dentro de un año cuando hayas pasado a otros trabajos o proyectos; intenta ser amable contigo mismo/a en el futuro y tomar buenas notas. En contraste, si utilizas un programa de apuntar y hacer clic o una hoja de cálculo para realizar pasos importantes en tu análisis, deberás recordar todos los pasos tomados para recrear los análisis o figuras. La mayoría de los análisis en algún momento se vuelven demasiado complicados como para que esto sea viable.
+
+
+### Uso de los archivos de proyecto de RStudio
+
+Una forma fácil de acceder a todos estos archivos es utilizar un archivo de proyecto. En RStudio, puedes crear un nuevo archivo de proyecto con **File, New Project**. A continuación, se te preguntará si deseas crear un nuevo directorio o asociarlo con un directorio existente.
+
+
 
 ![](projects_new.png)
 
-Choose this second option to have a project file associated with the folder that you created above.
 
-Once created, you can open your project by directly clicking on that file or from **File, Open** if you have R Studio open already. Once open, you will see your directory structure in the files panel on the bottom right of R Studio and all your scripts and data are easily accessible.
+Elige esta segunda opción para tener un archivo de proyecto asociado con la carpeta que creaste anteriormente.
+
+Una vez creado, puedes abrir tu proyecto haciendo clic directamente en ese archivo o desde **File, Open** si ya tienes RStudio abierto. Una vez abierto, verás la estructura de tu directorio en el panel de archivos en la parte inferior derecha de RStudio y todos tus scripts y datos serán fácilmente accesibles.
+
 
 ![](Basic_project_managment_image.jpg)
 
 
-A big benefit of using a project file is that when you import data, you do not need to specify the working directory with `setwd`. R Studio will look within the folder that contains the project file. When using `read.csv("")`, press tab repeatedly when you are within the `""` to choose the local folders and files:
+
+Un gran beneficio de trabajar con el enfoque de proyecto es que cuando importas datos, no necesitas especificar el directorio de trabajo con `setwd`. RStudio buscará dentro de la carpeta que contiene el proyecto. Al usar `read.csv("")`, presiona la tecla `tab` repetidamente cuando estés dentro de las `""` para elegir las carpetas y archivos locales:
+
 
 ```{r, eval=F}
 read.csv("/Data/Survey_data.csv")
 ```
 
-The data file is found with a relative file path, rather than the alternatives of a full path in the `read.csv` function or setting the working directory then using `read.csv`
+El archivo de datos se encuentra con una ruta relativa, en lugar de las alternativas de una ruta completa en la función `read.csv` o establecer el directorio de trabajo y luego usar `read.csv`.
+
 
 ```{r,eval=F}
 read.csv("C:/Work/Data/Survey_data.csv")
@@ -50,25 +58,25 @@ setwd("C:/Work/Data")
 read.csv(file = "Survey_data.csv")
 ```
 
-Similarly, when you output a file (e.g., figures or tables), you can store than in your outputs folder (away from the raw data)
+
+De manera similar, cuando exportas un archivo (por ejemplo, figuras o tablas), puedes guardarlos en tu carpeta de salidas (lejos de los datos crudos).
 
 ```{r,eval=F}
 write.csv("/Outputs/Survey_summary_table.csv")
 ```
 
-You can now simply copy your whole project folder to any other computer (desktop to laptop, student to supervisor etc.) and your code will always work without having to change the working directory for every machine.
 
-If you have mutiple R project files, you can easily swap between them by clicking on the project name on the top right of R Studio.
-  
+Ahora puedes simplemente copiar toda la carpeta de tu proyecto a cualquier otra computadora (de escritorio a portátil, de estudiante a supervisor, etc.) y tu código siempre funcionará sin tener que cambiar el directorio de trabajo en cada máquina.
 
-### Further help
- 
-R Studio's help with [using projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
-Our introduction to [version control](/coding-skills/version-control/) for keeping track of revisions to project files.
-  
+Si tienes varios archivos de proyectos de R, puedes cambiar fácilmente entre ellos haciendo clic en el nombre del proyecto en la parte superior derecha de RStudio.
 
-**Author**: Alistair Poore & Will Cornwell
- 
-**Year:** 2016
+### Ayuda adicional
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+La ayuda de RStudio sobre [el uso de proyectos](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
+Nuestra introducción al [control de versiones](/coding-skills/version-control/) para realizar un seguimiento de las revisiones de los archivos del proyecto.
+
+**Autor**: Alistair Poore y Will Cornwell
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

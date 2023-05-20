@@ -5,85 +5,90 @@ output: html_document
 aliases: /importing-data/
 ---
 
-Before we can run any data analyses or create figures in R, we need to import that data into R. Preparing and cleaning the data for analyses is essential and often more time consuming than the statistical analyses themselves. It is unusual for raw data to be in the correct format and without errors. Data cleaning is the process of identifying and fixing any problems so data can be analysed easily. 
+Antes de poder ejecutar análisis de datos o crear gráficos en R, debemos importar esos datos a R. Preparar y limpiar los datos para el análisis es esencial y a menudo requiere más tiempo que los propios análisis estadísticos. Es inusual que los datos sin procesar estén en el formato correcto y sin errores. La limpieza de datos es el proceso de identificar y corregir cualquier problema para que los datos puedan ser analizados fácilmente.
 
-Importing data is a major challenge for beginners. This module will give instructions for one of most common ways we import data, and some of challenges you may face and how to overcome them. Some of these issues can be avoided by following good data entry and management practices (first read [Data entry](../data-entry) to get help with this.
-  
+Importar datos es un desafío importante para los principiantes. Este módulo brindará instrucciones para una de las formas más comunes de importar datos, así como algunos desafíos que puedes enfrentar y cómo superarlos. Algunos de estos problemas se pueden evitar siguiendo buenas prácticas de entrada y gestión de datos (lee primero [Entrada de datos](../data-entry) para obtener ayuda con esto).
 
-### Importing data as a data frame
- 
-We recommend entering data into a spreadsheet program (e.g., Excel), and saving that data as a comma separated values (.csv) file. These are easily read into R and shared among users with different spreadsheet programs.
+### Importar datos como un marco de datos
+
+Recomendamos ingresar los datos en un programa de hoja de cálculo (por ejemplo, Excel) y guardar esos datos como un archivo de valores separados por comas (.csv). Estos se pueden leer fácilmente en R y compartir entre usuarios con diferentes programas de hojas de cálculo.
+
 
 ![](Importing_data_image.jpg)
 
+En este módulo, vamos a utilizar un conjunto de datos de muestra sobre el comportamiento de alimentación de un caracol marino para demostrar cómo importar los datos y los problemas más comunes que surgen al importar y limpiar datos en R.
 
-In this module, we are going to use a sample data set on feeding behaviour of a marine snail to demonstrate how to import the data, and the most common issues that arise with data import and cleaning in R.
+Primero, guarda el archivo de datos, [Snail_feeding.csv](/datasets/Snail_feeding.csv), en tu directorio de trabajo. Consulta [Introducción a R](..) para obtener ayuda sobre cómo configurar el directorio de trabajo.
 
-First, save the data file, [Snail_feeding.csv](/datasets/Snail_feeding.csv) to your working directory. See [Getting started with R](..) for help on for setting the working directory.
-
-Second, import the data file to a data frame called Snail_feeding with the `read.csv` function.
+Segundo, importa el archivo de datos a un marco de datos llamado Snail_feeding utilizando la función `read.csv`.
 
 ```{r}
 Snail_feeding <- read.csv("Snail_feeding.csv")
 ```
   
 
-### Cleaning data frames 
- 
-When you use `read.csv`, R uses several default arguments which can be altered to ensure your data are imported with fewer errors. Have a look at the help file within R (by typing `?read.csv` to familiarise yourself with some of these arguments.
+### Limpieza de data frames
 
-The ones that are particularly useful are:
+Cuando utilizas `read.csv`, R utiliza varios argumentos por defecto que se pueden modificar para asegurar que tus datos se importen con menos errores. Echa un vistazo al archivo de ayuda dentro de R (escribiendo `?read.csv`) para familiarizarte con algunos de estos argumentos.
 
-`header = T` - specifying this at T (i.e., TRUE) will ensure that the values in the first row of your data are treated as variable names.
+Los que son particularmente útiles son:
 
-`strip.white = T` - this will remove trailing and leading white space from factors. This is a common typing error made during data entry (i.e., "males" vs. "males_"). If we set this as TRUE, they both become "males", otherwise R will think there are two different levels.
+`header = T` - al especificar esto como T (es decir, TRUE), asegurarás que los valores en la primera fila de tus datos se traten como nombres de variables.
 
-`na.strings = ""`  - this will ensure that empty cells are replaced by NA (the way R records missing data). Annoyingly, R imports missing values within characters/factors types as a value "". Using `na.strings = ""` will insert NAs instead. In addition, if you have coded missing values as something other then blank space you can define that missing value using this argument (i.e `na.strings = c("", "-", "*")`). 
+`strip.white = T` - esto eliminará los espacios en blanco al final y al principio de los factores. Este es un error común al escribir los datos (por ejemplo, "males" vs "males_"). Si lo establecemos como TRUE, ambos se convertirán en "males". De lo contrario, R considerará que hay dos niveles diferentes.
 
-Putting all these together in the `read.csv` function will give us a cleaner data frame.
+`na.strings = ""` - esto asegurará que las celdas vacías se reemplacen por NA (la forma en que R registra los datos faltantes). De manera molesta, R importa valores faltantes dentro de caracteres/factores como el valor "". Usando `na.strings = ""`, se insertarán NAs en su lugar. Además, si has codificado valores faltantes como algo distinto a un espacio en blanco, puedes definir ese valor faltante usando este argumento (por ejemplo, `na.strings = c("", "-", "*")`).
+
+Al combinar todos estos en la función `read.csv`, obtendremos un marco de datos más limpio.
+
+
 
 ```{r, collapse= T}
 Snail_feeding <- read.csv("Snail_feeding.csv", header = T, strip.white = T, na.strings = "")
 ```
   
 
-###  Checking the data 
- 
-If something is a character when it should be numeric you might see messages such as <font face="monospace">"'x' must be numeric "</font> or <font face="monospace">"non-numeric argument to binary operator"</font>. Likewise, if something is a factor when it should be character, some character operations might fail. To avoid some of these issues, check your data using `str` and `summary` before analyses.  
+### Verificación de los datos
 
-`str`  enables you to check the structure of your data and that your variables are the correct type (i.e., numeric, characters, integers, or factors). See [Data types and structure](../data-types-structure) for explanations of these different types.
+Si algo es un carácter cuando debería ser numérico, es posible que veas mensajes como <font face="monospace">"'x' must be numeric "</font> o <font face="monospace">"non-numeric argument to binary operator"</font>. De manera similar, si algo es un factor cuando debería ser un carácter, algunas operaciones con caracteres podrían fallar. Para evitar algunos de estos problemas, verifica tus datos utilizando `str` y `summary` antes de realizar análisis.
+
+`str` te permite verificar la estructura de tus datos y asegurarte de que tus variables tengan el tipo correcto (es decir, numérico, caracteres, enteros o factores). Consulta [Tipos de datos y estructura](../data-types-structure) para obtener explicaciones sobre estos diferentes tipos.
+
 
 ```{r, collapse= T}
 str(Snail_feeding)
 ```
 
-`summary` allows you to look at basic statistics for each of your variables and can be used to identify any obvious typos (i.e., extreme maximums or minimums relative to the mean or median or extra groups within a categorical vector).
+
+`summary` te permite ver estadísticas básicas para cada una de tus variables y se puede utilizar para identificar errores obvios (es decir, máximos o mínimos extremos en relación a la media o mediana, o grupos adicionales dentro de un vector categórico).
+
 
 ```{r, collapse= T}
 summary(Snail_feeding)
 ```
 
-Note that for the factor of sex, errors in data entry resulted in five levels (female, female s, male, Male and males) when there should be only two. See below for the fix.
-  
 
-### Common problems when importing data
- 
+Ten en cuenta que para el factor de sexo, errores en la entrada de datos resultaron en cinco niveles (female, female s, male, Male y males) cuando debería haber solo dos. Ver a continuación la solución.
 
-**You don't get the number of columns or rows you expect**
- 
-If you see a bunch of extra columns (X, X.1,X.2,X.3 etc) or rows in your data frame filled with NAs its likely because a character (most likely white space(i.e. space bar or tab) was entered in cells beyond your actual data in Excel. This problem can be avoided during data entry by removing all the colors/formatting and emptying columns/rows except for those needed. 
+### Problemas comunes al importar datos
 
-If the problem is still there we can tackle it in R, by indexing within square brackets `dataframe[row, column]`. For example, the following code will replace the data frame in this example with one that only includes the first 7 columns and removes the 5 unwanted ones (X, X.1,X.2,X.3 etc).
+**No obtienes el número de columnas o filas que esperas**
+
+Si ves un montón de columnas adicionales (X, X.1, X.2, X.3, etc.) o filas en tu marco de datos llenas de NA, es probable que se haya ingresado un carácter adicional (probablemente un espacio en blanco o una tabulación) en celdas más allá de tus datos reales en Excel. Este problema se puede evitar durante la entrada de datos eliminando todos los colores/formatos y vaciando columnas/filas excepto las necesarias.
+
+Si el problema persiste, podemos abordarlo en R mediante la indexación dentro de corchetes cuadrados `dataframe[fila, columna]`. Por ejemplo, el siguiente código reemplazará el marco de datos en este ejemplo con uno que solo incluye las primeras 7 columnas y elimina las 5 no deseadas (X, X.1, X.2, X.3, etc.).
+
 
 ```{r}
 Snail_feeding <- Snail_feeding[, 1:7]
 ```
 
-The package [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) has several very neat functions for subsetting rows and columns - see [Subsetting data](/../data-manipulation/subsetting-data) for help with these.
+El paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) tiene varias funciones muy útiles para subconjuntar filas y columnas. Consulta [Subsetting data](/../data-manipulation/subsetting-data) para obtener ayuda con esto.
 
-If you had very many columns and didn't want to count them, you could use logic (&, or, ==, >, < , !=) to remove the unwanted rows and columns. We don't want to remove all NAs, only additional rows and columns that are entirely filled with NAs. These have the property of the number of NAs being equal to the number of rows in a given column (or number of columns in a given row). 
+Si tienes muchas columnas y no quieres contarlas, puedes usar lógica (&, or, ==, >, < , !=) para eliminar las filas y columnas no deseadas. No queremos eliminar todos los valores NA, solo las filas y columnas adicionales que estén completamente llenas de NAs. Estas tienen la propiedad de que el número de NAs es igual al número de filas en una columna dada (o número de columnas en una fila dada).
 
-We do this by selecting columns from our data frame where the column sum, `colSums`, of all the NAs, `>is.na`, in our data frame are not equal, `!=` to the number of rows, `nrow`, of our data frame. Using the same logic you can do this for rows as well.
+Hacemos esto seleccionando las columnas de nuestro data frame donde la suma de columnas, `colSums`, de todos los NAs, `>is.na`, en nuestro data frame no sea igual, `!=`, al número de filas, `nrow`, de nuestro data frame. Puedes usar la misma lógica para hacer esto con las filas también.
+
 
 ```{r, collapse= T}
 # Selects rows that are not entirely NA
@@ -93,15 +98,16 @@ Snail_feeding <- Snail_feeding[rowSums(is.na(Snail_feeding)) != ncol(Snail_feedi
 ```
   
 
-**The columns are not the type of data you expect**
- 
-**Characters as factors** When data frames are imported into R, characters are automatically coerced as factors. For statistical work this makes a lot of sense; we are more likely to want to work over factors (defined earlier) than over characters. Factors are fantastic when one is doing statistical analysis and actually exploring the data. However, prior to that when one is reading, cleaning, troubleshooting, merging and generally manipulating the data, factors are a total pain. 
+**Las columnas no son del tipo de datos que esperas**
 
-You can use the argument `stringsAsFactors=FALSE` when importing the data to avoid automatic coercion to factors or you can use `as.character` to convert individual vectors to characters. 
+**Caracteres como factores** Cuando se importan marcos de datos en R, los caracteres se convierten automáticamente en factores. Esto tiene mucho sentido para el trabajo estadístico; es más probable que queramos trabajar con factores (definidos anteriormente) que con caracteres. Los factores son fantásticos cuando se hace análisis estadístico y se explora realmente los datos. Sin embargo, antes de eso, cuando se leen, limpian, solucionan problemas, fusionan y manipulan los datos en general, los factores son un dolor de cabeza total.
 
-Tip: Use factors as late as possible in the analysis process. Set `stringsAsFactors=FALSE` when importing your data, and when you need factors someplace within your script, then coerce the data to a factor.
+Puedes usar el argumento `stringsAsFactors=FALSE` al importar los datos para evitar la conversión automática a factores o puedes usar `as.character` para convertir vectores individuales en caracteres.
 
-**Factors as integers** In this data frame, Snail ID is an integer where it should be a factor or character. This is because in the original data sheet Snail ID was coded using numbers. This is a common problem and is easy to fix. Simply use `as.factor()` or `as.character()`, and then `class()` to check our coercion worked. Remember to use `$` to access the vector from within the data frame. 
+Consejo: Utiliza factores lo más tarde posible en el proceso de análisis. Configura `stringsAsFactors=FALSE` al importar tus datos y, cuando necesites factores en algún lugar dentro de tu script, convierte los datos a un factor.
+
+**Factores como enteros** En este marco de datos, el ID de caracol es un entero cuando debería ser un factor o un carácter. Esto se debe a que en la hoja de datos original, el ID de caracol se codificó utilizando números. Este es un problema común y es fácil de solucionar. Simplemente usa `as.factor()` o `as.character()`, y luego `class()` para verificar que nuestra conversión haya funcionado. Recuerda usar `$` para acceder al vector desde dentro del marco de datos.
+
 
 ```{r, collapse= T, eval = T}
 Snail_feeding$Snail <- as.factor(Snail_feeding$Snail)
@@ -109,15 +115,16 @@ class(Snail_feeding$Snail)
 ```
   
 
-**Numerics as characters (factors)** Due to the automatic coercion in R, any non-numeric digits within a numerical variable will result in the whole variable being coerced to a character (R imports as factors). In this example, the variable Distance has been imported as a factor with 768 levels, when we would like it to be a numerical variable. This indicates a typo somewhere within the distance vector. Such typos are common (e.g., accidentally using comma instead of full stop when entering decimals), but a little trickier to solve. 
+**Números como caracteres (factores)** Debido a la coerción automática en R, cualquier dígito no numérico dentro de una variable numérica resultará en que toda la variable se convierta en un carácter (R lo importa como factores). En este ejemplo, la variable "Distance" se ha importado como un factor con 768 niveles, cuando en realidad debería ser una variable numérica. Esto indica que hay un error tipográfico en alguna parte del vector de distancias. Estos errores tipográficos son comunes (por ejemplo, usar accidentalmente una coma en lugar de un punto decimal al ingresar decimales), pero un poco más difíciles de resolver.
 
-With a small data set, it is quickest to go back to the original data and find the error. Once fixed, import again and the variable should now be numeric.
+Con un conjunto de datos pequeño, lo más rápido es regresar a los datos originales y encontrar el error. Una vez corregido, vuelves a importar y la variable debería ser numérica.
 
-With a larger data set, we have the problem of needing to find the typos. Unfortunately, we can't just convert our data straight into numeric from a vector of type Factor. This is because of the levels attribute (see [Data types and structure](../data-types-structure)). If you try and convert a factor directly to a numerical variable, the values become a number that corresponds to the number of levels (1:n, ordered alphabetically or ascending) rather than the actual value.
+Con un conjunto de datos más grande, surge el problema de tener que encontrar los errores tipográficos. Desafortunadamente, no podemos convertir directamente nuestros datos de un vector de tipo factor a numérico. Esto se debe al atributo "levels" (consultar [Tipos de datos y estructura](../data-types-structure)). Si intentas convertir un factor directamente en una variable numérica, los valores se convierten en un número que corresponde al número de niveles (1:n, ordenados alfabéticamente o de forma ascendente) en lugar del valor real.
 
-Thus, we must first convert to a character and then to a numeric. When converting to a numeric, you will get a warning message, NAs introduced by coercion. This is because the non numeric values (i.e., our typos) cannot be coerced to a numeric and get replaced by NA.
+Por lo tanto, primero debemos convertirlo a carácter y luego a numérico. Al convertirlo a numérico, obtendrás un mensaje de advertencia "NAs introduced by coercion". Esto se debe a que los valores no numéricos (es decir, nuestros errores tipográficos) no se pueden convertir a numéricos y se reemplazan por NA.
 
-We can use this to our advantage, `is.na` in combination with `which` will identify where the typos or missing values are within the vector. 
+Podemos aprovechar esto, utilizando `is.na` en combinación con `which` para identificar dónde están los errores tipográficos o los valores faltantes dentro del vector.
+
 
 ```{r, collapse= T}
 Snail_feeding$Distance <- as.character(Snail_feeding$Distance)
@@ -126,7 +133,9 @@ Snail_feeding$Distance <- as.numeric(Snail_feeding$Distance)
 which(is.na(Snail_feeding$Distance))
 ```
 
-This tells us that something weird happened in rows 682 and 755.  Now we have identified where the problem is, it is simple to replace values within our data frame with correct values (go back to your original datasheet). You could either fix the error in the data set and import again, or replace values in R by indexing within square bracketsand assigning, `<-`, the new value.  Use `which(is.na())` to check if your fix worked. 
+
+Esto nos indica que algo extraño sucedió en las filas 682 y 755. Ahora que hemos identificado dónde está el problema, es fácil reemplazar los valores en nuestro marco de datos con los valores correctos (vuelve a tu hoja de datos original). Puedes corregir el error en el conjunto de datos y volver a importarlo, o reemplazar los valores en R utilizando índices dentro de corchetes y asignando el nuevo valor con `<-`. Usa `which(is.na())` para verificar si tu corrección funcionó.
+
 
 ```{r, collapse= T}
 Snail_feeding[682, "Distance"] <- 0.356452
@@ -136,41 +145,48 @@ which(is.na(Snail_feeding$Distance))
 ```
   
 
-**You have more variable levels then expected**
- 
-One of the most important steps in any data analyses or processing task is to verify that your data values are correct. For example a variable called "Sex" would be expected to have only two levels.  However in our data frame it has five levels (see `str` and `summary` above).
+**Tienes más niveles de variables de los esperados**
 
-You can check the levels of a factor, or unique character values with `levels` (for factors only), or `unique` (for characters and factors).  
+Uno de los pasos más importantes en cualquier análisis de datos o tarea de procesamiento es verificar que los valores de tus datos sean correctos. Por ejemplo, se esperaría que una variable llamada "Sexo" tenga solo dos niveles. Sin embargo, en nuestro marco de datos tiene cinco niveles (ver `str` y `summary` arriba).
+
+Puedes verificar los niveles de un factor o los valores únicos de caracteres con `levels` (solo para factores) o `unique` (para caracteres y factores).
 
 ```{r, collapse= T}
 levels(Snail_feeding$Sex)
 unique(Snail_feeding$Sex)
 ```
 
-There are several typos which we can correct with `unique` and `which` and the logical operators `==` (equals) and `|` (or) to identify and replace typos.  
 
-To replace any values that are are "males" or "Male" with "male", we would use:
+Hay varios errores tipográficos que podemos corregir utilizando `unique` y `which`, así como los operadores lógicos `==` (igual) y `|` (o) para identificar y reemplazar los errores tipográficos.
+
+Para reemplazar cualquier valor que sea "males" o "Male" con "male", usaríamos:
+
 
 ```{r}
 Snail_feeding$Sex[which(Snail_feeding$Sex == "males" | Snail_feeding$Sex == "Male")] <- "male"
 ```
 
-To replace any values that are "female s" with "female", we would use:
+
+Para reemplazar cualquier valor que sea "female s" con "female", usaríamos:
+
 
 ```{r}
 Snail_feeding$Sex[which(Snail_feeding$Sex == "female s")] <- "female"
 ```
 
-Check it worked using `unique`, but also look what happens when you check `levels`.
+
+Verifica que funcione usando `unique`, pero también observa lo que sucede cuando verificas los `levels` (niveles).
+
 
 ```{r, collapse= T}
 unique(Snail_feeding$Sex)
 levels(Snail_feeding$Sex)
 ```
 
-When we use `unique` to check our categories there are just male and female, however when we look at levels we still have the five different levels including the typos. This is because of the behavior of factors. Once the levels have been defined, they will still be there regardless if they are included in any samples. As our extra levels were typos not true levels, we should remove these from the attributes. 
 
-`factor` will remove extra levels from a vector.
+Cuando usamos `unique` para verificar nuestras categorías, solo aparecen "male" y "female", sin embargo, cuando observamos los niveles, todavía tenemos los cinco niveles diferentes, incluyendo los errores tipográficos. Esto se debe al comportamiento de los factores. Una vez que se han definido los niveles, seguirán existiendo independientemente de si están incluidos en alguna muestra. Dado que nuestros niveles adicionales eran errores tipográficos y no niveles reales, debemos eliminarlos de los atributos.
+
+`factor` eliminará los niveles adicionales de un vector.
 
 ```{r, collapse= T}
 Snail_feeding$Sex <- factor(Snail_feeding$Sex)
@@ -178,33 +194,36 @@ levels(Snail_feeding$Sex)
 ```
   
 
-**Numeric typos**
- 
-Using `summary` above is a useful tool to check for potential typos within our numeric variables.  Compare the Max or Min against the Median  of each numeric variable. If either value is an order of magnitude greater or less then your median it could be a typo. For example look at the max depth, this looks like the decimal point has been forgotten.
+**Errores numéricos**
 
-Again we, can use logical operators and indexing to identify potential numeric typos. Given all the values of our depth variable appear to be between 1 and 2 (based on inter quartile ranges from summary), we will look for rows with a depth greater then 2.  
+Usar `summary` anteriormente es una herramienta útil para verificar posibles errores tipográficos en nuestras variables numéricas. Compara el valor máximo o mínimo con la mediana de cada variable numérica. Si alguno de los valores es una orden de magnitud mayor o menor que la mediana, podría ser un error tipográfico. Por ejemplo, observa la profundidad máxima, parece que se ha olvidado el punto decimal.
+
+Nuevamente, podemos utilizar operadores lógicos e indexación para identificar posibles errores numéricos. Dado que todos los valores de nuestra variable de profundidad parecen estar entre 1 y 2 (según los rangos intercuartiles de summary), buscaremos filas con una profundidad mayor a 2.
+
 
 ```{r, collapse= T}
 Snail_feeding[which(Snail_feeding$Depth > 2), ]
 ```
+
  
-There is only 1 row. After confirming with our original data that this is in fact a typo we will replace it with the real value. Selecting the row and column we replace the value 162 with 1.62.
+Solo hay 1 fila. Después de confirmar con nuestros datos originales que esto es, de hecho, un error tipográfico, lo reemplazaremos con el valor real. Seleccionando la fila y la columna, reemplazamos el valor 162 con 1.62.
+
 
 ```{r, collapse= T}
 Snail_feeding[which(Snail_feeding$Depth > 2), 6] <- 1.62
 ```
   
 
-### Why do this in R ?
- 
-You might be wondering why go through the trouble of fixing this in R? Why not just go to the .csv file and fix all the problems directly. It is usually OK to do this if you know the problem is a typo etc. However to maintain data integrity it is important to have a record of every change that has been made to your original data set. By doing all the manipulations and fixes in R, you are also keeping a record of all the changes that are occurring to your data. 
+### ¿Por qué hacer esto en R?
 
-Also, you may want to start to explore data before you have collected the entire data set. If you set up a script that checks all of these things before making graphs and running analyses, it is quick to run the script again on the full data once you have it all. The script acts to remind you of all the things to check and is better at picking up typos than you are in a huge spreadsheet. 
-  
+Puede que te preguntes por qué molestarse en corregir esto en R. ¿Por qué no ir directamente al archivo .csv y corregir todos los problemas? Por lo general, está bien hacer esto si sabes que el problema es un error tipográfico, etc. Sin embargo, para mantener la integridad de los datos, es importante tener un registro de cada cambio que se haya realizado en tu conjunto de datos original. Al realizar todas las manipulaciones y correcciones en R, también estás guardando un registro de todos los cambios que se están produciendo en tus datos.
 
-### The final check
- 
-Finally, once you have checked and fixed all the problems in your data re run `str` and `summary`. Actually it is a good idea to run these functions regularly throughout data cleaning to keep tabs on any changes you make. 
+Además, es posible que desees comenzar a explorar los datos antes de haber recopilado todo el conjunto de datos. Si configuras un script que verifique todas estas cosas antes de crear gráficos y ejecutar análisis, es rápido volver a ejecutar el script en los datos completos una vez que los tengas todos. El script actúa como un recordatorio de todas las cosas que debes verificar y es mejor para detectar errores tipográficos que tú en una hoja de cálculo enorme.
+
+### La verificación final
+
+Finalmente, una vez que hayas verificado y corregido todos los problemas en tus datos, vuelve a ejecutar `str` y `summary`. De hecho, es una buena idea ejecutar estas funciones regularmente durante la limpieza de datos para estar al tanto de cualquier cambio que realices.
+
 
 ``` {r, collapse = T}
 str(Snail_feeding)
@@ -212,15 +231,14 @@ summary(Snail_feeding)
 ``` 
   
 
-### Further help
- 
-[Intro to data cleaning in R by de jonge and van de Loo](https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
+### Más ayuda
 
-[R-bloggers- common errors in table import](http://www.r-bloggers.com/using-r-common-errors-in-table-import/)
-  
+[Introducción a la limpieza de datos en R por de Jonge y van de Loo](https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
 
-**Author**: Keryn Bain
- 
-**Year:** 2016
+[R-bloggers - errores comunes en la importación de tablas](http://www.r-bloggers.com/using-r-common-errors-in-table-import/)
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autor**: Keryn Bain
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

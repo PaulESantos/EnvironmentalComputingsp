@@ -373,7 +373,7 @@ What if we had some real biological data at those points? Well, let's make some 
 ```{r, eval=FALSE}
 sst_samp$shark_abund <- rpois(n = nrow(sst_samp), lambda = round(sst_samp$SST_feb_2013))
 plot(sst_samp$shark_abund ~ sst_samp$SST_feb_2013)
-shark_glm <- glm(shark_abund ~ SST_feb_2013 + SST_anomaly,
+shark_glm <- glm(sst_samp$shark_abund ~ sst_samp$SST_feb_2013 + sst_samp$SST_anomaly,
   data = sst_samp, family = "poisson"
 )
 summary(shark_glm)
@@ -395,8 +395,8 @@ names(sst_stack)[3] <- "SST_anomaly"
 rpoints_sst <- randomPoints(sst_stack, 500)
 sst_samp <- extract(sst_stack, rpoints_sst)
 sst_samp <- data.frame(sst_samp, lat = rpoints_sst[, 2], lon = rpoints_sst[, 1])
-sst_samp$shark_abund <- rpois(n = nrow(sst_samp), lambda = round(sst_samp$SST_feb_2013))
-shark_glm <- glm(shark_abund ~ SST_feb_2013 + SST_anomaly,
+sst_samp$shark_abund <- rpois(n = nrow(sst_samp), lambda = round(as.numeric(sst_samp$SST_feb_2013)))
+shark_glm <- glm(sst_samp$shark_abund ~ sst_samp$SST_feb_2013 + sst_samp$SST_anomaly,
   data = sst_samp, family = "poisson"
 )
 shark_predict <- predict(sst_stack, shark_glm, type = "response")
