@@ -14,8 +14,11 @@ Este tutorial tiene la intención de "volver a lo básico" un poco y aprender a 
 Probablemente ya tengas tus datos en un hermoso documento de Excel y, como tal, puede que no parezca haber una buena razón para "inventar" datos. Sin embargo, hay varias buenas razones por las que esto puede ser útil:
 
 **1.** Trabajar en problemas a pequeña escala antes de utilizar todos tus datos.
+
 **2.** Es posible que desees realizar algún tipo de estudio de simulación.
+
 **3.** Es posible que desees simular datos que esperas recopilar para asegurarte de tener los métodos correctos enumerados en tu propuesta.
+
 **4.** Es posible que te quedes atascado y quieras pedir ayuda.
 
 El enfoque aquí estará en el último punto. Es bastante inevitable que te encuentres con algún tipo de problema de programación. ¡Todos lo hacemos! Cuando esto sucede y deseas enviar algún código a un amigo, colega o incluso hacer una pregunta en internet, debes proporcionar un [ejemplo reproducible](https://stackoverflow.com/help/mcve).

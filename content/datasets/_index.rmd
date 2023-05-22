@@ -4,7 +4,9 @@ weight: 7
 output: html_document
 ---
 
-This page contains the datasets or files that are used throughout the tutorials found on this website. Most datasets are in .csv format, unless stated otherwise. The datasets are organised alphabetically. 
+
+Esta página contiene los conjuntos de datos o archivos que se utilizan en los tutoriales encontrados en este sitio web. La mayoría de los conjuntos de datos están en formato **.csv**, a menos que se indique lo contrario. Los conjuntos de datos están organizados alfabéticamente.
+
 
 ## A
 
@@ -93,6 +95,7 @@ This page contains the datasets or files that are used throughout the tutorials 
 
 [Weather_vars.csv](/datasets/Weather_vars.csv)
  
-**Year:** 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

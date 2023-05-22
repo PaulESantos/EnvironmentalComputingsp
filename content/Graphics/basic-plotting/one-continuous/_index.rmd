@@ -1,65 +1,75 @@
 ---
-title: 'One Continuous Variable'
+title: 'Una Variable Continua'
 weight: 1
 output: html_document
 aliases: /one-continuous-variable/
 ---
 
-Being able to visualise the properties of data is a critical step in data exploration, and needed for effective communication of results. This page details two common ways that you can display data from a single, continuous variable in R: frequency histograms and box-and-whisker plots.
 
-The sample data used below are the lengths (cm) of 80 fish caught in an estuary at sites with different management zones (protected versus unprotected) and shores (urbanised versus healthy). 
+Poder visualizar las propiedades de los datos es un paso crítico en la exploración de datos y necesario para la comunicación efectiva de resultados. En esta página se detallan dos formas comunes en las que se pueden mostrar los datos de una sola variable continua en R: histogramas de frecuencia y diagramas de caja - bigotes.
+
+Los datos de muestra utilizados a continuación son las longitudes (cm) de 80 peces capturados en un estuario en sitios con diferentes zonas de gestión (protegidas versus no protegidas) y costas (urbanizadas versus saludables).
+
 
 ![](Single_continuous_variable_image.jpg)
 
-### Frequency histograms
- 
-Frequency histograms plot how often the values of a continuous variable fall into certain ranges. They are an effective way to visualise the range of values obtained and the distribution of your data (i.e. is it symmetrical or skewed?).
 
-Firstly, download the sample data set,  [Estuary_fish.csv](/datasets/Estuary_fish.csv), and import into R.
+### Histogramas de frecuencia
+
+Los histogramas de frecuencia representan con qué frecuencia caen los valores de una variable continua en ciertos rangos. Son una forma efectiva de visualizar el rango de valores obtenidos y la distribución de tus datos (es decir, ¿es simétrica o asimétrica?).
+
+En primer lugar, descarga el conjunto de datos de muestra, [Estuary_fish.csv](/datasets/Estuary_fish.csv), e impórtalo a R.
+
 
 ```{r}
 Fish <- read.csv(file = "Estuary_fish.csv")
 ```
 
-A frequency histogram of the variable Length from the data frame Fish is easily produced with the `hist` function.
+
+Un histograma de frecuencia de la variable "Length" del data frame "Fish" se puede producir fácilmente con la función `hist`.
+
 
 ```{r}
 hist(Fish$Length)
 ```
 
-You can see straight away that all the fish were less than 30 cm long and that these length data are positively skewed - small fish are more frequent and large fish are rare.
 
-You can alter the number of bins or the range of each bin with `breaks` argument. This will change the width and shape of the histogram. For example, if you wanted 15 bins, you would use:
+De inmediato puedes ver que todos los peces tenían menos de 30 cm de longitud y que estos datos de longitud tienen una asimetría positiva: los peces pequeños son más frecuentes y los peces grandes son raros.
+
+Puedes modificar el número de intervalos o el rango de cada intervalo con el argumento `breaks`. Esto cambiará el ancho y la forma del histograma. Por ejemplo, si deseas 15 intervalos, usarías:
+
+
 
 ```{r}
 hist(Fish$Length, breaks = 15)
 ```
 
-If you wanted each bin to be have a range of 2 cm, you would use `breaks=seq(0,30,by=2)` where the numbers in the brackets are the minimum, maximum and range for each bin.
-  
 
-### Box and whisker plots
- 
-A box and whisker plot, or boxplot, is another useful way to visualise the distribution of a single, continuous variable. They are easily made with the `boxplot` function. The `horizontal=TRUE` argument makes the single axis horizontal.
+Si deseas que cada intervalo tenga un rango de 2 cm, puedes usar `breaks=seq(0,30,by=2)`, donde los números entre corchetes son el mínimo, el máximo y el rango para cada intervalo.
+
+### Gráficos de caja y bigotes
+
+Un gráfico de caja y bigotes, también conocido como boxplot, es otra forma útil de visualizar la distribución de una variable continua. Se pueden crear fácilmente con la función `boxplot`. El argumento `horizontal=TRUE` hace que el eje único sea horizontal.
+
 
 ```{r}
 boxplot(Fish$Length, horizontal = TRUE)
 ```
 
-The plot shows the distribution of a variable by indicating the median, quartiles, maximum and minimum of a variable. The top and bottom whiskers are the maximum and minimum values (excluding any outliers that are indicated by a circle). The thick black line is the median, with the boxes either side of the median line the lower and upper quartiles. 
 
-Remember that the median is the value that has 50% of values larger and 50% of values smaller. Similarly, the quartiles represent the values with 25% of the values lower (the lower quartile) or 25% of values higher (the upper quartile). 
+El gráfico muestra la distribución de una variable indicando la mediana, los cuartiles, el máximo y el mínimo de la variable. Los bigotes superior e inferior representan los valores máximo y mínimo (excluyendo cualquier valor atípico que se indica con un círculo). La línea gruesa en negro es la mediana, y las cajas a cada lado de la línea de la mediana son los cuartiles inferior y superior.
 
-The boxplot will indicate skewness in your data if the median is not equally distant from the quartiles or maximum and minimum values. In this example, you can see that the median is closer to the minimum value that the maximum (indicating that low values are more common).
-  
+Recuerda que la mediana es el valor que tiene el 50% de los valores mayores y el 50% de los valores menores. De manera similar, los cuartiles representan los valores con el 25% de los valores menores (el cuartil inferior) o el 25% de los valores mayores (el cuartil superior).
 
-### Formatting plots
- 
-These simple plots can be formatted using the basic R formatting in the graphics package. The code below gives you some of the more commonly used formatting commands to give you higher control over your plots.
+El gráfico de caja y bigotes indicará la asimetría en tus datos si la mediana no está equidistante de los cuartiles o de los valores máximo y mínimo. En este ejemplo, puedes ver que la mediana está más cerca del valor mínimo que del máximo (lo que indica que los valores bajos son más comunes).
 
-**Add axis labels or titles**
- 
-Axis labels are produced with the `xlab` and `ylab` arguments. Titles are provided with the `main` argument.
+### Formateo de gráficos
+
+Estos gráficos sencillos se pueden formatear utilizando las funciones básicas de formateo de R en el paquete de gráficos. El código a continuación muestra algunos de los comandos de formateo más comúnmente utilizados para tener un mayor control sobre tus gráficos.
+
+**Agregar etiquetas de ejes o títulos**
+
+Las etiquetas de los ejes se crean con los argumentos `xlab` y `ylab`. Los títulos se proporcionan con el argumento `main`.
 
 ```{r}
 hist(Fish$Length, xlab = "Fish length (cm)", main = "Frequency histogram of fish length")
@@ -67,11 +77,12 @@ hist(Fish$Length, xlab = "Fish length (cm)", main = "Frequency histogram of fish
 boxplot(Fish$Length, xlab = "Fish length (cm)", main = "Box plot of fish length", horizontal = TRUE)
 ```
 
-Using the `main=NULL` argument removes the title, which is often unecessary as details of what a plot illustrates are usually written in a figure legend below the plot.
+Usando el argumento `main=NULL`, se elimina el título, lo cual suele ser innecesario, ya que los detalles sobre lo que ilustra un gráfico suelen estar escritos en una leyenda debajo del gráfico.
 
-**Edit axis limits**
- 
-Axis limits are set by the `xlim` and `ylim` arguments, where a vector of the minimum and maximum limits is required. For example, to have each of these plot the data between 0 and 40, you would use:
+**Editar límites de los ejes**
+
+Los límites de los ejes se establecen mediante los argumentos `xlim` y `ylim`, donde se requiere un vector con los límites mínimo y máximo. Por ejemplo, para que cada uno de estos gráficos muestre los datos entre 0 y 40, se usaría:
+
 
 ```{r, eval = FALSE}
 hist(Fish$Length, xlab = "Fish length (cm)", main = "Frequency histogram of fish length", xlim = c(0, 40))
@@ -79,32 +90,33 @@ hist(Fish$Length, xlab = "Fish length (cm)", main = "Frequency histogram of fish
 boxplot(Fish$Length, xlab = "Fish length (cm)", main = "Box plot of fish length", ylim = c(0, 40), horizontal = TRUE)
 ```
 
-Note that `ylim' is needed there to set the range for the single response variable (Fish length) even though it ends up on the horizontal axis after we use the `horizontal=TRUE` argument.
+
+Ten en cuenta que `ylim` es necesario allí para establecer el rango de la variable de respuesta única (longitud del pez), aunque al final acabe en el eje horizontal después de usar el argumento `horizontal=TRUE`.
  
 
-**Plot alignment**
+**Alineación de los gráficos**
  
-Use the `horizontal=TRUE` argument to align the box plot horizontally - leave this out if you want a vertical alignment.
+Utiliza el argumento `horizontal=TRUE` para alinear el diagrama de caja horizontalmente; omítelo si deseas una alineación vertical.
  
 
-**Adding colour**
+**Añadir color**
  
-Colour can be added to any part of the plots (axis, fonts etc.) using the `col` argument. There are over 600 colours that can be plotted, type `colors()` for the names of the whole range.
+Se puede agregar color a cualquier parte de los gráficos (ejes, fuentes, etc.) utilizando el argumento `col`. Hay más de 600 colores que se pueden representar en el gráfico; escribe `colors()` para ver los nombres de todo el rango.
 
-Here we will simply change the colour of the histogram.
+Aquí simplemente cambiaremos el color del histograma.
+
+
 ```{r}
 hist(Fish$Length, xlab = "Fish length (cm)", main = "Frequency histogram of fish length", col = "red")
 ```
   
-
-### Further help
+### Más ayuda
  
-Type `?hist` and `?boxplot` to get the R help for these functions. 
+Escribe `?hist` y `?boxplot` para obtener ayuda sobre estas funciones en R. 
   
 
-**Author**: Stephanie Brodie
+**Autor**: Stephanie Brodie
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
-
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

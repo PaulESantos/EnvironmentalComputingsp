@@ -1,5 +1,5 @@
 ---
-title: 'Basic Plotting in R'
+title: 'Gráficos básicos en R'
 weight: 1
 output: html_document
 aliases: /basic-plotting-in-r/
@@ -19,9 +19,8 @@ abline(model, col = "red")
 boxplot(loght ~ hemisphere, data = Plant_height, ylab = "log(Plant height)", xlab = "Hemisphere", names = c("South", "North"), col = "lightblue")
 ```
 
-R has a very wide range of functions and packages for visualising data. Here is some help for some very simple plots using the base functions in R for data with:  
+R cuenta con una amplia gama de funciones y paquetes para visualizar datos. Aquí tienes ayuda para realizar algunos gráficos muy simples utilizando las funciones básicas en R para datos con:
 
-* [one continuous variable](/graphics/basic-plotting/one-continuous/) - histograms and box plots  
-* [two continuous variables](/graphics/basic-plotting/two-continuous/) - scatter plots  
-* [one continuous vs categorical variables](/graphics/basic-plotting/one-continuous-one-factor/) - box plots and bar plots  
-
+* [una variable continua](/graphics/basic-plotting/one-continuous/) - histogramas y diagramas de caja
+* [dos variables continuas](/graphics/basic-plotting/two-continuous/) - gráficos de dispersión
+* [una variable continua vs variables categóricas](/graphics/basic-plotting/one-continuous-one-factor/) - diagramas de caja y gráficos de barras

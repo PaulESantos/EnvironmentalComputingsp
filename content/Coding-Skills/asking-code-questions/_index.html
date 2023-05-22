@@ -368,11 +368,13 @@ como tal, puede que no parezca haber una buena razón para “inventar”
 datos. Sin embargo, hay varias buenas razones por las que esto puede ser
 útil:</p>
 <p><strong>1.</strong> Trabajar en problemas a pequeña escala antes de
-utilizar todos tus datos. <strong>2.</strong> Es posible que desees
-realizar algún tipo de estudio de simulación. <strong>3.</strong> Es
-posible que desees simular datos que esperas recopilar para asegurarte
-de tener los métodos correctos enumerados en tu propuesta.
-<strong>4.</strong> Es posible que te quedes atascado y quieras pedir
+utilizar todos tus datos.</p>
+<p><strong>2.</strong> Es posible que desees realizar algún tipo de
+estudio de simulación.</p>
+<p><strong>3.</strong> Es posible que desees simular datos que esperas
+recopilar para asegurarte de tener los métodos correctos enumerados en
+tu propuesta.</p>
+<p><strong>4.</strong> Es posible que te quedes atascado y quieras pedir
 ayuda.</p>
 <p>El enfoque aquí estará en el último punto. Es bastante inevitable que
 te encuentres con algún tipo de problema de programación. ¡Todos lo
@@ -439,19 +441,19 @@ reemplazo:</p>
 <pre class="r"><code>data &lt;- sample(10)
 
 data</code></pre>
-<pre><code>##  [1]  8  9  7 10  5  4  3  2  6  1</code></pre>
+<pre><code>##  [1]  1  6  5  8  9  2  4 10  7  3</code></pre>
 <p>O, 10 números aleatorios con reemplazo:</p>
 <pre class="r"><code>data &lt;- sample(10, replace = TRUE)
 
 data</code></pre>
-<pre><code>##  [1]  4 10  9  7  4  8  3  1  7  1</code></pre>
+<pre><code>##  [1] 7 9 2 9 4 2 5 5 2 3</code></pre>
 <p>Puedes crear un vector y luego realizar una muestra de él:</p>
 <pre class="r"><code>factor &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;)
 
 data &lt;- sample(factor, replace = TRUE)
 
 data</code></pre>
-<pre><code>## [1] &quot;d&quot; &quot;b&quot; &quot;d&quot; &quot;c&quot; &quot;c&quot;</code></pre>
+<pre><code>## [1] &quot;e&quot; &quot;c&quot; &quot;e&quot; &quot;d&quot; &quot;a&quot;</code></pre>
 <p>También puedes realizar muestras n veces, lo cual hace que sea una
 función muy conveniente. Por ejemplo, tomar muestras de los cuatro palos
 de cartas, 100 veces:</p>
@@ -479,7 +481,7 @@ uniforme.</p>
 <pre class="r"><code>data &lt;- runif(100)
 
 head(data)</code></pre>
-<pre><code>## [1] 0.4277050 0.1641431 0.3152610 0.3134036 0.6989719 0.4465205</code></pre>
+<pre><code>## [1] 0.91832788 0.43859399 0.42584870 0.03272531 0.08940764 0.39832792</code></pre>
 <p>Al igual que arriba, <code>runif</code> genera valores de una
 distribución con min = 0 y max = 1. Podemos cambiar esto a lo que
 queramos. Por ejemplo, para obtener 100 números aleatorios entre -10 y

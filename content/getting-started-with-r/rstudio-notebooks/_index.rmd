@@ -1,6 +1,6 @@
 ---
 weight: 2
-title: "Using R Notebooks"
+title: "Utilizando R Notebooks"
 aliases: /using-rstudio-notebooks/
 output: html_document
 ---
@@ -10,57 +10,61 @@ library(dplyr)
 library(ggplot2)
 ```
 
-If you are working in the laboratory or in the field, it is essential to keep good notes on what you are doing so that you can remember your methods and ensure that your work is reproducible.
+
+Si estás trabajando en el laboratorio o en el campo, es esencial tomar buenas notas sobre lo que estás haciendo para poder recordar tus métodos y asegurarte de que tu trabajo sea reproducible.
+
 
 ![](Notebooks_image.jpg)
 
-Similarly, once you are dealing with the data you have collected, good notes on how you have processed that data are essential. They help you in understanding exactly what you are doing and are needed to write methods sections, and to communicate both methods and results to collaborators or supervisors.
 
-In a traditional R script, all the text is code and comments are separated from executable code by starting a line with #. For example,
+De manera similar, una vez que estés trabajando con los datos que has recopilado, es fundamental tener buenas notas sobre cómo has procesado esos datos. Te ayudarán a comprender exactamente lo que estás haciendo y serán necesarias para escribir secciones de métodos y comunicar tanto los métodos como los resultados a colaboradores o supervisores.
+
+En un script tradicional de R, todo el texto es código y los comentarios se separan del código ejecutable comenzando una línea con #. Por ejemplo,
 
 ```{r, eval =F}
 plot(y ~ x)
-# code to make a plot of y vs x
 ```
 
-This can get messy if you have lots of comments, so we recommend looking at [RStudio notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) as a very clean way of writing your code with associated comments.
+Esto puede volverse confuso si tienes muchos comentarios, por lo que recomendamos utilizar [notebooks de RStudio](http://rmarkdown.rstudio.com/r_notebooks.html) como una forma muy limpia de escribir tu código con los comentarios correspondientes.
 
-RStudio notebooks are a form of markdown document, a widely used format for exporting text and code to various report formats. All web pages on this site start their life as markdown files with all the text, code needed to make the html file. Rstudio notebooks have the added benefits of displaying the output from your code directly in the document.
-  
+Los notebooks de RStudio son una forma de documento markdown, un formato ampliamente utilizado para exportar texto y código a varios formatos de informe. Todas las páginas web de este sitio comienzan su vida como archivos markdown con todo el texto y código necesario para generar el archivo html. Los notebooks de RStudio tienen la ventaja adicional de mostrar la salida de tu código directamente en el documento.
 
-### Creating a new notebook
- 
-Creating a new notebook is as simple as clicking **File, New File, R Notebook** from the RStudio menu. You will need a recent version of RStudio (1.0 or higher), so update that if necessary.
+### Creación de un nuevo notebook
 
-Save the file in a folder on your computer. This folder will become the working directory for any code in your notebook and there is no need to set the working directory.
+Crear un nuevo notebook es tan sencillo como hacer clic en **File, New file, R Notebook** en el menú de RStudio. Necesitarás una versión reciente de RStudio, así que actualízalo si es necesario.
 
-Edit the title at the top, have a quick read of the notes then delete the template provided (from "This is an [R Markdown]..."" onwards). Make sure you leave the first few lines in between the --- marks.
+Guarda el archivo en una carpeta de tu computadora. Esta carpeta se convertirá en el directorio de trabajo para cualquier código en tu notebook y no es necesario establecer el directorio de trabajo.
 
-Your notebook is now just a big blank page for you to start writing down all the steps involved in your work. For example, you might want to start with a brief description of the project.
-  
+Edita el título en la parte superior, lee rápidamente las notas y luego elimina la plantilla proporcionada (desde "This is an [R Markdown]..."" en adelante). Asegúrate de dejar las primeras líneas entre los marcas ---.
 
-### Adding code to your notebook
+Tu notebook ahora es solo una gran página en blanco para que comiences a escribir todos los pasos involucrados en tu trabajo. Por ejemplo, es posible que desees comenzar con una breve descripción del proyecto.
+
+### Agregar código a tu notebook
+
 
 ![](Menu1.png)
 
-Executable code is added to your notebook in what are called chunks. To do this, click on **Insert, R** from the top right of your notebook (or use **Ctrl + Alt + I** on the keyboard). This will add an empty chunk that looks like this:
+El código ejecutable se agrega a tu cuaderno en lo que se llaman **chunk** (fragmentos de código). Para hacer esto, haz clic en **Insert, R** en la parte superior derecha de tu cuaderno (o usa **Ctrl + Alt + I** en el teclado). Esto agregará un fragmento vacío que se verá así:
 
 ![](Chunk1.png)
 
-Any code that you want to run then be added inside the chunk. I like to use the first chunk in the notebook to load any R packages that might be required for the upcoming work. E.g.,
+Cualquier código que desees ejecutar debe agregarse dentro del chunk. Me gusta usar el primer chunk de código en el cuaderno para cargar los paquetes de R que podrían ser necesarios para el trabajo próximo. Por ejemplo,
+
 
 ![](Chunk2.png)
 
-Be careful not to delete the ``` marks as the text will no longer be recognised as code.
-  
 
-### Running the code
- 
-Running all the code in your chunk is done by clicking the little green arrow at the top right of your chunk. Just like in a script you can still run individual lines of code by entering *Ctrl+Enter* with your cursor on that line.
+Ten cuidado de no eliminar las comillas invertidas (```) ya que el texto ya no será reconocido como código.
 
-Use the chunks to organise your workflow, grouping code that does a particular task within a chunk and preceding these by plain text comments that explain what each chunk will do. Avoid putting every single line of code in a separate chunk and avoid having very many lines of code that do different things within the same chunk.
 
-Output from your code will appear directly below the code chunk rather than in the console below or the plots pane to the right. For example, a plot of plant height vs temperature from the data set used in our [linear regression tutorial](/statistics/linear-models/linear-regression).
+### Ejecución del código
+
+La ejecución de todo el código en cada uno de los chunk se realiza haciendo clic en la pequeña flecha verde en la parte superior derecha del chunk. Al igual que en un script, aún puedes ejecutar líneas individuales de código ingresando *Ctrl+Enter* con el cursor en esa línea.
+
+Utiliza los chunk de código para organizar tu flujo de trabajo, agrupando el código que realiza una tarea específica dentro de un chunk y precediendo esto con comentarios de texto plano que expliquen lo que hará cada chunk. Evita colocar cada línea de código en un chunk separado y evita tener muchas líneas de código que hagan cosas diferentes dentro del mismo chunk.
+
+La salida de tu código aparecerá directamente debajo del chunk de código en lugar de en la consola debajo o en el panel de gráficos a la derecha. Por ejemplo, un gráfico de la altura de las plantas versus la temperatura a partir del conjunto de datos utilizado en nuestro [tutorial de regresión lineal](/statistics/linear-models/linear-regression).
+
 
 
 ```{r, eval=F,echo=F}
@@ -71,71 +75,77 @@ ggplot(Plant_height, aes(temp, loght, color = growthform)) +
 
 ![](Chunk3.png)
 
-You can hide or show any output within your notebook by clicking on the little upward arrows (top right of output).
+
+Puedes ocultar o mostrar cualquier salida dentro de tu cuaderno haciendo clic en las pequeñas flechas hacia arriba (arriba a la derecha de la salida).
 
 
 ![](Menu2.png)
 
-To expand or collapse all output click on the cog symbol next to Preview at the top of the notebook. The settings in there can also be used to send all output to the console (**Chunk output in Console**) or keep in the notebook (**Chunk Output Inline**).
+Para expandir o contraer todas las salidas, haz clic en el símbolo de engranaje junto a Preview en la parte superior del notebook. También se pueden utilizar los ajustes para enviar todas las salidas a la consola (**Chunk output in Console**) o mantenerlas en el notebook (**Chunk Output Inline**).
 
-If you save the notebook and leave RStudio, the output is saved and you will see plots etc when you reopen the file. If you have made any changes to code or data files, however, you will need to run the code again. 
+Si guardas el notebook y sales de RStudio, la salida se guarda y verás gráficos, etc. cuando vuelvas a abrir el archivo. Sin embargo, si has realizado cambios en el código o en los archivos de datos, deberás ejecutar el código nuevamente.
 
 ![](Menu3.png)
 
-This is easily done by clicking **Run, Run all**. Also very useful when you are part way through a document is **Run All Chunks Above** to ensure everything is refreshed and running correctly.
-  
 
-### Exporting your notebook to other formats
- 
-In addition to being a visually appealing way to combine code and comments, notebooks can also be used to create reports in various formats (html, pdf and word).
+Esto se hace fácilmente haciendo clic en **Run, Run all**. También es muy útil cuando estás en medio de un documento hacer clic en **Run All Chunks Above** para asegurarte de que todo esté actualizado y se esté ejecutando correctamente.
+
+
+### Exportar tu notebook a otros formatos
+
+Además de ser una forma visualmente atractiva de combinar código y comentarios, los notebook también se pueden utilizar para crear informes en varios formatos (html, pdf y word).
+
 
 ![](Menu4.png)
 
-Clicking on **Preview** will give you a sneak preview of what this might look like. To make the documents, you would then choose **Knit to HTML** for example to make an html file.
 
-The html files created are an excellent way to share your work with collaborators and supervisors. The single document can be opened in any browser on any device and has all comments, code, statistical output and figures. Your reader doesn't need to run any code (or even be an R user) to see what you have done. The html files even have neat little buttons where you can hide and show the code, and the ability to reverse the whole process and download a markdown file from the html.
 
-When you knit to HTML for the first time, you may be prompted for some packages that are not on your machine (e.g., knitr, rmarkdown). If this happens, install those and do it again.
+Al hacer clic en **Preview**, podrás obtener una vista previa de cómo podría verse esto. Para generar los documentos, luego seleccionarías **Knit to HTML**, por ejemplo, para crear un archivo html.
 
-When you first look at your html file, you may also realise that there are some unwanted parts (e.g., warning messages) and that the formatting could improved. To fix these, you need to learn a bit more about controlling the behaviour of code chunks, and some basic formatting.
+Los archivos html creados son una excelente manera de compartir tu trabajo con colaboradores y supervisores. El documento único se puede abrir en cualquier navegador en cualquier dispositivo y contiene todos los comentarios, código, salida estadística e imágenes. El lector no necesita ejecutar ningún código (ni siquiera ser un usuario de R) para ver lo que has hecho. Los archivos html incluso tienen botones pequeños y ordenados donde puedes ocultar y mostrar el código, y la capacidad de revertir todo el proceso y descargar un archivo de markdown desde el html.
 
-These are nicely detailed on RStudio's [R Markdown cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf). Here are a just few of the more useful options:
-  . 
+Cuando generes un archivo HTML por primera vez, es posible que se te soliciten algunos paquetes que no están instalados en tu máquina (por ejemplo, knitr, rmarkdown). Si eso ocurre, instálalos y vuelve a intentarlo.
 
-### Some basic markdown formatting
- 
+Cuando mires por primera vez tu archivo html, es posible que también te des cuenta de que hay algunas partes no deseadas (por ejemplo, mensajes de advertencia) y que la estructura podría mejorarse. Para solucionar esto, debes aprender un poco más sobre cómo controlar el comportamiento de los chunk de código y sobre la su estructura básica.
 
-| Markdown  | Output  |
+Estos están detallados de manera clara en la [hoja de referencia de R Markdown](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) de RStudio. Aquí hay algunas opciones más útiles:
+
+### Algunos formatos básicos de markdown
+
+| Markdown | Resultado |
 |-----|----|
-| Header 1 |  # Header 1 |
-| Header 2 |  ## Header 2 |
-| Header 3 |  ## Header 2 |
-| *italics*  | *italics* |
-| **bold** |  **bold** |
-|Inserting an image:  | ![](E_C_logo_black_square.png)  |
-| Inserting a link: More help at Environmental Computing-/.. | More help at [Environmental Computing](/..)  |
+| Título 1 |  # Título 1 |
+| Título 2 |  ## Título 2 |
+| Título 3 |  ## Título 3 |
+| *cursiva* | *cursiva* |
+| **negrita** | **negrita** |
+| Insertar una imagen: | ![](E_C_logo_black_square.png) |
+| Insertar un enlace: Más ayuda en Environmental Computing-/.. | Más ayuda en [Environmental Computing](/..) |
 
+## Control del comportamiento de los chunk de código
 
-## Controlling chunk behaviour
- 
-You can control how the code and its output is displayed in the exported document with a series of options for each chunk. There are lots of these (detailed [here](https://yihui.name/knitr/options/)), but a few useful ones are:
+Puedes controlar cómo se muestra el código y su resultado en el documento exportado con una serie de opciones para cada chunk. Hay muchas de estas opciones (detalladas [aquí](https://yihui.name/knitr/options/)), pero algunas útiles son:
 
-If you want to show the code but not run it, use `eval=F` within the `{r}` at the top of your chunk
-Choose to run code in the output or not
+Si quieres mostrar el código pero no ejecutarlo, utiliza `eval=F` dentro de `{r}` al comienzo de tu chunk.
+Elige ejecutar el código en la salida o no.
 
 ```{r, eval=F}
 # ```{r, eval=F}
 2 + 2
 ```
 
-To run the code, but hide the code in the output:
+
+Para ejecutar el código pero ocultar el código en la salida:
+
 
 ```{r, eval=F}
 # ```{r, echo=F}
 2 + 2
 ```
 
-To hide all messages and warnings:
+
+Para ocultar todos los mensajes y advertencias:
+
 
 ```{r, warning=F, message=F}
 # ```{r, warning=F, message=F}
@@ -147,7 +157,9 @@ To hide all messages and warnings:
 Plant_height <- read.csv(file = "Plant_height.csv")
 ```
 
-To change the size of any plots:
+
+Para cambiar el tamaño de cualquier gráfico:
+
 
 ```{r, fig.height=3, fig.width=10}
 # ```{r, fig.height=3, fig.width=10}
@@ -155,26 +167,27 @@ ggplot(Plant_height, aes(temp, loght)) +
   geom_point()
 ```
 
-These can also be set once at the top of the document rather than individually for each chunk (termed Global options). For example, to set the size of all figures, we would use:
+
+Estas opciones también se pueden establecer una vez al comienzo del documento en lugar de individualmente para cada chunk (llamadas opciones globales). Por ejemplo, para establecer el tamaño de todas las figuras, usaríamos:
+
 
 ```{r, include=F}
 knitr::opts_chunk$set(fig.width = 10, fig.height = 10)
 ```
   
+### Más ayuda
 
-### Further help
- 
-RStudio's [introduction to notebooks](http://rmarkdown.rstudio.com/r_notebooks.html)
+[RStudio's introduction to notebooks](http://rmarkdown.rstudio.com/r_notebooks.html)
 
-RStudio's [R Markdown cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
+[Hoja de referencia de R Markdown de RStudio](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 
-Nathan Stephen's [Why I love R notebooks](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/)
+[Por qué me encantan los cuadernos de R](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/) por Nathan Stephen
 
-Jonathan McPherson's [R Notebooks](https://www.rstudio.com/resources/webinars/introducing-notebooks/)
+[R Notebooks](https://www.rstudio.com/resources/webinars/introducing-notebooks/) por Jonathan McPherson
   
 
-**Author**: Alistair Poore
+**Autor**: Alistair Poore
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

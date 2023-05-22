@@ -4,7 +4,9 @@ output: html_document
 weight: 10 
 ---
 
-In Feb 2022, the Environmental Computing site was migrated from Wordpress to Hugo. The purpose of this page is to document the links used in the previous site. We've setup the new site so that these links should be redirected to the current page, using an alias. Listing them here allows us to check this. Mainataining the links is desirbale, as they've been embedded in various course materials and distributed over the web.
+
+En febrero de 2022, el sitio de Environmental Computing se migró de Wordpress a Hugo. El propósito de esta página es documentar los enlaces utilizados en el sitio anterior. Hemos configurado el nuevo sitio para que estos enlaces se redirijan a la página actual, utilizando un alias. Enumerarlos aquí nos permite verificar esto. Mantener los enlaces es deseable, ya que se han incrustado en diversos materiales de cursos y se han distribuido en la web.
+
 
 - [/analysis-variance-factorial/](/analysis-variance-factorial/)
 - [/analysis-variance-single-factor/](/analysis-variance-single-factor/)

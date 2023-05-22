@@ -1,98 +1,107 @@
 ---
-title: 'Two Continuous Variable'
+title: 'Dos Variables Continuas'
 weight: 2
 output: html_document
 aliases: /two-continuous-variables/
 ---
 
-Visualising the relationship between two continuous variables is one of the most commonly used graphical techniques in the sciences. This page details how to produce simple scatterplots to display how one continuous variable is related to another.
+
+Visualizar la relación entre dos variables continuas es una de las técnicas gráficas más comúnmente utilizadas en las ciencias. Esta página detalla cómo producir diagramas de dispersión simples para mostrar cómo una variable continua está relacionada con otra.
+
 
 ![](Two_continuous_variables_image.jpg)
   
 
-For this worked example, download a data set on plant heights around the world, [Plant_height.csv](/datasets/Plant_height.csv), and import into R.
+Para este ejemplo práctico, descarga un conjunto de datos sobre las alturas de las plantas alrededor del mundo, [Plant_height.csv](/datasets/Plant_height.csv), e impórtalo en R.
 
 ```{r}
 Plant_height <- read.csv(file = "Plant_height.csv", header = TRUE)
 ```
   
 
-###Scatterplots###
- 
-To visualise how plant height varies with temperature, we can use a simple scatterplot, using the `plot` function. Place the Y variable on the left of the tilde (~) and the X variable on the right. The `data=Plant_height` argument tells R to look in the data frame Plant_height for those two variables.
+### Diagramas de dispersión ###
+
+Para visualizar cómo varía la altura de las plantas con relación a la temperatura, podemos usar un diagrama de dispersión simple, utilizando la función `plot`. Coloca la variable Y a la izquierda del símbolo tilde (~) y la variable X a la derecha. El argumento `data=Plant_height` le indica a R que busque esas dos variables en el data frame Plant_height.
+
 
 ```{r}
 plot(height ~ temp, data = Plant_height)
 ```
 
-If the two variables you would like to plot are in different objects in R, you would simply use:
+Si las dos variables que deseas visualizar están en diferentes objetos en R, simplemente usarías:
 
 ```{r, eval=F}
 plot(y ~ x)
 ```
 
-where *y* and *X* are two vectors of equal length. 
-  
 
-### Formatting plots
- 
-Scatterplots can be formatted using the basic R formatting in the graphics package. The code below details some of the more commonly used formatting commands for simple scatterplots. These commands can be used for any plotting function in the graphics package.
+donde *y* y *X* son dos vectores de igual longitud.
 
-**Add axis labels or titles**
-Axis labels are produced with the `xlab` and `ylab` arguments. Titles are provided with the `main` argument. Note that figures in scientific publications rarely have a title, but include information about the plot in a figure legend presented below the plot.
+### Formateo de gráficos
+
+Los gráficos de dispersión se pueden construir utilizando el formato básico de R en el paquete "graphics". El código a continuación detalla algunos de los comandos de formato más comúnmente utilizados para gráficos de dispersión simples. Estos comandos se pueden utilizar para cualquier función de visualización en el paquete "graphics".
+
+**Agregar etiquetas de ejes o títulos**
+
+Las etiquetas de ejes se generan con los argumentos `xlab` e `ylab`. Los títulos se proporcionan con el argumento `main`. Ten en cuenta que las figuras en publicaciones científicas rara vez tienen un título, pero incluyen información sobre el gráfico en una leyenda de la figura presentada debajo del gráfico.
+
 
 ```{r}
 plot(height ~ temp, data = Plant_height, xlab = "Temperature (°C)", ylab = "Plant height (m)", main = "Plant height vs temperature")
 ```
 
-**Edit axis limits**
-Axis limits are set by the `xlim` and `ylim` arguments, where a vector of the minimum and maximum limits is required. For example to set the Y axis to have a minimum of zero and a maximum of 80 m, and the x axis to range between -20 and 30, use:
+**Editar límites de ejes**
+
+Los límites de los ejes se establecen mediante los argumentos `xlim` e `ylim`, donde se requiere un vector de los límites mínimo y máximo. Por ejemplo, para establecer el eje Y con un mínimo de cero y un máximo de 80 m, y el eje X con un rango entre -20 y 30, utiliza:
+
 
 ```{r,eval=FALSE}
 plot(height ~ temp, data = Plant_height, xlab = "Temperature (°C)", ylab = "Plant height (m)", ylim = c(0, 80), xlim = c(-20, 30))
 ```
 
-**Symbol style**
-The choice of symbols to use in plotting is extensive and choices are accessed using the `pch` argument in the graphical parameters. Type `?pch` to see all the choices. 
+
+**Estilo de símbolos**
+
+La elección de los símbolos a utilizar en la visualización es amplia y las opciones se acceden mediante el argumento `pch` en los parámetros gráficos. Escribe `?pch` para ver todas las opciones.
 
 ![](pch.png)
 
-A solid circles `pch=16` or `pch=19` are often the neatest way to display data on a scatterplot.
+
+Los círculos sólidos `pch=16` o `pch=19` son a menudo la forma más clara de mostrar datos en un gráfico de dispersión.
+
 ```{r}
 plot(height ~ temp, data = Plant_height, xlab = "Temperature (°C)", ylab = "Plant height (m)", ylim = c(0, 80), pch = 16)
 ```
 
-**Adding colour**
- 
-Colour can be added to any part of the plots (axis, fonts etc.) using `col` argument. There are over 600 colours that can be plotted, type `colours()` for the whole range.
+**Agregar color**
 
-Here we will simply change the colour of the symbols to blue.
+El color se puede agregar a cualquier parte de los gráficos (ejes, fuentes, etc.) utilizando el argumento `col`. Hay más de 600 colores que se pueden representar, escribe `colours()` para ver todo el rango.
+
+Aquí simplemente cambiaremos el color de los símbolos a azul.
+
 ```{r}
 plot(height ~ temp, data = Plant_height, xlab = "Temperature (°C)", ylab = "Plant height (m)", pch = 16, col = "blue")
 ```
 
 
-**Adding a line of best fit**
- 
-To further explore the relationship between two variables you can add a line of best fit. For example, to add the line of best fit from a simple linear regression, we would use the linear modelling function, `lm`, to obtain the slope and intercept, and add this line to the scatterplot via the graphical parameter `abline`.
+**Agregando una línea de mejor ajuste**
 
-See the page on [linear regression](/statistics/linear-models/linear-regression/) for the analysis of tree height versus temperature for this data set. The dependent variable analysed was the log transformed data for tree height (loght). To plot this against temperature with the line of best fit from the linear model, we would use:
+Para explorar aún más la relación entre dos variables, puedes agregar una línea ajuste. Por ejemplo, para agregar la línea de ajuste de una regresión lineal simple, usaríamos la función de modelado lineal, `lm`, para obtener la pendiente e intersección, y agregar esta línea al diagrama de dispersión a través del parámetro gráfico `abline`.
+
+Consulta la página sobre [regresión lineal](/statistics/linear-models/linear-regression/) para el análisis de altura de árboles versus temperatura en este conjunto de datos. La variable dependiente analizada fue la transformación logarítmica de la altura de los árboles (loght). Para graficar esto en función de la temperatura con la línea de ajuste del modelo lineal, usaríamos:
+
 
 ```{r}
 plot(loght ~ temp, data = Plant_height, xlab = "Temperature (°C)", ylab = "log(Plant height)", pch = 16)
 abline(lm(loght ~ temp, data = Plant_height))
 ```
   
+### Más ayuda
 
-### Further help
- 
-Type `?plot` and `?abline` to get the R help for these functions. 
+Escribe `?plot` y `?abline` para obtener la ayuda de R sobre estas funciones.
 
-  
+**Autores**: Stephanie Brodie y Alistair Poore
 
-**Authors**: Stephanie Brodie & Alistair Poore
- 
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
-
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

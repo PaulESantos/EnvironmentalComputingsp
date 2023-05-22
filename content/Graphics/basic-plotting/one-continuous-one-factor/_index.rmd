@@ -1,45 +1,53 @@
 ---
-title: 'One Continuous and One Categorical Variable'
+title: 'Una Variable Continua y una Variable Categórica'
 weight: 3
 output: html_document
 aliases: /single-continuous-vs-categorical-variables/
 ---
 
-Visualising how a measured variable relates to other variables of interest is essential for data exploration and communicating the results of scientific research. This page details how to plot a single, continuous variable against levels of a categorical predictor variable. 
 
-These sorts of plots are very commonly used in the biological, earth and environmental sciences. For example, to view how a given variable differs between an experimental treatment and a control, or among sites and sampling times in environmental sampling. 
+Visualizar cómo una variable medida se relaciona con otras variables de interés es esencial para la exploración de datos y la comunicación de los resultados de la investigación científica. Esta página detalla cómo trazar una única variable continua frente a niveles de una variable predictora categórica.
+
+
+Este tipo de gráficos se utiliza comúnmente en las ciencias biológicas, de la Tierra y del medio ambiente. Por ejemplo, para ver cómo una variable dada difiere entre un tratamiento experimental y un control, o entre sitios y tiempos de muestreo en el muestreo ambiental.
+
 
 ![](Single_continuous_vs_categorical_variable_image.jpg)
 
-We will use sample data from an experiment that contrasted the metabolic rate of two species of prawns and introduce two commonly used types of plots for this purpose: boxplots and bar plots.
 
-Firstly, download the sample data file, [Prawns_MR.csv](/datasets/Prawns_MR.csv), and import into R.
+Utilizaremos datos de muestra de un experimento que contrastó la tasa metabólica de dos especies de camarones e introduciremos dos tipos de gráficos comúnmente utilizados para este propósito: **diagramas de caja** y **diagramas de barras**.
+
+En primer lugar, descarga el archivo de datos de muestra, [Prawns_MR.csv](/datasets/Prawns_MR.csv), e impórtalo en R.
+
 
 ```{r}
 Prawns <- read.csv(file = "Prawns_MR.csv")
 ```
   
 
-### Boxplots
- 
-Boxplots are easily made with the `boxplot` function. Boxplots show the distribution of a variable by indicating the median, quartiles, maximum and minimum of a variable. The top and bottom whiskers are the maximum and minimum values (excluding any outliers that are indicated by a circle). The thick black line is the median, with the boxes either side of the median line the lower and upper quartiles.
+### Diagramas de Caja
 
-To contrast metabolic rate across the two species, we would use:
+Los diagramas de caja se realizan fácilmente con la función `boxplot`. Los diagramas de caja muestran la distribución de una variable indicando la mediana, los cuartiles, el máximo y el mínimo de una variable. Los bigotes superior e inferior son los valores máximo y mínimo (excluyendo los valores atípicos que se indican con un círculo). La línea gruesa negra es la mediana, y las cajas a cada lado de la línea de mediana son los cuartiles inferiores y superiores.
+
+Para contrastar la tasa metabólica entre las dos especies, utilizaríamos:
+
 
 ```{r}
 boxplot(Metabolic_rate ~ Species, data = Prawns)
 ```
 
-The continuous variable is on the left of the tilde (~) and the categorical variable is on the right. Straight away you can see that species B has a higher metabolic rate than species A.
-  
 
-### Bar plots
- 
-These sorts of data are also commonly visualised with a bar plot that displays the means of the continuous variable for each level of the categorical variable, with error bars displaying some measures of variation within each category. The error bars could be the standard deviation, standard error or 95% confidence intervals.
 
-While commonly used, they are not so easy to create in the base functions in R. There are various ways to do this, but one is to use the `summarise` and `group_by` functions from the package [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) to calculate the means and measures of variation for each level of your categorical variable (see [Summarising data](/data-manipulation/summarising-data/)).
+La variable continua se encuentra a la izquierda del símbolo de tilde **(~)** y la variable categórica se encuentra a la derecha. De inmediato, puedes observar que la especie B tiene una tasa metabólica más alta que la especie A.
 
-Here is some sample code to plot means +/- standard deviations. For more control over error bars, we recommend using the more advanced plotting options in the package ggplot2 (see [bar plots with error bars](/graphics/ggplot/ggplot-barplot/)).
+### Gráficos de barras
+
+Este tipo de datos también se visualiza comúnmente mediante un gráfico de barras que muestra las medias de la variable continua para cada nivel de la variable categórica, con barras de error que muestran algunas medidas de variación dentro de cada categoría. Las barras de error pueden ser la desviación estándar, el error estándar o los intervalos de confianza del 95%.
+
+Aunque se utilizan comúnmente, no son tan fáciles de crear con las funciones básicas de R. Hay varias formas de hacerlo, pero una opción es utilizar las funciones `summarise` y `group_by` del paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) para calcular las medias y medidas de variación para cada nivel de tu variable categórica (consulta [Resumen de datos](/data-manipulation/summarising-data/)).
+
+Aquí tienes un código de ejemplo para visualizar las medias +/- desviaciones estándar. Para tener un mayor control sobre las barras de error, te recomendamos utilizar opciones de trazado más avanzadas en el paquete ggplot2 (consulta [gráficos de barras con barras de error](/graphics/ggplot/ggplot-barplot/)).
+
 
 ```{r,warning=F,message=F}
 library(dplyr)
@@ -54,9 +62,10 @@ Species.summary <- Prawns %>% # the names of the new data frame and the data fra
   )
 ```
 
-In a new data frame called Species.summary, we now have the means, standard deviations and the lower and upper values that set the size of the error bars for each level of the grouping variable. The  limits for the error bars were calculated by adding (upper) or subtracting (lower) the standard deviation from the mean.
+En un nuevo data frame llamado **Species.summary**, ahora tenemos las medias, desviaciones estándar y los valores inferiores y superiores que establecen el tamaño de las barras de error para cada nivel de la variable de agrupación. Los límites de las barras de error se calcularon sumando (superior) o restando (inferior) la desviación estándar a la media.
 
-We can now use the `barplot` and `arrows` functions to make a plot with error bars.
+Ahora podemos utilizar las funciones `barplot` y `arrows` para crear un gráfico con barras de error.
+
 
 ```{r}
 Prawn.plot <- barplot(Species.summary$mean,
@@ -67,22 +76,26 @@ Prawn.plot <- barplot(Species.summary$mean,
 arrows(Prawn.plot, Species.summary$lower, Prawn.plot, Species.summary$upper, angle = 90, code = 3)
 ```
 
-Note that plots of means and error bars can be misleading as they hide the true distributions of the data. Means can also be misleading when data are very skewed, and calculations for error bars using *t* statistics (e.g., 95% confidence intervals) assume the data are normally distributed. 
-  
 
-### Formatting plots
- 
-Box plots and bar plots can be formatted using the basic R formatting in the base graphics package. The code below details some of the more commonly used formatting commands for these plots. These commands can be used for any plotting function in the graphics package.
+Ten en cuenta que los gráficos de medias y barras de error pueden ser engañosos, ya que ocultan las distribuciones reales de los datos. Las medias también pueden ser engañosas cuando los datos están muy sesgados y los cálculos para las barras de error utilizando estadísticas *t* (por ejemplo, intervalos de confianza del 95%) asumen que los datos están distribuidos de manera normal.
 
-**Add axis labels or titles**  
-Axis labels are produced with the `xlab` and `ylab` arguments. Titles are provided with the `main` argument. Note that figures in scientific publications rarely have a title, but include information about the plot in a figure legend presented below the plot.
+### Formateo de gráficos
+
+Los diagramas de caja (box plots) y los gráficos de barras se pueden formatear utilizando el formato básico de R en el paquete de gráficos base. El siguiente código detalla algunos de los comandos de formato más utilizados para estos gráficos. Estos comandos se pueden utilizar para cualquier función de visualización en el paquete de `graphics`.
+
+**Agregar etiquetas de ejes o títulos**
+
+Las etiquetas de los ejes se agregan con los argumentos `xlab` y `ylab`. Los títulos se proporcionan con el argumento `main`. Ten en cuenta que las figuras en publicaciones científicas rara vez tienen un título, pero incluyen información sobre el gráfico en una leyenda:
+
 
 ```{r,eval=FALSE}
 boxplot(Metabolic_rate ~ Species, data = Prawns, xlab = "Species", ylab = "Metabolic rate")
 ```
 
-**Edit axis limits**  
-Axis limits are set by the <font face="monospace">xlim</font> and <font face="monospace">ylim</font> arguments, where a vector of the minimum and maximum limits is required. For example to set the Y axis to have a minimum of zero and a maximum of 1, use:
+
+**Editar límites de los ejes**  
+Los límites de los ejes se establecen mediante los argumentos <font face="monospace">xlim</font> y <font face="monospace">ylim</font>, donde se requiere un vector con los límites mínimos y máximos. Por ejemplo, para establecer el **eje Y** con un mínimo de cero y un máximo de 1, utiliza:
+
 
 ```{r,eval=FALSE}
 boxplot(Metabolic_rate ~ Species,
@@ -91,9 +104,9 @@ boxplot(Metabolic_rate ~ Species,
 )
 ```
 
-**Renaming levels of the categorical factor**  
-If the levels of your categorical factor are not ideal for the plot, you can rename those with the 
-`names` argument. For example, to put the actual species names on:
+
+**Renombrar niveles del factor categórico**  
+Si los niveles de una variable categórico no son ideales para el gráfico, se puede modificar los nombres utilizando el argumento `names`. Por ejemplo, para poner los nombres reales de las especies:
 
 ```{r}
 boxplot(Metabolic_rate ~ Species,
@@ -102,10 +115,13 @@ boxplot(Metabolic_rate ~ Species,
 )
 ```
 
-**Adding colour** 
-Colour can be added to any part of the plots (axis, fonts etc.) using `col` argument. There are over 600 colours that can be plotted, type `colours()` for the whole range.
 
-Here we will simply change the colour of the bars in the bar plot to red.
+**Agregar color**  
+Se puede agregar color a cualquier parte del gráfico (ejes, fuentes, etc.) utilizando el argumento `col`. Hay más de 600 colores disponibles, puedes escribir `colours()` para ver toda la lista de colores disponibles.
+
+Aquí simplemente cambiaremos el color de las barras en el gráfico de barras a rojo.
+
+
 ```{r}
 barplot(Species.summary$mean,
   names.arg = Species.summary$Species,
@@ -114,15 +130,14 @@ barplot(Species.summary$mean,
 ```
   
 
-### Further help
- 
-Type `?boxplot` and `?barplot` to get the R help for these functions. 
-  
+### Más ayuda
 
-**Authors**: Stephanie Brodie & Alistair Poore
- 
-**Year:** 2016
+Escribe `?boxplot` y `?barplot` para obtener la ayuda de R sobre estas funciones.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autores**: Stephanie Brodie y Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 
 
