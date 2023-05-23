@@ -1,5 +1,5 @@
 ---
-title: 'Customising your ggplot'
+title: 'Personalización de un gráfico en ggplot'
 weight: 2
 output: html_document
 aliases: /plotting-with-ggplot-altering-the-overall-appearance/
@@ -54,30 +54,34 @@ print(
 ```
 
 
-**ggplots** are almost entirely customisable. This gives you the freedom to create a plot design that perfectly matches your report, essay or paper. 
+Los resultados de **ggplots** son casi completamente personalizables. Esto te brinda la libertad de crear un diseño de gráfico que se ajuste perfectamente a tu informe, ensayo o artículo.
 
-The overall appearance can be edited by changing the style or prescence of grid lines, axis notches, panel colour, legend colour or outlines.
+El aspecto general se puede editar cambiando el estilo o la presencia de líneas de cuadrícula, marcas de los ejes, color del panel, color de la leyenda o contornos.
 
-Before you get started, read the page on the [basics](/graphics/ggplot/ggplot-basics/) of plotting with ggplot and install the package ggplot2.
+Antes de comenzar, lee la página sobre los [Conceptos básicos](/graphics/ggplot/ggplot-basics/) para la construcción de gráficos con ggplot e instala el paquete ggplot2.
+
 
 ```{r}
 library(ggplot2)
 ```
   
 
-### Creating a customised theme
+### Creación de un tema personalizado
  
-One of the most effective ways to customise your plot is to create a customised theme and separate this from your basic ggplot code. By separating and saving your theme, it will be much easier to edit, alter and reuse for other projects.  
+Una de las formas más efectivas de personalizar tu gráfico es crear un tema personalizado y separarlo de tu código básico de ggplot. Al separar y guardar tu tema, será mucho más fácil editarlo, modificarlo y reutilizarlo para otros proyectos.
+
 
 ![](ggplot1_basics_image.jpg)
 
-In these examples, let's use a data set that is already in R with the length and width of floral parts for three species of iris. First, load the data set:
+En estos ejemplos, vamos a utilizar un conjunto de datos que ya está en R, el cual incluye la longitud y el ancho de partes florales para tres especies de iris. Primero, carga el conjunto de datos:
 
 ```{r}
 data(iris)
 ```
 
-The following code for a scatter plot of petal length vs sepal length with the three species colour-coded is the base that we will use throughout this tutorial.
+
+El siguiente código para un gráfico de dispersión de longitud del pétalo vs longitud del sépalo con las tres especies codificadas por color es la base que utilizaremos en todo este tutorial.
+
 
 ```{r, echo=TRUE}
 IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
@@ -88,37 +92,40 @@ IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
 print(IrisPlot)
 ```
 
-To change the design of an element of your plot, you create a theme then print the plot with the theme applied. For example, some code to change the colour and size of the legend in the above plot would look like this.
+
+Para cambiar el diseño de un elemento de tu gráfico, debes crear un tema y luego imprimir el gráfico con el tema aplicado. Por ejemplo, el código para cambiar el color y el tamaño de la leyenda en el gráfico anterior se vería así:
+
 
 ```{r}
 mytheme <-
   theme(legend.title = element_text(colour = "steelblue", size = rel(2)))
 ```
 
-We would then reprint the base plot with this theme added:
+Luego volveríamos a imprimir el gráfico base con este tema agregado:
 
 ```{r}
 print(IrisPlot + mytheme)
 ```
 
-Themes can have many different elements, that relate to legends, axes, titles etc. Separate each within the `theme` code with a comma. 
-  
 
-### Formatting the plot and legend background
- 
-The plot and legend background can be changed to any colour listed [here](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) using the following code:
+Los temas pueden tener muchos elementos diferentes relacionados con leyendas, ejes, títulos, etc. Separa cada elemento dentro del código `theme` con una coma.
 
-* `panel.background = element_rect(your format)` will alter the panel behind the graph.  
-* `legend.key = element_rect(your format)` alters the boxes next to each category name.  
-* `legend.background = element_rect(your format)` will alter the box around the legend names and boxes.  
+### Fondo del gráfico y de la leyenda
 
-For each of these, the formats you can alter are:  
+El fondo del gráfico y de la leyenda se puede cambiar a cualquier color de los enumerados [aquí](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) utilizando el siguiente código:
 
-* `fill = "colour"` to colour the panel behind the plot.  
-* `colour = "colour"` will alter the axis outline of the graph.  
-* `size = (number)` will alter the thickness of this outline.  
+* `panel.background = element_rect()` modificará el panel detrás del gráfico.
+* `legend.key = element_rect()` modificará las cajas junto a cada nombre de categoría.
+* `legend.background = element_rect()` modificará la caja alrededor de los nombres y cajas de la leyenda.
 
-To demonstrate how this works, here is a ugly theme with obvious colours chosen to demonstrate the differences: 
+Para cada uno de estos elementos, los formatos que puedes modificar son:
+
+* `fill = "color"` para colorear el panel detrás del gráfico.
+* `colour = "color"` modificará el contorno de los ejes del gráfico.
+* `size = 6` modificará el grosor de este contorno.
+
+Para demostrar cómo funciona, aquí hay un tema feo con colores obvios elegidos para mostrar las diferencias:
+
 
 ```{r}
 
@@ -138,19 +145,19 @@ print(IrisPlot + mytheme)
 ```
   
 
-### Altering the size, colour or presence of grid lines
- 
-The grid lines are divided into two sets of grid lines; major and minor. This allows you to accentuate or remove half the grid lines.  
-* `panel.grid.major = element_line(your format)` - alters the format of major grid lines.  
-* `panel.grid.minor = element_line(your format)` - alters the format of minor grid lines.  
+### Modificar el tamaño, color o presencia de las líneas de cuadrícula
 
-where `(your format)` specifies the colour and thickness of the lines. 
+Las líneas de cuadrícula se dividen en dos conjuntos: las líneas de cuadrícula mayores y menores. Esto te permite acentuar o eliminar la mitad de las líneas de cuadrícula.
+* `panel.grid.major = element_line()` - modifica el formato de las líneas de cuadrícula mayores.
+* `panel.grid.minor = element_line()` - modifica el formato de las líneas de cuadrícula menores.
 
-Formats include:  
-* Colour. For example, `colour = "steelblue2"` - remember to include "" before and after the colour name.  
-* Size. Specified by entering a number, for example, `size = (3)`.  
+donde `()` se usa para especificar el color y el grosor de las líneas.
 
-Putting these together in a theme would look like this:
+Los formatos incluyen:
+* Color. Por ejemplo, `colour = "steelblue2"` - recuerda incluir "" antes y después del nombre del color.
+* Tamaño. Se especifica ingresando un número, por ejemplo, `size = 3`.
+
+Al combinar todo esto en un tema, se vería así:
 
 ```{r}
 mytheme <-
@@ -165,8 +172,8 @@ mytheme <-
 print(IrisPlot + mytheme)
 ```
 
+Para remover las líneas de cuadrícula, puedes usar `element_blank()`
 
-To remove the grid lines, use the `element_blank()`.
 ```{r}
 mytheme <- theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
 
@@ -174,9 +181,10 @@ print(IrisPlot + mytheme)
 ```
   
 
-### Altering the x and y axis lines 
- 
-The size and colour of axis lines themselves can be customised in the same way as the grid lines (above), using `axis.line=element_line(your format)`. For example:
+### Modificación de las líneas de los ejes x e y
+
+El tamaño y el color de las líneas de los ejes se pueden personalizar de la misma manera que las líneas de la cuadrícula (arriba), utilizando `axis.line = element_line()`. Por ejemplo:
+
 
 ```{r}
 mytheme <-
@@ -189,9 +197,10 @@ print(IrisPlot + mytheme)
 ```
   
 
-### Altering the axis ticks/notches
- 
-The size and colour of the ticks can be altered using `axis.ticks = element_line(your format)`. For example:
+### Modificación de las marcas de los ejes
+
+El tamaño y el color de las marcas de los ejes se pueden alterar utilizando `axis.ticks = element_line( )`. Por ejemplo:
+
 
 ```{r}
 mytheme <- theme(axis.ticks = element_line(colour = "red", size = (2)))
@@ -200,9 +209,10 @@ print(IrisPlot + mytheme)
 ```
   
 
-### Removing any element of a theme
- 
-`= element_blank()` is used if you wish to entirely remove an element of the formatting. For example, to get rid of ticks, grid lines and the background, you would use:
+### Eliminación de cualquier elemento de un tema
+
+Se utiliza `= element_blank()` si deseas eliminar completamente un elemento del formato. Por ejemplo, para eliminar las marcas, las líneas de la cuadrícula y el fondo, utilizarías:
+
 
 ```{r}
 mytheme <-
@@ -217,9 +227,10 @@ print(IrisPlot + mytheme)
 ```
   
 
-### Example of a fully customised ggplot
- 
-Here is an example of a ggplot with many of the elements customised. This is obviously a lot of code, but remember that you can save and reuse your favorite theme as often as you like. See the page on [adding titles and axis names](/graphics/ggplot/ggplot-labels/) for help with those parts of the `print()` code.
+### Ejemplo de un ggplot completamente personalizado
+
+Aquí tienes un ejemplo de un ggplot con muchos elementos personalizados. Obviamente, es mucho código, pero recuerda que puedes guardar y reutilizar tu tema favorito tantas veces como quieras. Consulta la página sobre [Agregar títulos y nombres de ejes](/graphics/ggplot/ggplot-labels/) para obtener ayuda con esas partes del código `print()`.
+
 
 ```{r, warning =F}
 IrisPlot <-
@@ -279,22 +290,20 @@ print(
 ```
   
 
+### Más ayuda
 
-###Further help
- 
-To further customise the aesthetics of the graph, including colour and formatting, see our other ggplot help pages:  
-* [adding titles and axis names](/graphics/ggplot/ggplot-labels/)  
-* [colours and symbols](/graphics/ggplot/ggplot-colour-shapes/).   
+Para personalizar aún más la estética del gráfico, incluyendo el color y el formato, consulta nuestras otras páginas de ayuda de ggplot:
+* [Agregar títulos y nombres de ejes](/graphics/ggplot/ggplot-labels/)
+* [Colores y símbolos](/graphics/ggplot/ggplot-colour-shapes/).
 
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
+Puedes encontrar ayuda sobre todas las funciones de ggplot en [el sitio de ayuda principal de ggplot](https://ggplot2.tidyverse.org).
 
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+Puedes descargar una hoja de referencia útil sobre las funciones más utilizadas [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with quite a bit of help online [here](http://www.cookbook-r.com/Graphs/)</p>
-  
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía sobre ggplot con bastante ayuda en línea [aquí](http://www.cookbook-r.com/Graphs/)</p>
 
-**Author**: Fiona Robinson
- 
-**Year:** 2016
+**Autor**: Fiona Robinson
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

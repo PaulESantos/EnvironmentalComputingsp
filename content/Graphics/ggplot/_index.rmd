@@ -1,5 +1,5 @@
 ---
-title: 'Plotting in R with ggplot2'
+title: 'Gráficos en R con ggplot2'
 weight: 1
 output: html_document
 aliases: /plotting-with-ggplot/
@@ -14,26 +14,25 @@ print(g1 + labs(y = "Petal length (cm)", x = "Sepal length (cm)"))
 ```
  
 
-[ggplot2](https://ggplot2.tidyverse.org) is a powerful graphing package in R that can be used to create professional looking plot for reports, essays or papers. It can create a variety of plots including boxplots, scatterpots and histograms and they can be highly customised to suit your data. 
+[ggplot2](https://ggplot2.tidyverse.org) es un paquete poderoso para la producción de gráficos en R que se puede utilizar para crear gráficos de aspecto profesional para informes, ensayos o trabajos académicos. Puede crear una variedad de gráficos, incluyendo diagramas de caja, gráficos de dispersión e histogramas, y se pueden personalizar ampliamente para adaptarse a tus datos.
 
-The package is named after a book called [The Grammar of Graphics](https://books.google.com.au/books/about/The_Grammar_of_Graphics.html?id=ZiwLCAAAQBAJ&source=kp_cover&hl=en) about how to effectively communicate data graphically. 
-  
+El paquete lleva el nombre de un libro llamado [The Grammar of Graphics](https://books.google.com.au/books/about/The_Grammar_of_Graphics.html?id=ZiwLCAAAQBAJ&source=kp_cover&hl=en)  que introduce un enfoque sistemático y estructurado para crear gráficos estadísticos.
+
+Comienza con los [Conceptos básicos](/graphics/ggplot/ggplot-basics) para aprender la sintaxis básica de cómo crear un gráfico.
+
+Luego, visita nuestras otras páginas para personalizar aún más la estética del gráfico, incluyendo el color y el formato:
+* [Modificar la apariencia general](/graphics/ggplot/ggplot-appearance/)
+* [Agregar títulos y nombres de ejes](/graphics/ggplot/ggplot-labels/)
+* [Colores y símbolos](/graphics/ggplot/ggplot-colour-shapes/).
+
+Puedes encontrar ayuda sobre todas las funciones de ggplot en el [Sitio principal de ayuda de ggplot](https://ggplot2.tidyverse.org).
+
+Una hoja de referencia útil sobre las funciones más utilizadas se puede descargar [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía sobre ggplot con bastante ayuda en línea [aquí](http://www.cookbook-r.com/Graphs/)</p>
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`
 
 
-Start with the [basics](/graphics/ggplot/ggplot-basics) to learn the basic syntax of making a graph
-
-Then, visit our other pages to further customise the aesthetics of the graph, including colour and formatting:  
-* [altering the overall appearance](/graphics/ggplot/ggplot-appearance/)  
-* [adding titles and axis names](/graphics/ggplot/ggplot-labels/)  
-* [colours and symbols](/graphics/ggplot/ggplot-colour-shapes/).   
-
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
-
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
-
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with quite a bit of help online [here](http://www.cookbook-r.com/Graphs/)</p>
-  
-
-**Year:** 2016
-
-**Last updated:** `r format(Sys.time(), "%b %Y")`
