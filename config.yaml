@@ -1,6 +1,6 @@
-baseURL: https://environmentalcomputing.net/
+baseURL: 
 languageCode: en-US
-defaultContentLanguage: en
+defaultContentLanguage: sp
 title: Environmental Computing
 theme: hugo-theme-learn
 metaDataFormat: yaml
@@ -15,7 +15,7 @@ params:
   disableLandingPageButton: yes
   disableMermaid: no
   disableNextPrev: no
-  editURL: https://github.com/nicercode/EnvironmentalComputing/edit/master/content/
+  editURL: https://github.com/PaulESantos/EnvironmentalComputingsp/edit/master/content/
   showVisitedLinks: yes
   titleSeparator: '::'
   themeVariant: 'green'
