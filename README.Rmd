@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Welcome to \n Environmental Computing `r emo::ji("wave")`
+# Bienvenido a \n Environmental Computing `r emo::ji("wave")`
 
  <img src="static/images/hexsticker_EC.png" align="right" alt="" width="150" />
 

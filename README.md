@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Welcome to Environmental Computing 👋
+# Bienvenido a Environmental Computing 👋
 
 <img src="static/images/hexsticker_EC.png" align="right" alt="" width="150" />
 
