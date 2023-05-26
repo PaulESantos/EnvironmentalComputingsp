@@ -1,11 +1,13 @@
 ---
-title: 'Colours and Shapes'
+title: 'Colores y formas'
 weight: 4
 output: html_document
 aliases: /plotting-with-ggplot-colours-and-symbols/
 ---
 
-Before you get started, read the page on the [basics](/graphics/ggplot/ggplot-basics/) of plotting with ggplot and install the package ggplot2.
+
+Antes de comenzar, lee la página sobre los [conceptos básicos](/graphics/ggplot/ggplot-basics/) de visualización con ggplot e instala el paquete ggplot2.
+
 
 ```{r,warning=F}
 library(ggplot2)
@@ -14,16 +16,18 @@ library(ggplot2)
 
 ![](ggplot1_basics_image.jpg)
 
-In these examples, let's use a data set that is already in R with the length and width of floral parts for three species of iris. First, load the data set:
+En estos ejemplos, utilizaremos un conjunto de datos que ya está en R con la longitud y el ancho de partes florales de tres especies de `iris`. Primero, carga el conjunto de datos:
+
 
 ```{r}
 data(iris)
 ```
 
-The following plots will be used as the base code throughout of this tutorial  
-* a scatter plot of petal length vs sepal length  
-* a box plot of sepal length vs species  
-* a frequency histogram of sepal length  
+Los siguientes gráficos se utilizarán como código base a lo largo de este tutorial:  
+* Un gráfico de dispersión de longitud de pétalo vs. longitud de sépalo  
+* Un diagrama de caja de longitud de sépalo vs. especies  
+* Un histograma de frecuencia de longitud de sépalo  
+
 
 ```{r, echo=TRUE, message=F, warning=F}
 IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length)) +
@@ -41,14 +45,13 @@ library(gridExtra)
 grid.arrange(IrisPlot, IrisBox, IrisHist, ncol = 2)
 ```
   
+### Cambiar el color de todo el gráfico o de su contorno
 
-### Changing the colour of the whole plot or its outline
- 
-To colour your entire plot one colour, add `fill = "colour"` or `colour = "colour"` into the brackets following the `geom_...` code where you specified what type of graph you want. 
+Para colorear todo tu gráfico de un solo color, agrega `fill = "color"` o `colour = "color"` dentro de los corchetes siguientes al código `geom_...` donde especificaste qué tipo de gráfico quieres.
 
-Note that for most plots, `fill = "colour"` will colour the whole shape, whereas `colour = "colour"` will fill in the outline.
+Ten en cuenta que para la mayoría de los gráficos, `fill = "color"` coloreará toda la forma, mientras que `colour = "color"` coloreará el contorno.
 
-For example, to make a blue box plot with a red outline, or a yellow histogram with an green outline::
+Por ejemplo, para hacer un diagrama de caja azul con un contorno rojo, o un histograma amarillo con un contorno verde:
 
 ```{r}
 IrisBox <- ggplot(iris, aes(Species, Sepal.Length)) +
@@ -62,7 +65,8 @@ IrisHist <- ggplot(iris, aes(Sepal.Length)) +
 grid.arrange(IrisBox, IrisHist, ncol = 2)
 ```
 
-For scatterplots, `colour = "colour"` will specify the fill colour for the point shape. 
+Para gráficos de dispersión, `colour = "color"` especificará el color de relleno para la forma del punto.
+
 
 ```{r}
 IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
@@ -73,14 +77,15 @@ IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
 print(IrisPlot)
 ```
 
-The plots and outlines can be changed to any colour listed [here](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf). Remember to include "" before and after the colour name. 
+La paleta básica de colores puede ser revisada [aquí](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf). Recuerda incluir "" antes y después del nombre del color. 
   
 
-### Using colour to visualise additional variables
+### Usar el color para visualizar variables adicionales
  
-**Additional categorical variables**
+**Variables categóricas adicionales**
 
-If you wish to colour point on a **scatter plot** by a third categorical variable, then add `colour = variable.name` within your `aes` brackets. This tells ggplot that this third variable will colour the points. To colour the points by the variable Species:
+Si deseas colorear los puntos de un **gráfico de dispersión** según una tercera variable categórica, agrega `colour = nombre_variable` como argumento dela función `aes`. Esto le indica a ggplot que esta tercera variable coloreará los puntos. Para colorear los puntos según la variable `Species`:
+
 
 ```{r}
 IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length, colour = Species)) +
@@ -91,7 +96,9 @@ IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length, colour = Species)) +
 print(IrisPlot)
 ```
 
-To colour **box plots** or **bar plots** by a given categorical variable, you use you use `fill = variable.name` instead of `colour`.
+
+Para colorear el **diagramas de caja** o el **gráficos de barras** según una variable categórica dada, utiliza `fill = nombre_variable` en lugar de `colour`.
+
 
 ```{r}
 IrisBox <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
@@ -103,9 +110,10 @@ print(IrisBox)
 ```
   
 
-**Additional continuous variables**
+**Variables continuas adicionales**
 
-The basic format for colouring a continuous variable is very similar to a categorical variable. The only real difference is you need to use `+ scale_colour_gradient(low = "colour1", high = "colour2")`. The other colour scales will not work as they are for categorical variables. For example, here is a plot of sepal length vs petal length, with the symbols colored by their value of sepal width.
+El formato básico para colorear una variable continua es muy similar al de una variable categórica. La única diferencia real es que debes usar `+ scale_colour_gradient(low = "color1", high = "color2")`. Las otras escalas de color no funcionarán, ya que son para variables categóricas. Por ejemplo, aquí tienes un gráfico de longitud del sépalo vs. longitud del pétalo, con los símbolos coloreados según su valor de ancho del sépalo.
+
 
 ```{r}
 IrisPlot.continuous <- ggplot(iris, aes(Petal.Length, Sepal.Length, colour = Sepal.Width)) +
@@ -114,7 +122,8 @@ IrisPlot.continuous <- ggplot(iris, aes(Petal.Length, Sepal.Length, colour = Sep
 print(IrisPlot.continuous)
 ```
 
-To make the gradient more effective, specify two colours within the `+ scale_colour_gradient` brackets to represent either end of the gradient. For example: 
+Para hacer el degradado más efectivo, especifica dos colores dentro de los corchetes `+ scale_colour_gradient` que representen los extremos del degradado. Por ejemplo:
+
 
 ```{r}
 print(IrisPlot.continuous + scale_colour_gradient(low = "black", high = "white"))
@@ -122,16 +131,16 @@ print(IrisPlot.continuous + scale_colour_gradient(low = "black", high = "white")
 print(IrisPlot.continuous + scale_colour_gradient(low = "darkolivegreen1", high = "darkolivegreen"))
 ```
   
-
-### Choosing your own colours for these variables
+### Elección de tus propios colores para estas variables
  
-This can be done in numerous ways. The basic format is to add `+ scale_colour_yourchoice()` for scatter plots or `+ scale_fill_yourchoice()` for box plots to the code where you 'print' your graph, where `yourchoice()` is one of several options. The syntax is:
+Esto se puede hacer de varias formas. El formato básico consiste en agregar `+ scale_colour_...()` para gráficos de dispersión o `+ scale_fill_...()` para diagramas de cajas al código donde "imprimes" tu gráfico, donde `...()` es una de varias opciones. La sintaxis es:
 
-`print(your.basic.graph + your.theme + scale_colour_yourchoice())`
+`print(tu.grafico.basico + scale_colour_...())`
 
-There are numerous options for the `+ scale_colour_yourchoice()` part.
+Hay varias opciones para la parte `+ scale_colour_...()`.
 
-**Individually select colours.**  To manually choose colours, you can use `+ scale_colour_manual()` or `+ scale_fill_manual()`. For example, to choose three colours for the iris plots:
+**Selección individual de colores.** Para elegir colores manualmente, puedes usar `+ scale_colour_manual()` o `+ scale_fill_manual()`. Por ejemplo, para elegir tres colores para los gráficos de iris:
+
 
 ```{r} 
 print(IrisPlot + scale_colour_manual(values = c("Blue", "Red", "Green")))
@@ -139,8 +148,7 @@ print(IrisPlot + scale_colour_manual(values = c("Blue", "Red", "Green")))
 print(IrisBox + scale_fill_manual(values = c("Black", "Orange", "Brown")))
 ```
 
-
-**Assign tones on a greyscale.** Use `+ scale_colour_grey()` or `+ scale_fill_grey()` 
+**Asignar tonos en una escala de grises.** Utiliza `+ scale_colour_grey()` o `+ scale_fill_grey()`
 
 ```{r}
 print(IrisPlot + scale_colour_grey())
@@ -148,7 +156,9 @@ print(IrisPlot + scale_colour_grey())
 print(IrisBox + scale_fill_grey())
 ```
 
-**Assign colours from a pre-made pallette.** Use `+ scale_colour_brewer()` or `+ scale_fill_brewer`. To do this you will need to install the package [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) and load in R.
+
+**Asignación de colores desde una paleta predefinida.** Utiliza `+ scale_colour_brewer()` o `+ scale_fill_brewer()`. Para hacer esto, deberás instalar el paquete [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) y cargarlo en R.
+
 
 ```{r, echo= TRUE, warning=F}
 library(RColorBrewer)
@@ -156,7 +166,9 @@ library(RColorBrewer)
 
 ![](RColourBrewer_palette.png)
 
-This can then be added to the end of your graph code just like the others `+ scale_colour_brewer(palette = "chosen.palette")` for scatterplots and `+ scale_fill_brewer(palette = "chosen.palette")` for boxplots, where `"chosen.pallete"` is one of the available palletes. For example,
+
+Esto se puede agregar al final del código de tu gráfico, al igual que los otros `+ scale_colour_brewer(palette = "nombre_de_la_paleta")` para gráficos de dispersión y `+ scale_fill_brewer(palette = "nombre_de_la_paleta")` para diagramas de caja, donde `"nombre_de_la_paleta"` es una de las paletas disponibles. Por ejemplo,
+
 
 ```{r}
 print(IrisPlot + scale_colour_brewer(palette = "Dark2"))
@@ -164,14 +176,15 @@ print(IrisPlot + scale_colour_brewer(palette = "Dark2"))
 print(IrisBox + scale_fill_brewer(palette = "Oranges"))
 ```
   
+### Cambiar símbolos en un gráfico de dispersión
 
-### Changing symbols in a scatterplot
- 
-In a simple scatterplot with no grouping variables, you can change the shape of the symbol by adding `shape = ?` to the `geom_point()` code, where ? is one of the following numbers for different shapes.
+En un gráfico de dispersión simple sin variables de agrupamiento, puedes cambiar la forma del símbolo agregando `shape = ?` al código de `geom_point()`, donde `?` es uno de los siguientes números para diferentes formas.
+
 
 ![](pch.png)
 
-For example, to use a filled triangle,
+
+Por ejemplo, para usar un triángulo relleno,
 
 ```{r}
 IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
@@ -182,9 +195,10 @@ IrisPlot <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
 print(IrisPlot)
 ```
 
-Different symbols can be used to group data in a scatterplot. This can be very helpful when printing in black and white or to further distinguish your categories. 
+Se pueden usar diferentes símbolos para agrupar datos en un gráfico de dispersión. Esto puede ser muy útil al imprimir en blanco y negro o para distinguir aún más tus categorías.
 
-To do this, you need to add  `shape = variable.name` within your basic plot `aes` brackets, where `variable.name` is the name of your grouping variable. For example, to have different symbols for each species, we would use.
+Para hacer esto, debes agregar `shape = nombre_variable` dentro de los corchetes de `aes` de tu gráfico básico, donde `nombre_variable` es el nombre de tu variable de agrupamiento. Por ejemplo, para tener diferentes símbolos para cada especie, usaríamos.
+
 
 ```{r}
 IrisPlot.shape <- ggplot(iris, aes(Petal.Length, Sepal.Length, shape = Species)) +
@@ -195,13 +209,14 @@ IrisPlot.shape <- ggplot(iris, aes(Petal.Length, Sepal.Length, shape = Species))
 print(IrisPlot.shape)
 ```
 
-To set the symbols manually, we can use the symbol codes in `scale_shape_manual()` added to your print function.
+Para establecer los símbolos manualmente, podemos utilizar los códigos de símbolo en `scale_shape_manual()` agregados a tu función de impresión.
+
 
 ```{r}
 print(IrisPlot.shape + scale_shape_manual(values = c(0, 16, 3)))
 ```
 
-This can be used with colour to further distinguish and group your variables. 
+Esto se puede usar junto con el color para distinguir y agrupar aún más tus variables.
 
 ```{r}
 IrisPlot.shape <- ggplot(iris, aes(Petal.Length, Sepal.Length, shape = Species, colour = Species)) +
@@ -211,21 +226,20 @@ print(IrisPlot.shape + scale_shape_manual(values = c(0, 16, 3)) + scale_colour_m
 ```
   
 
-###Further help
- 
-To further customise the aesthetics of the graph, including colour and formatting, see our other ggplot help pages:  
-*[altering overall appearance](/graphics/ggplot/ggplot-appearance/).  
-*[adding titles and axis names](/graphics/ggplot/ggplot-labels/)  
-   
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
+### Más ayuda
 
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+Para personalizar aún más la estética del gráfico, incluyendo el color y el formato, consulta nuestras otras páginas de ayuda de ggplot:
+* [Modificando la apariencia general](/graphics/ggplot/ggplot-appearance/).
+* [Agregando títulos y nombres de ejes](/graphics/ggplot/ggplot-labels/).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with quite a bit of help online [here](http://www.cookbook-r.com/Graphs/)</p>
-  
+Puedes encontrar ayuda sobre todas las funciones de ggplot en el [sitio principal de ayuda de ggplot](https://ggplot2.tidyverse.org).
 
-**Author**: Fiona Robinson
- 
-**Year:** 2016
+Puedes descargar una hoja de ayuda útil con funciones comúnmente utilizadas [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía sobre ggplot con bastante ayuda en línea [aquí](http://www.cookbook-r.com/Graphs/)</p>
+
+**Autor**: Fiona Robinson
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

@@ -1,15 +1,17 @@
 ---
-title: 'Titles and Axes Labels'
+title: 'Títulos y etiquetas de ejes'
 weight: 3
 output: html_document
 aliases: /plotting-with-ggplot-adding-titles-and-axis-names/
 ---
 
-**ggplots** are almost entirely customisable. This gives you the freedom to create a plot design that perfectly matches your report, essay or paper. 
 
-This page provides help for adding titles, legends and axis labels.
+Las gráficas de **ggplot** son casi completamente personalizables. Esto te brinda la libertad de crear un diseño de gráfico que se ajuste perfectamente a tu informe, ensayo o artículo.
 
-Before you get started, read the page on the [basics](/graphics/ggplot/ggplot-basics/) of plotting with ggplot and install the package ggplot2.
+Esta página proporciona ayuda para agregar títulos, leyendas y etiquetas de ejes.
+
+Antes de comenzar, lee la página sobre los [conceptos básicos](/graphics/ggplot/ggplot-basics/) de visualización con ggplot e instala el paquete ggplot2.
+
 
 ```{r,warning=F}
 library(ggplot2)
@@ -18,13 +20,14 @@ library(ggplot2)
 
 ![](ggplot1_basics_image.jpg)
 
-In these examples, let's use a data set that is already in R with the length and width of floral parts for three species of iris. First, load the data set:
+En estos ejemplos, vamos a utilizar un conjunto de datos que ya está en R con la longitud y el ancho de las partes florales de tres especies de iris. Primero, carga el conjunto de datos:
+
 
 ```{r}
 data(iris)
 ```
 
-The following code for a scatter plot of petal length vs sepal length with the three species colour-coded is the base that we will use throughout this tutorial:
+El siguiente código para un gráfico de dispersión de longitud del pétalo vs. longitud del sépalo, con las tres especies codificadas por colores, es la base que utilizaremos en este tutorial:
 
 ```{r, echo=TRUE}
 IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
@@ -35,33 +38,34 @@ IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
 print(IrisPlot)
 ```
   
+### Agregar un título
 
-### Adding a title
- 
-To add a title to your plot, add the code `+ggtitle("Your Title Here")` to your line of basic ggplot code. Ensure you have quotation marks at the start and end of your title. 
+Para agregar un título a tu gráfico, añade el código `+ggtitle("Tu título aquí")` a tu línea de código básico de ggplot. Asegúrate de utilizar comillas al inicio y al final de tu título.
 
 ```{r echo=TRUE}
 print(IrisPlot + ggtitle("Petal and sepal length of iris"))
 ```
 
-If you have a particulary long title that would work better on two lines, use `\n` for a new line. Make sure to use the correct slash. 
+Si tienes un título especialmente largo que funcionaría mejor en dos líneas, utiliza `\n` para hacer un salto de línea. Asegúrate de utilizar la barra diagonal correcta.
 
 ```{r echo=TRUE}
 print(IrisPlot + ggtitle("Petal and sepal length \nof three species of iris"))
 ```
   
 
-### Changing axis labels
- 
-To alter the labels on the axis, add the code `+labs(y= "y axis name", x = "x axis name")` to your line of basic ggplot code.
+### Cambiar las etiquetas de los ejes
+
+Para modificar las etiquetas de los ejes, añade el código `+labs(y = "nombre del eje y", x = "nombre del eje x")` a tu línea de código básico de ggplot.
+
 
 ```{r echo=TRUE}
 print(IrisPlot + labs(y = "Petal length (cm)", x = "Sepal length (cm)"))
 ```
 
-Note: You can also use `+labs(title = "Title")` which is equivalent to `ggtitle`.
+Nota: También puedes usar `+labs(title = "Título")`, que es equivalente a `ggtitle`.
 
-For example:
+Por ejemplo:
+
 ```{r eval=F}
 print(IrisPlot + labs(
   title = "Petal and Sepal Length \nof Iris",
@@ -70,9 +74,11 @@ print(IrisPlot + labs(
 ```
   
 
-### Changing the legend title
- 
-In the same way you edited the title and axis names, you can alter the legend title by adding `+labs(colour = "Legend Title")` to the end of your basic plot code. Note: This will only work if you have actually added an extra variable to your basic `aes` code (in this case, using `colour=Species` to group the points by Species).
+### Cambiar el título de la leyenda
+
+De la misma manera que editaste el título y los nombres de los ejes, puedes modificar el título de la leyenda agregando `+labs(colour = "Título de la leyenda")` al final de tu código básico de trazado. 
+
+Nota: Esto solo funcionará si realmente has añadido una variable adicional a tu código `aes` (en este caso, utilizando `color = Species` para agrupar los puntos por especie).
 
 ```{r}
 IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
@@ -81,7 +87,8 @@ IrisPlot <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
 print(IrisPlot + labs(colour = "Iris species"))
 ```
 
-Note: If you are using a histogram, boxplot or bar graph then it is slightly different. You must use `fill` instead of `colour`.
+Nota: Si estás utilizando un histograma, diagrama de caja o gráfico de barras, es ligeramente diferente. Debes usar `fill` en lugar de `colour`.
+
 
 ```{r,eval =F}
 IrisBox <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
@@ -90,34 +97,35 @@ print(IrisBox + labs(fill = "Iris species"))
 ```
   
 
-### Altering the text style of your legend, axis or title
+### Modificando el estilo del texto en la leyenda, ejes o título
  
-The font, colour, size and emphasis of your labels and text can all be altered. To do this, use the code `theme()` and customise with `element_text()` to alter these properties. 
+Se pueden modificar la fuente, color, tamaño y énfasis de las etiquetas y texto. Para hacer esto, utiliza el código `theme()` y personalízalo con `element_text()` para modificar estas propiedades.
 
-The basic format is: `mytheme <- theme(title type = element_text(your formats))`
+El formato básico es: `mi_tema <- theme(tipo_de_título = element_text(tus_formatos))`
 
-Where "title type" specifies which particular text you want to edit. These can be:
+Donde "tipo_de_título" especifica qué texto en particular deseas editar. Estos pueden ser:
 
-* plot title. - `plot.title = element_text()`  
-* axis title. - `axis.title = element_text()`  
-* legend title. - `legend.title = element_text()`  
-* legend categories - `legend.text = element_text()`  
-* appearance of axis values/numbers. - `axis.text = element_text()`  
+* título del gráfico. - `plot.title = element_text()`
+* título del eje. - `axis.title = element_text()`
+* título de la leyenda. - `legend.title = element_text()`
+* categorías de la leyenda - `legend.text = element_text()`
+* apariencia de los valores/números del eje. - `axis.text = element_text()`
   
 
-**Formatting choices**
-The font, colour, size and emphasis of any of these labels can be altered by arguments within `element_text(your format)`. 
+**Opciones de formato**
+La fuente, color, tamaño y énfasis de cualquiera de estas etiquetas se pueden modificar con argumentos dentro de `element_text(tu_formato)`.
 
-* family. - the font style. Examples of fonts include: "Palatino", "Helvetica", "Courier", "Times". Further font choices can be seen 
-[here](http://www.cookbook-r.com/Graphs/Fonts/). For example, `family = "Palatino"`  
-* face. - the type of emphasis, with options including **bold**, *italic* and "bold.italic". For example, `face = "bold.italic"`  
-* colour. - the colour can be changed to any of the colours listed [here](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf). Remember to include "" before and after the colour name. For example, `colour = "steelblue2"`.  
-* size. - the size of the text. This is specified by entering a number. For example, `size = (3)`.  
+* family. - el estilo de fuente. Ejemplos de fuentes incluyen: "Palatino", "Helvetica", "Courier", "Times". Puedes ver más opciones de fuente 
+[aquí](http://www.cookbook-r.com/Graphs/Fonts/). Por ejemplo, `family = "Palatino"`
+* face. - el tipo de énfasis, con opciones que incluyen **bold** (negrita), *italic* (cursiva) y "bold.italic" (negrita cursiva). Por ejemplo, `face = "bold.italic"`
+* colour. - el color se puede cambiar a cualquiera de los colores listados [aquí](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf). Recuerda incluir "" antes y después del nombre del color. Por ejemplo, `colour = "steelblue2"`.
+* size. - el tamaño del texto, especificado con un número. Por ejemplo, `size = (3)`.
   
 
-### Example code
+### Código de ejemplo
  
-Here is an example of a theme that customises the title, the legend, the axis labels and specifies the font, emphasis, size and colour of each of these. The figure is then plotted with this theme and further code that provides the content of the title and axis labels:
+Aquí tienes un ejemplo de un tema que personaliza el título, la leyenda, las etiquetas de los ejes y especifica la fuente, énfasis, tamaño y color de cada uno de ellos. La figura se traza con este tema y con código adicional que proporciona el contenido del título y las etiquetas de los ejes:
+
 
 ```{r,warning=F}
 mynamestheme <- theme(
@@ -132,9 +140,10 @@ print(IrisPlot + mynamestheme + labs(title = "Petal and sepal \nlength of iris",
 ```
   
 
-### Removing a label
+### Eliminación de una etiqueta
  
-Another option is to remove the text from the plot entirely. To do this you use the code `= element_blank()`, remembering those open and closed brackets. The following code would remove the legend title and axis text.
+Otra opción es eliminar completamente el texto del gráfico. Para hacer esto, utiliza el código `= element_blank()`, recordando los paréntesis abiertos y cerrados. El siguiente código eliminaría el título de la leyenda y el texto del eje.
+
 
 ```{r,eval=F}
 myblanktheme <- theme(
@@ -148,22 +157,20 @@ myblanktheme <- theme(
 print(IrisPlot + myblanktheme + labs(title = "Petal and sepal \nlength of iris", y = "Petal length (cm)", x = "Sepal length (cm)"))
 ```
   
+### Más ayuda
 
-###Further help
- 
-To further customise the aesthetics of the graph, including colour and formatting, see our other ggplot help pages:  
-* [altering overall appearance](/graphics/ggplot/ggplot-appearance/).  
-* [colours and symbols](/graphics/ggplot/ggplot-colour-shapes/).
-   
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
+Para personalizar aún más la estética del gráfico, incluyendo el color y el formato, consulta nuestras otras páginas de ayuda de ggplot:
+* [Modificar la apariencia general](/graphics/ggplot/ggplot-appearance/).
+* [Colores y símbolos](/graphics/ggplot/ggplot-colour-shapes/).
 
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+Puedes encontrar ayuda sobre todas las funciones de ggplot en [el sitio principal de ayuda de ggplot](https://ggplot2.tidyverse.org).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with quite a bit of help online [here](http://www.cookbook-r.com/Graphs/)</p>
-  
+Una hoja de referencia útil sobre las funciones comúnmente utilizadas se puede descargar [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
 
-**Author**: Fiona Robinson
- 
-**Year:** 2016
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía de ggplot con bastante ayuda en línea [aquí](http://www.cookbook-r.com/Graphs/)</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autor**: Fiona Robinson
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

@@ -1,5 +1,5 @@
 ---
-title: 'The Basics of ggplot2'
+title: 'Fundamentos de ggplot2'
 weight: 1
 output: html_document
 aliases: /plotting-with-ggplot-the-basics/
@@ -15,15 +15,17 @@ print(g1 + labs(y = "Petal length (cm)", x = "Sepal length (cm)"))
 ```
  
 
-### Creating a ggplot
- 
-First, you will need to install the package ggplot2 on your machine, then load the package with the usual `library` function.
+### Creación de un grafico con ggplot
+
+Primero, necesitarás instalar el paquete ggplot2 en tu máquina y luego cargar el paquete con la función `library` como de costumbre.
+
 
 ```{r}
 library(ggplot2)
 ```
 
-The starting point for creating a plot is to use the `ggplot` function with the following basic structure:
+El punto de partida para crear un gráfico es utilizar la función `ggplot` con la siguiente estructura básica:
+
 
 ```{r,eval=FALSE}
 plot1 <- ggplot(data, aes(x_variable, y_variable)) +
@@ -32,36 +34,40 @@ plot1 <- ggplot(data, aes(x_variable, y_variable)) +
 print(plot1)
 ```
 
-`data` is a data frame that holds the variables that you would like to plot.
+`data` es un data frame que contiene las variables que deseas representar en el gráfico.
 
-`aes` specifies which variables to plot. This code commonly causes confusion when creating ggplots. While `aes` stands for aesthetics, in ggplot it does not relate to the visual look of the graph but rather what data you want to see in the graph. It specifies what the graph presents rather than how it is presented.
+`aes` especifica qué variables se deben representar. Este código suele causar confusión al crear un objeto ggplot. Aunque `aes` significa estética, en ggplot no se refiere al aspecto visual del gráfico, sino a los datos que deseas ver en el gráfico. Especifica qué se presenta en el gráfico en lugar de cómo se presenta.
 
-`+ geom_graph.type` specifies what sort of plot you want to make. ggplot will not work unless you have this added on. You don't actually type 'graph.type()', but choose one of the types of graph.
+`+ geom_` especifica qué tipo de gráfico quieres crear, ggplot no funcionará a menos que agregues esto.
 
-Commonly used examples include:  
-* scatterplot - `+ geom_point()`  
-* boxplot - `+ geom_boxplot()`  
-* histogram - `+ geom_histogram()`  
-* bar plot - `+ geom_bar()`  
+Algunos ejemplos comúnmente utilizados incluyen:
+* scatterplot (gráfico de dispersión) - `+ geom_point()`
+* boxplot (gráfico de caja) - `+ geom_boxplot()`
+* histograma - `+ geom_histogram()`
+* gráfico de barras - `+ geom_bar()`
 
-Ensure there is a open and closed bracket after the `geom` code. This tells R to make the graph with the basic standard formatting for this graph type.
+Asegúrate de tener un paréntesis abierto y cerrado después del código `geom_`. Esto le indica a R que haga el gráfico con el formato estándar básico para este tipo de gráfico.
 
-The type of graph you want to make has to match the classes of the inputs. For example, a scatterplot would require both variables to be numeric. Or a boxplot would require the *x* variable to be a factor and the *y* variable to be numeric. You can check the class of any variable with the `class` function, or all variables in a data frame with the `str` function.
+El tipo de gráfico que deseas hacer debe coincidir con las clases de las variables de entrada. Por ejemplo, un `scatterplot` requeriría que ambas variables sean numéricas. O un `boxplot` requeriría que la variable *x* sea un factor y la variable *y* sea numérica. Puedes verificar la clase de cualquier variable con la función `class`, o todas las variables en un data frame con la función `str`.
 
-A helpful practise when making ggplots is to assign the plot you've made to an object (e.g., plot1 in the code above) and then 'print' it separately. As your ggplot becomes more complicated this will make it much easier. 
+Una práctica útil al crear objeto con ggplot es asignar el gráfico que has creado a un objeto (por ejemplo, plot1 en el código anterior) y luego imprimirlo por separado. A medida que tu ggplot se vuelve más complicado, esto facilitará mucho las cosas.
   
 
-### Example plots
+### Ejemplos de gráficos
+
  
 ![](ggplot1_basics_image.jpg)
 
-In these examples, let's use a data set that is already in R with the length and width of floral parts for three species of iris. First, load the data set:
+
+En estos ejemplos, utilizaremos un conjunto de datos que ya está en R con la longitud y el ancho de partes florales de tres especies de `iris`. Primero, carga el conjunto de datos:
+
 
 ```{r}
 data(iris)
 ```
 
-To contrast petal length across the three species of iris with a **box plot**, we would use:
+Para contrastar las longitudes del pétalo entre las tres especies de iris con un **diagrama de caja**, usaríamos:
+
 
 ```{r}
 plot1 <- ggplot(iris, aes(Species, Petal.Length)) +
@@ -69,9 +75,11 @@ plot1 <- ggplot(iris, aes(Species, Petal.Length)) +
 print(plot1)
 ```
 
-Note how `aes` included the *x* then the *y* variables which you wanted to plot, and that `+ geom_boxplot()` specified a boxplot.
 
-To plot a **frequency histogram** of petal length, we would use:
+Observa cómo `aes` incluye las variables *x* y luego *y* que deseas graficar, y cómo `+ geom_boxplot()` especifica un diagrama de caja.
+
+Para graficar un **histograma de frecuencia** de la longitud del pétalo, usaríamos:
+
 
 ```{r, message=F}
 plot2 <- ggplot(iris, aes(Petal.Length)) +
@@ -79,7 +87,7 @@ plot2 <- ggplot(iris, aes(Petal.Length)) +
 print(plot2)
 ```
 
-To use a **scatter plot** the visualise the relationship between petal length and sepal length, we would use:
+Para generar un **gráfico de dispersión** y visualizar la relación entre la longitud del pétalo y la longitud del sépalo, usaríamos:
 
 ```{r}
 plot3 <- ggplot(iris, aes(Sepal.Length, Petal.Length)) +
@@ -87,7 +95,7 @@ plot3 <- ggplot(iris, aes(Sepal.Length, Petal.Length)) +
 print(plot3)
 ```
 
-These points could then be coloured according to the levels of a categorical variable. To do this, add `colour="categorical.variable"` in the `aes` brackets. To colour by species, we would use:
+Estos puntos podrían ser coloreados según los niveles de una variable categórica. Para hacer esto, agrega `colour="variable.categórica"` dentro de los paréntesis de `aes`. Para colorear por especie, usaríamos:
 
 ```{r}
 plot4 <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
@@ -96,9 +104,10 @@ print(plot4)
 ```
   
 
-### Adding a basic theme
+### Añadiendo un tema básico
  
-The overall look of the ggplot can be altered with different set themes. This can be done by adding `+ theme_bw()` or `+ theme_classic()` to the end of your line of code. Like `geom()`, ensure there is open and closed brackets after the theme name.
+La apariencia general del ggplot se puede modificar con diferentes temas predefinidos. Esto se puede hacer agregando `+ theme_bw()` o `+ theme_classic()` al final de tu línea de código. Al igual que con `geom()`, asegúrate de que haya paréntesis abiertos y cerrados después del nombre del tema.
+
 
 ```{r}
 plot5 <- ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
@@ -113,24 +122,23 @@ print(plot6)
 ```
   
 
-###Further help
- 
+### Más ayuda
 
-To further customise the aesthetics of the graph, including colour and formatting, see our other ggplot help pages:  
-* [altering the overall appearance](/graphics/ggplot/ggplot-appearance/)  
-* [adding titles and axis names](/graphics/ggplot/ggplot-labels/)  
-* [colours and symbols](/graphics/ggplot/ggplot-colour-shapes/).   
+Para personalizar aún más la estética del gráfico, incluyendo el color y el formato, consulta nuestras otras páginas de ayuda de ggplot:  
+* [Modificar la apariencia general](/graphics/ggplot/ggplot-appearance/)  
+* [Agregar títulos y nombres de ejes](/graphics/ggplot/ggplot-labels/)  
+* [Colores y símbolos](/graphics/ggplot/ggplot-colour-shapes/).   
 
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
+La ayuda de todas las funciones de ggplot se puede encontrar en [The master ggplot help site](https://ggplot2.tidyverse.org).
 
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+Se puede descargar una útil hoja de referencia con funciones comúnmente utilizadas [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with quite a bit of help online [here](http://www.cookbook-r.com/Graphs/)</p>
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía de ggplot con mucha ayuda en línea [aquí](http://www.cookbook-r.com/Graphs/)</p>
   
 
-**Author**: Fiona Robinson
+**Autor**: Fiona Robinson
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 

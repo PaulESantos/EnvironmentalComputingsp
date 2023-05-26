@@ -1,13 +1,14 @@
 ---
-title: 'Barplot with Errorbars'
+title: 'Gráfico de barras con barras de error'
 weight: 5
 output: html_document
 aliases: /plotting-with-ggplot-bar-plots-with-error-bars/
 ---
 
-Bar plots with error bars are very frequently used in the environmental sciences to represent the variation in a continuous variable within one or more categorical variables. These are not always straightforward to make with the base functions in R. This page introduces you to making these plots with the package ggplot2.
+Los gráficos de barras con barras de error se utilizan con mucha frecuencia en las ciencias ambientales para representar la variación en una variable continua dentro de una o más variables categóricas. No siempre es sencillo crear estos gráficos con las funciones base de R. Esta página te muestra cómo hacer estos gráficos con el paquete ggplot2.
 
-Before you get started, read the page on the [basics](../ggplot-basics/) of plotting with ggplot and install the package ggplot2.
+Antes de empezar, lee la página sobre los conceptos [básicos](../ggplot-basics/) de visualización con ggplot e instala el paquete ggplot2.
+
 
 ```{r,warning=F}
 library(ggplot2)
@@ -16,16 +17,16 @@ library(ggplot2)
 
 ![](ggplot1_basics_image.jpg)
 
-In this examples, let's use a data set that is already in R with the length and width of floral parts for three species of iris. First, load the data set:
+En estos ejemplos, utilizaremos un conjunto de datos que ya está en R con la longitud y el ancho de partes florales de tres especies de `iris`. Primero, carga el conjunto de datos:
 
 ```{r}
 data(iris)
 ```
 
-To contrast a variable across species, we first need to summarise the data to obtain means and a measure of variation for each of the three species in the data set. There are several ways to do this in R, but we like the `summarise` and `group_by` functions in the package [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html). See [here](/data-manipulation/summarising-data/
-) for more details on using dplyr for summarising data.
+Para contrastar una variable entre especies, primero necesitamos resumir los datos para obtener las medias y una medida de variación para cada una de las tres especies en el conjunto de datos. Hay varias formas de hacer esto en R, pero nos gusta utilizar las funciones `summarise` y `group_by` del paquete [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html). Consulta [aquí](/data-manipulation/summarising-data/) para obtener más detalles sobre cómo usar dplyr para resumir datos.
 
-The following code will make a new data frame with the summary data per species.
+El siguiente código creará un nuevo marco de datos con los datos resumidos por especie.
+
 
 ```{r,warning=F,message=F}
 library(dplyr)
@@ -40,7 +41,8 @@ Iris_summary <- iris %>% # the names of the new data frame and the data frame to
   ) # calculates the standard error of each group
 ```
 
-We can now make a bar plot of means vs species, with standard deviations or standard errors as the error bar. The following code uses the standard deviations.
+Ahora podemos hacer un gráfico de barras de medias vs. especies, con desviaciones estándar o errores estándar como barras de error. El siguiente código utiliza las desviaciones estándar.
+
 
 ```{r}
 IrisPlot <- ggplot(Iris_summary, aes(Species, mean_PL)) +
@@ -50,28 +52,19 @@ IrisPlot <- ggplot(Iris_summary, aes(Species, mean_PL)) +
 IrisPlot + labs(y = "Petal length (cm) +/- s.d.", x = "Species") + theme_classic()
 ```
 
+`geom_col` utiliza el valor de la variable y (mean_PL) como altura de las barras.
 
-`geom_col` uses the value of the y variable (mean_PL) as the height of the bars. 
+En el código de `geom_errorbar`, `ymin` y `ymax` son la parte superior e inferior de las barras de error (definidas aquí como media +/- sd), y `width` define el ancho de las barras de error.
 
-In the `geom_errorbar` code, `ymin` and `ymax` are the top and bottom of the error bars (defined here as mean +/- sd), and `width` defines how wide the error bars are.
+### Más ayuda
 
-###Further help
- 
-To further customise the aesthetics of the graph, including colour and formatting, see our other ggplot help pages:  
-* [altering the overall appearance](../ggplot-appearance/)  
-* [adding titles and axis names](../ggplot-labels/)  
-* [colours and symbols](../ggplot-colour-shapes/)   
+Para personalizar aún más la estética del gráfico, incluyendo el color y el formato, consulta nuestras otras páginas de ayuda de ggplot:
+* [Alterar la apariencia general](../ggplot-appearance/)
+* [Añadir títulos y nombres de ejes](../ggplot-labels/)
+* [Colores y símbolos](../ggplot-colour-shapes/)
 
-Help on all the ggplot functions can be found at the [The master ggplot help site](https://ggplot2.tidyverse.org).
+Puedes encontrar ayuda sobre todas las funciones de ggplot en [el sitio de ayuda maestro de ggplot](https://ggplot2.tidyverse.org).
 
-A useful cheat sheet on commonly used functions can be downloaded [here](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
+Puedes descargar una hoja de referencia útil sobre funciones comúnmente utilizadas [aquí](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - a guide to ggplot with online help on making bar and line graphs with error bars [here](http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/)</p>
-  
-
-**Author**: Alistair Poore (small edits by Will Cornwell)
- 
-**Year:** 2016
-
-**Last updated:** `r format(Sys.time(), "%b %Y")`
-
+<p style="margin-left: .5in; text-indent: -.5in;">Chang, W (2012) *R Graphics cookbook.* O'Reilly Media. - una guía de gg
