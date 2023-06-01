@@ -4,62 +4,66 @@ title: Instrucciones para construir y editar Environmental Computing.
 
 El sitio web está desarrollado utilizando el generador de sitios estáticos [Hugo](https://hugodocs.info) y se implementa en [Netlify](netlify.com). Estamos utilizando el tema `learn` [disponible aquí en GitHub](https://github.com/matcornic/hugo-theme-learn).
 
-# Building site 
 
-Following are our notes on site upkeep.
+# Construcción del sitio
 
-We deploy via R, using the blogdown package. You ran run Hugo independently, but we're assuming you use R. 
+A continuación, presentamos nuestras notas sobre el mantenimiento del sitio.
+
+Implementamos el sitio mediante R, utilizando el paquete blogdown. Puedes ejecutar Hugo de forma independiente, pero suponemos que utilizas R.
 
 ```
 install.packages("blogdown")
 ```
 
-The site requires a particular version of Hugo
+El sitio requiere una versión particular de Hugo
 
 ```
 blogdown::install_hugo("0.91.2")
 blogdown::check_hugo()
 ```
 
-To build the site:
+Para construir el sitio:
 
 ```
 blogdown::serve_site()
 ```
 
-- This opens up a web page where the site is continually rebuilt. If you create a new `Rmd` it is automatically rendered and added to the site
-- Build pages are deployed in the folder `public`. 
-- Watch for error messages
+- Esto abre una página web donde el sitio se reconstruye continuamente. Si creas un nuevo archivo `Rmd`, se renderiza automáticamente y se agrega al sitio.
+- Las páginas construidas se despliegan en la carpeta `public`.
+- Estar atento a los mensajes de error.
 
-To stop the server:
+Para detener el servidor:
 
 ```
 blogdown::stop_server()
 ```
 
-## Full rebuild
+## Reconstrucción completa
 
-Blogdown only renders pages when the rmd file is either missing or updated. To trigger a full rebuild, you can remove all the html and .lock files from the `content` folder then run `blogdown::serve_site()`. 
+Blogdown solo renderiza las páginas cuando el archivo `rmd` falta o ha sido actualizado. Para activar una reconstrucción completa, puedes eliminar todos los archivos `html` y `.lock` de la carpeta `content` y luego ejecutar `blogdown::serve_site()`.
+
 
 ```
 list.files("content", pattern=".lock", recursive=TRUE, full.names=TRUE) %>% file.remove()
 list.files("content", pattern=".html", recursive=TRUE, full.names=TRUE) %>% file.remove()
 ```
 
-Note, rendering will stop if an error is encountered. Hence, it is important that you have all relevant packages installed. This can be achieved with the following call, which ensures all the dependencies listed in DESCRIPTION are installed:
+Ten en cuenta que la renderización se detendrá si se encuentra un error. Por lo tanto, es importante que tengas instalados todos los paquetes relevantes. Esto se puede lograr con la siguiente llamada, que asegura que se instalen todas las dependencias enumeradas en DESCRIPTION:
 
 ```
 devtools::install_deps()
 ```
 
+# Escribiendo contenido
 
-# Writing content
+## Estructura de carpetas
 
-## Folder structure
+El menú lateral se crea a partir de la estructura de archivos en la carpeta `content`. Tanto las páginas `Rmd` como `md` se renderizan en `html`.
 
-The side menu is created from the file structure in the folder `content`. Both Rmd and md pages are rendered into html. 
+Estamos utilizando una estructura donde cada nueva página se almacena en su propia carpeta, junto con todas las imágenes y datos que necesites. Dentro de esa carpeta, el archivo rmd se llama `_index.rmd`. Cualquier imagen o archivo vinculado en la página también se puede almacenar en la carpeta, lo que te permite usar enlaces relativos en el archivo rmd. Ejemplo:
 
-We're using a structure where each new page is stored in its own folder, along with all the images and data you need. Within that folder the rmd is file is named `_index.rmd`. Any images or files linked in the page can be stored in the folder too, enabling you to to use relative links in the rmd file. E.g.
+
+
 
 ```
 ├── page_name
@@ -70,10 +74,13 @@ We're using a structure where each new page is stored in its own folder, along w
 ├── another_page
 ```
 
-Creating a new page:
 
-1. Make a new folder inside `content` (without spaces or special chars in the name)
-2. In the folder, create a new file `_index.rmd` with yaml
+Creación de una nueva página:
+
+1. Crea una nueva carpeta dentro de `content` (sin espacios ni caracteres especiales en el nombre).
+2. Dentro de la carpeta, crea un nuevo archivo `_index.rmd` con yaml
+
+
 
 ```
 ---
@@ -82,34 +89,32 @@ author: "Alistair Poore"
 ---
 ```
 
+## Códigos cortos
 
-## Short codes
-
-Hugo uses short codes to easily embed content. See https://gohugo.io/content-management/shortcodes/. When rendering files ia blogdown, you can't write the shortcodes directly, instead you can use the [`shortcode` function](https://rdrr.io/github/rstudio/blogdown/man/shortcode.html)
-
-
+Hugo utiliza códigos cortos para incrustar contenido fácilmente. Consulta https://gohugo.io/content-management/shortcodes/ (en inglés). Al renderizar archivos en blogdown, no puedes escribir los códigos cortos directamente, en su lugar, puedes utilizar la función [`shortcode`](https://rdrr.io/github/rstudio/blogdown/man/shortcode.html).
 
 ### Tweet
-In an md file:
+En un archivo `md`:
 
 ```
 {{< tweet 306854385076543488 >}}
 ```
 
-In an Rmd file
+En un archivo Rmd:
 
 ```
 `r blogdown::shortcode("tweet", "306854385076543488")`
 ```
-### Figure
 
-In an md file:
+### Figura
+En un archivo `md`:
+
 
 ```
 {{< figure src="https://danielfalster.com/images/2016.06.27-useR/useR-600x300.png" height="100" width="100" >}}
 ```
 
-In an Rmd file??
+¿En un archivo `Rmd`?
 
 ```
 `r blogdown::shortcode("figure", src = "https://danielfalster.com/images/2016.06.27-useR/useR-600x300.png", alt = "A nice figure")`
