@@ -1,69 +1,78 @@
 ---
-title: 'Cluster Analysis'
+title: 'Análisis de Clúster'
 weight: 3
 output: html_document
 aliases: /cluster-analysis/
 editor_options: 
   chunk_output_type: console
 ---
-Cluster analysis is a method of classification, aimed at grouping objects based on the similarity of their attributes. It is commonly used to group a series of samples based on multiple variables that have been measured from each sample. The procedure produces a tree-like diagram (a dendrogram) that illustrates the relationships between all the samples based on a defined measure of similarity.
+
+El análisis de clúster es un método de clasificación que tiene como objetivo agrupar objetos en función de la similitud de sus atributos. Se utiliza comúnmente para agrupar una serie de muestras basadas en múltiples variables que han sido medidas en cada muestra. El procedimiento produce un diagrama en forma de árbol (un dendrograma) que ilustra las relaciones entre todas las muestras basadas en una medida definida de similitud.
 
 ![](Cluster_analysis_image.jpg)
 
-There are many methods available for clustering (agglomerative, divisive, non hierarchical etc.). Here are some instructions for one of the more commonly used methods, agglomerative hierarchical clustering. This procedure involves a series of steps: 
 
-* calculate a matrix that holds all pair-wise similarities among all objects  
-* join together the pair of objects that are most similar  
-* recalculate the similarity matrix for that cluster vs all remaining objects  
-* repeat last two steps until all objects are joined  
-  
+Existen muchos métodos disponibles para el agrupamiento (aglomerativo, divisivo, no jerárquico, etc.). Aquí tienes algunas instrucciones para uno de los métodos más comúnmente utilizados, el agrupamiento jerárquico aglomerativo. Este procedimiento involucra una serie de pasos:
 
-### Running the analysis
+* Calcular una matriz que contenga todas las similitudes entre pares de objetos.
+* Unir los objetos que son más similares.
+* Recalcular la matriz de similitud para ese clúster frente a todos los objetos restantes.
+* Repetir los dos últimos pasos hasta que todos los objetos estén unidos.
+
+
+### Ejecutando el análisis
  
 
 ![](Cluster_analysis_image2.jpg)
 
-In this example, we will use cluster analysis to visualise differences in the composition of metal contaminants in the seaweeds of Sydney Harbour (data from [(Roberts *et al.* 2008)](http://www.sciencedirect.com/science/article/pii/S026974910800033X).). Download the data set, [Harbour_metals.csv](/datasets/Harbour_metals.csv), and load into R.
+
+En este ejemplo, utilizaremos el análisis de clúster para visualizar las diferencias en la composición de contaminantes metálicos en las algas marinas del Puerto de Sídney (datos de [(Roberts *et al.* 2008)](http://www.sciencedirect.com/science/article/pii/S026974910800033X)). Descarga el conjunto de datos, [Harbour_metals.csv](/datasets/Harbour_metals.csv), y cárgalo en R.
+
 
 ```{r}
 Harbour_metals <- read.csv(file = "Harbour_metals.csv", header = TRUE)
 ```
 
-These data have the concentrations of seven metals measured from 60 samples, half from the seaweed *Padina crassa* and half from the *Sargassum linearifolium*
+Estos datos contienen las concentraciones de siete metales medidos en 60 muestras, la mitad de la alga marina *Padina crassa* y la mitad del *Sargassum linearifolium*.
 
-The first two columns are categorical variables that group samples by site and seaweed species. The third column has unique labels for each replicate sample and the remaining columns are the metal concentrations.
+Las dos primeras columnas son variables categóricas que agrupan las muestras por sitio y especie de alga marina. La tercera columna tiene etiquetas únicas para cada muestra replicada y las columnas restantes son las concentraciones de metales.
 
-The cluster analysis runs on the response variables only so we need to make a data frame with just the metal concentrations (columns 4-8).
+El análisis de agrupamiento se realiza solo en las variables de respuesta, por lo que necesitamos crear un marco de datos solo con las concentraciones de metales (columnas 4 a 8).
+
 
 ```{r}
 Harbour_metals2 <- Harbour_metals[, 4:8]
 ```
 
-To help interpret the graph, we can add the sample labels as row names in this data frame
+Para ayudar a interpretar el gráfico, podemos agregar las etiquetas de las muestras como nombres de fila en este marco de datos.
 
 ```{r}
 rownames(Harbour_metals2) <- Harbour_metals$Rep
 ```
 
-To perform the cluster analysis, we need to make a matrix that quantifies the similarity between each pair of samples. Here we will use the Euclidean distance as our similarity coefficient, but there are others to choose from (see below).
+
+Para realizar el análisis de agrupamiento, necesitamos crear una matriz que cuantifique la similitud entre cada par de muestras. Aquí utilizaremos la distancia euclidiana como nuestro coeficiente de similitud, pero hay otros para elegir (ver más abajo).
+
 
 ```{r}
 H_metals.sim <- dist(Harbour_metals2, method = "euclidean")
 ```
 
-We then use `hclust` function with an argument that specifies the linkage method (here we will use the single linkage method).
+Luego, utilizamos la función `hclust` con un argumento que especifica el método de enlace (aquí utilizaremos el método de enlace simple).
+
 
 ```{r}
 H_metals.cluster <- hclust(H_metals.sim, method = "single")
 ```
 
-Finally, plot the object that was created by the <font face="monospace">hclust</font> function.
+Finalmente, trazamos el objeto que fue creado por la función <font face="monospace">hclust</font>.
+
 
 ```{r}
 plot(H_metals.cluster)
 ```
 
-We can make this a bit neater with all the samples lined up along the bottom by converting it to a dendrogram object (the `as.dendrogram` function) and plotting that (although this default plot is still a bit ugly and would need work with labels and axes before being ready for publication).
+Podemos mejorar esto un poco alineando todas las muestras en la parte inferior convirtiéndolo en un objeto dendrograma (la función `as.dendrogram`) y trazándolo (aunque este gráfico predeterminado aún es un poco feo y necesitaría trabajar en etiquetas y ejes antes de estar listo para su publicación).
 
 ```{r}
 plot(as.dendrogram(H_metals.cluster), ylab = "Euclidean distance")
@@ -71,33 +80,34 @@ plot(as.dendrogram(H_metals.cluster), ylab = "Euclidean distance")
   
 
 
-### Interpreting the results
- 
-A dendrogram has a branch for each sample joined at nodes that relate to the value of the similarity coefficient that joined the two objects. Interpretation of all the relationships comes from examination of the branching structure (which objects join most closely with each other) and from the similarities at which they join. Objects that join together close the tips of the branches are more similar to each other than those that join further toward the base of the tree (note that the default dendogram in R is like an upside down tree with the branches at the bottom and trunk at the top).
+### Interpretación de los resultados
 
-Strong evidence for distinct groups would be evident if there were clusters where the samples within a cluster are much more similar to each other than samples in other clusters.
-  
+Un dendrograma tiene una rama para cada muestra unida en nodos que se relacionan con el valor del coeficiente de similitud que une los dos objetos. La interpretación de todas las relaciones se realiza mediante el examen de la estructura de ramificación (qué objetos se unen más estrechamente entre sí) y de las similitudes en las que se unen. Los objetos que se unen cerca de las puntas de las ramas son más similares entre sí que aquellos que se unen más cerca de la base del árbol (ten en cuenta que el dendrograma predeterminado en R se parece a un árbol boca abajo, con las ramas en la parte inferior y el tronco en la parte superior).
 
-### Assumptions to check
- 
-Before running a cluster analysis to create a dendrogram, you need to consider:
+Se podría evidenciar una fuerte evidencia de grupos distintos si hubiera grupos donde las muestras dentro de un grupo son mucho más similares entre sí que las muestras en otros grupos.
 
-**What measure of similarity to use.** Dendograms can be created from any similarity matrix. There are many distance measures that can be used to describe the similarity between samples. The `dist` fuction in R has `"euclidean"`, `"maximum"`, `"manhattan"`, `"canberra"`, `"binary"` or `"minkowski"` (specified in the method argument of `dist`). Other measures are available in other packages (e.g., the Bray-Curtis measure which is recommended for analyses of species composition data is available in the package vegan).
 
-**Whether the data need transforming or standardising.** If the variables are measured on very different scales, or if there are outliers, then the structure of the dendrogram will be strongly influenced by the values of the largest values in the data set. Variables can be transformed or standardised to lessen the influence of large values (i.e., treat all variables on a more equal footing).
+### Supuestos a verificar
 
-**What method will be used to create the dendrogram.** The structure of dendrograms can also be sensitive to algorithm used to construct the tree (the linkage method). In the previous example, you used the single linkage method. The `hclust` function in R has several available: `"ward"`, `"single"`, `"complete"`, `"average"`, `"mcquitty"`, `"median"` and `"centroid"`.
-  
+Antes de ejecutar un análisis de agrupamiento para crear un dendrograma, debes considerar:
 
-### Communicating the results
- 
-**Written.**  The interpretation of the dendrogram would be described in the text of a Results section (i.e, were there any obvious clusters of samples? were there any samples that were very different from the rest?). There are no numerical results to report.
+**Qué medida de similitud usar.** Los dendrogramas se pueden crear a partir de cualquier matriz de similitud. Hay muchas medidas de distancia que se pueden utilizar para describir la similitud entre muestras. La función `dist` en R tiene opciones como `"euclidean"`, `"maximum"`, `"manhattan"`, `"canberra"`, `"binary"` o `"minkowski"` (especificadas en el argumento `method` de `dist`). Otras medidas están disponibles en otros paquetes (por ejemplo, la medida Bray-Curtis, que se recomienda para análisis de datos de composición de especies, está disponible en el paquete vegan).
 
-**Visual.**  Results from cluster analyses are communicated visually with the dendrogram. It is important to label the axis to show what measure of similarity was used in the analysis.
+**Si los datos necesitan ser transformados o estandarizados.** Si las variables se miden en escalas muy diferentes, o si hay valores atípicos, entonces la estructura del dendrograma estará fuertemente influenciada por los valores más grandes en el conjunto de datos. Las variables se pueden transformar o estandarizar para disminuir la influencia de los valores grandes (es decir, tratar todas las variables en igualdad de condiciones).
 
-If there are pre-determined groups of samples (e.g., samples grouped by species in the example above) samples are usually labelled or provided with colour-coded symbols to allow patterns in the dendrogram to be more easily seen. With large data sets individual labels for each sample (as we did here) make for very plots.
+**Qué método se utilizará para crear el dendrograma.** La estructura de los dendrogramas también puede ser sensible al algoritmo utilizado para construir el árbol (método de enlace). En el ejemplo anterior, utilizaste el método de enlace simple. La función `hclust` en R tiene varios disponibles, como `"ward"`, `"single"`, `"complete"`, `"average"`, `"mcquitty"`, `"median"` y `"centroid"`.
 
-With many samples in your dendrogram it is often necessary to label them in some way (e.g., by colour) to help see patterns. The package [dendextend](https://cran.r-project.org/web/packages/dendextend/vignettes/FAQ.html) allows you to do this. Here is some code to produce the same dendrogram with the samples colour coded by location.
+
+### Comunicación de los resultados
+
+**Escrita.** La interpretación del dendrograma se describe en el texto de la sección de Resultados (por ejemplo, ¿hay grupos evidentes de muestras? ¿hay muestras que son muy diferentes del resto?). No hay resultados numéricos que informar.
+
+**Visual.** Los resultados de los análisis de agrupamiento se comunican visualmente con el dendrograma. Es importante etiquetar los ejes para mostrar qué medida de similitud se utilizó en el análisis.
+
+Si hay grupos predefinidos de muestras (por ejemplo, muestras agrupadas por especie en el ejemplo anterior), generalmente se etiquetan las muestras o se les proporcionan símbolos codificados por colores para permitir una visualización más fácil de los patrones en el dendrograma. Con conjuntos de datos grandes, las etiquetas individuales para cada muestra (como hicimos aquí) generan gráficos muy completos.
+
+Con muchas muestras en tu dendrograma, a menudo es necesario etiquetarlas de alguna manera (por ejemplo, por color) para ayudar a visualizar los patrones. El paquete [dendextend](https://cran.r-project.org/web/packages/dendextend/vignettes/FAQ.html) te permite hacer esto. Aquí tienes un código para producir el mismo dendrograma con las muestras codificadas por color según la ubicación.
+
 
 ```{r, fig.width=6,warning=F, message=F}
 library(dendextend)
@@ -108,20 +118,18 @@ labels_colors(dend) <- sample_colours
 plot(dend, ylab = "Euclidean distance")
 ```
   
+### Más ayuda
 
-### Further help
- 
-You can access R help for the main functions used here by typing `?hclust`, `?dist` or `?as.dendrogram`. There are many R packages associated with the many different types of cluster analysis. See a long list of possibly useful packages [here](http://cran.cnr.berkeley.edu/web/views/Cluster.html).
+Puedes acceder a la ayuda de R para las funciones principales utilizadas aquí escribiendo `?hclust`, `?dist` o `?as.dendrogram`. Hay muchos paquetes de R asociados con los diferentes tipos de análisis de agrupamiento. Consulta una larga lista de paquetes posiblemente útiles [aquí](http://cran.cnr.berkeley.edu/web/views/Cluster.html).
 
-<p style="margin-left: .5in; text-indent: -.5in;">Quinn, GP and MJ Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Ch. 18. Multidimensional scaling and cluster analysis.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">Quinn, GP y MJ Keough (2002) *Diseño experimental y análisis de datos para biólogos*. Cambridge University Press. Capítulo 18. Escalamiento multidimensional y análisis de agrupamiento.</p>
 
-<p style="margin-left: .5in; text-indent: -.5in;">McKillup, S (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Ch. 22. Introductory concepts of multivariate analysis.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">McKillup, S (2012) *Estadística explicada. Una guía introductoria para científicos de la vida.* Cambridge University Press. Capítulo 22. Conceptos introductorios del análisis multivariado.</p>
 
-[Visualizing dendrograms in R](http://rpubs.com/gaston/dendrograms)
-  
+[Visualización de dendrogramas en R](http://rpubs.com/gaston/dendrograms)
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+**Autor**: Alistair Poore
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

@@ -1,5 +1,5 @@
 ---
-title: 'Multivariate Data'
+title: 'Datos Multivariados'
 weight: 4
 output: html_document
 editor_options: 
@@ -36,9 +36,8 @@ labels_colors(dend) <- sample_colours
 plot(dend, ylab = "")
 ```
 
-R has a very wide range of functions and packages for visualising multivariate data. Here is some help for some of the more commonly used techniques:  
+R cuenta con una amplia gama de funciones y paquetes para visualizar datos multivariados. Aquí tienes ayuda para algunas de las técnicas más comúnmente utilizadas:
 
-* [multidimensional scaling](/graphics/multivariate-vis/mds/)  
-* [principal componenents analysis](/graphics/multivariate-vis/pca/)  
-* [cluster analysis](/graphics/cluster-analysis/)  
-
+* [Escalamiento multidimensional](/graphics/multivariate-vis/mds/)  
+* [Análisis de componentes principales](/graphics/multivariate-vis/pca/)  
+* [Análisis de agrupamiento - Cluster](/graphics/cluster-analysis/)  
