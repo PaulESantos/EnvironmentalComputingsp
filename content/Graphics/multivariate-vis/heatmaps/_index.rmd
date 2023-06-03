@@ -118,23 +118,23 @@ Los colores son bastante feos. Crear los tuyos propios es complicado, pero impli
 
 
 ```{r}
-# Reorder Density levels to Sparse, Dense, Other
+# Reordenar los niveles de densidad a Esparcido, Denso, Otro
 Bac.factorsDS$Density <- factor(Bac.factorsDS$Density, levels = c("Sparse", "Dense", "Other"))
 DensityCol <- c("darkorchid", "darkorange", "grey80")
 names(DensityCol) <- levels(Bac.factorsDS$Density)
 
-# Reorder Species to Seagrass, Caulerpa, Other
+# Reordenar las especies a Hierba marina, Caulerpa, Otro
 Bac.factorsDS$Species <- factor(Bac.factorsDS$Species, levels = c("Seagrass", "Caulerpa", "Other"))
 SpeciesCol <- c("forestgreen", "blue3", "grey80")
 names(SpeciesCol) <- levels(Bac.factorsDS$Species)
 
-# Add to a list, where names match those in factors dataframe
+# Agregar a una lista, donde los nombres coinciden con los del dataframe de factores
 AnnColour <- list(
   Density = DensityCol,
   Species = SpeciesCol
 )
 
-# Check the output
+# Verificar el resultado
 AnnColour
 ```
 
@@ -208,7 +208,7 @@ Analizaremos las abundancias de todos los OTUs con modelos lineales generalizado
 
 
 ```{r,eval=F}
-# Create factor and data file without the U1, U2 and U3 samples
+# Crear factor y archivo de datos sin las muestras U1, U2 y U3
 Bac.factorsDS_noU <- filter(Bac.factors, Treatment_ID != "U")
 Bac.counts500DS_noU <- select(Bac.counts500, -contains("U"))
 

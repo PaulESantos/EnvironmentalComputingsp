@@ -1,0 +1,174 @@
+---
+title: 'Heatmaps - Mapa de Calor'
+weight: 4
+output: html_document
+aliases: /heat-maps/
+---
+
+
+
+<p>Los mapas de calor son un método útil para explorar conjuntos de datos multivariados. Las variables de respuesta (por ejemplo, abundancias) se visualizan utilizando gradientes de color o esquemas de color. Con la transformación adecuada y la agrupación de filas y columnas, se pueden observar patrones interesantes dentro de los datos. También se pueden utilizar para mostrar los resultados después del análisis estadístico, por ejemplo, para mostrar aquellas variables que difieren entre los grupos de tratamiento.</p>
+<p><img src="Heatmaps_image.png" /></p>
+<p>En este tutorial, utilizaremos mapas de calor para visualizar patrones en las comunidades bacterianas encontradas en hábitats marinos en presencia de dos macrófitas (pasto marino y <em>Caulerpa</em>) en dos densidades (escasa y densa). También hay muestras de sedimento sin vegetación (Otro). Hay tres muestras replicadas en cada grupo.</p>
+<p>Utilizaremos el paquete <a href="https://cran.r-project.org/web/packages/pheatmap/index.html">pheatmap</a> (mapas de calor bonitos) para dibujar nuestros mapas de calor. El paquete base de R también puede dibujar mapas de calor, pero tiene algunas limitaciones. Primero, instala el paquete y cárgalo en R. También necesitaremos el paquete dplyr para seleccionar filas y columnas.</p>
+<pre class="r"><code>library(pheatmap)
+library(dplyr)</code></pre>
+<div id="lectura-de-los-datos" class="section level3">
+<h3>Lectura de los datos</h3>
+<p>Con datos multivariados, a menudo tenemos dos marcos de datos con 1) los recuentos por muestra y 2) los factores que agrupan las muestras. Descarga estos dos archivos de datos, <a href="/datasets/Bac.counts.csv">Bac.counts.csv</a> y <a href="/datasets/Bac.factors.csv">Bac.factors.csv</a>, e impórtalos en R.</p>
+<pre class="r"><code>Bac.counts &lt;- read.csv(file = &quot;Bac.counts.csv&quot;, header = TRUE, row.names = 1)
+Bac.factors &lt;- read.csv(file = &quot;Bac.factors.csv&quot;, header = TRUE, row.names = 1)</code></pre>
+<p>El argumento <code>row.names=1</code> asigna la primera columna de la hoja de cálculo como nombres de fila en el marco de datos. Deberíamos verificar la estructura de los datos de los recuentos utilizando el comando <code>head</code>. Dado que hay muchas columnas, solo revisaremos las primeras 10 utilizando indexación (uso de <code>[,]</code> después del objeto, con números de fila antes de la coma y números de columna después).</p>
+<pre class="r"><code>head(Bac.counts[, 1:10])</code></pre>
+<pre><code>          DC1  DC2  DC3  DS1  DS2  DS3  SC1  SC2  SC3  SS1
+Otu00002 2906 2619 2200 2959 3205 2455 2815 2761 2275 3519
+Otu00003 1631 1323 1258 1055 1552 1509 1345 1255 1270 1180
+Otu00005 1493 1416 1592  984 1131  879 1430 1448 1296 1431
+Otu00004 1171 1164 1489  936 1514 1174 1271 1310 1207 1278
+Otu00006 1160 1226 1245  764 1134 1271  906  983 1110 1251
+Otu00007 1112 1042 1211 1060 1155 1103 1283 1198 1175 1485</code></pre>
+<p>Podemos ver que los nombres de las filas de los datos tienen los números de código para cada unidad taxonómica operativa (<code>OTU</code>) de bacterias, y hay recuentos enteros de estas en cada muestra. Ahora, vamos a verificar las dimensiones de los datos (número de filas y columnas).</p>
+<pre class="r"><code>dim(Bac.counts)</code></pre>
+<pre><code>[1] 4299   15</code></pre>
+<p>Hay 4299 unidades taxonómicas operativas (<code>OTUs</code>) de bacterias como filas entre 15 muestras como columnas.</p>
+<p>A continuación, podemos verificar la estructura de la información de factor utilizando la función <code>str</code>. En este experimento, las muestras están categorizadas por un <code>ID</code> de tratamiento (cada combinación de densidad y especie), niveles de densidad y niveles de especie. Las otras columnas son para fines de trazado en otro lugar.</p>
+<pre class="r"><code>str(Bac.factors)</code></pre>
+<pre><code>&#39;data.frame&#39;:	15 obs. of  6 variables:
+ $ Treatment_ID: chr  &quot;DC&quot; &quot;DC&quot; &quot;DC&quot; &quot;DS&quot; ...
+ $ Density     : chr  &quot;Dense&quot; &quot;Dense&quot; &quot;Dense&quot; &quot;Dense&quot; ...
+ $ Species     : chr  &quot;Caulerpa&quot; &quot;Caulerpa&quot; &quot;Caulerpa&quot; &quot;Seagrass&quot; ...
+ $ pch1        : int  16 16 16 15 15 15 21 21 21 22 ...
+ $ pch2        : int  4 22 21 15 16 NA NA NA NA NA ...
+ $ legend      : chr  &quot;U - Unvegetated&quot; &quot;SZ - Sparse Zostera &quot; &quot;SC - Sparse Caulerpa&quot; &quot;DS - Dense Zostera&quot; ...</code></pre>
+</div>
+<div id="dibujando-un-mapa-de-calor" class="section level3">
+<h3>Dibujando un mapa de calor</h3>
+<p>La función básica es <code>pheatmap</code>. Vamos a intentarlo sin argumentos especiales, excepto que solo observaremos las primeras 500 OTUs (ya están ordenadas de mayor a menor abundancia total). La función <code>slice</code> en dplyr puede tomar cualquier subconjunto de filas numeradas (ver <a href="/data-manipulation/subsetting-data/">Subconjunto de datos</a>).</p>
+<pre class="r"><code>Bac.counts500 &lt;- slice(Bac.counts, 1:500)
+
+pheatmap(Bac.counts500)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>En la figura, las muestras son columnas y las OTUs bacterianas son filas, con el color representando el rango de recuentos de cada OTU en cada muestra. El rojo significa más abundante (~3500 recuentos), el azul menos abundante (0 recuentos) y el amarillo claro está en algún punto intermedio. Ten en cuenta que tanto las filas como las columnas se han reorganizado en función de medidas de similitud entre filas y columnas (ver <a href="/graphics/cluster-analysis/">Análisis de clúster</a>).</p>
+<p><strong>Transformación de datos</strong>. Ahora puedes notar que tenemos un problema de escala. Los datos están llenos de bacterias poco comunes (azules) y eso es todo lo que podemos ver en el mapa de calor. Para visualizar esto de manera más efectiva, podemos intentar una transformación logarítmica con una constante de +1 para lidiar con los ceros.</p>
+<pre class="r"><code>Bac.Log10.counts500 &lt;- log10(Bac.counts500 + 1)
+pheatmap(Bac.Log10.counts500)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-7-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>La vista de los datos ha cambiado realmente con la transformación, al igual que el agrupamiento de filas y columnas. Parece haber algunas OTUs muy abundantes (rojo/amarillo), algunas de abundancia media (blanco/baja) y otras de baja abundancia (azul).</p>
+<p>Esto no se habría visto tan claramente si no hubiéramos agrupado las filas y columnas, y si las hubiéramos representado “tal cual” desde la tabla de datos (aunque aquí ya se había hecho un ordenamiento de filas). Puedes ver esto si dibujamos el mapa de calor nuevamente sin agrupar las filas y columnas.</p>
+<pre class="r"><code>pheatmap(Bac.Log10.counts500, cluster_rows = FALSE, cluster_cols = FALSE)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="coloreando-grupos-de-muestras" class="section level3">
+<h3>Coloreando grupos de muestras</h3>
+<p>Antes de analizar más a fondo cómo afecta el agrupamiento a los patrones observados, debemos agregar algunos colores asociados a los grupos de tratamiento. El método más simple es utilizar el data frame <code>Bac.factors</code> como entrada, asegurándote de que:</p>
+<ol style="list-style-type: decimal">
+<li><p>especifiques correctamente las covariables categóricas (grupos de factores) y las covariables numéricas (por ejemplo, concentración),</p></li>
+<li><p>los nombres de las filas en “Bac.factors” coincidan con los de “Bac.counts”, y</p></li>
+<li><p>luego elimines los factores que no deseas mostrar.</p></li>
+</ol>
+<p>Para extraer solo las columnas <code>density</code> y <code>species</code> de nuestro data frame de factores, podemos utilizar la función <code>select</code> del paquete “dplyr” y luego usar estos para codificar con colores nuestras muestras.</p>
+<pre class="r"><code>Bac.factorsDS &lt;- select(Bac.factors, Density, Species)
+
+pheatmap(Bac.Log10.counts500, annotation_col = Bac.factorsDS)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Los colores son bastante feos. Crear los tuyos propios es complicado, pero implica crear vectores de colores nombrados y luego agregarlos a una lista. Esto representa la información de <code>anotación de colores</code>. Debemos definir colores para las covariables categóricas (grupos de factores) y rangos de colores para las covariables numéricas (por ejemplo, concentración).</p>
+<pre class="r"><code># Reordenar los niveles de densidad a Esparcido, Denso, Otro
+Bac.factorsDS$Density &lt;- factor(Bac.factorsDS$Density, levels = c(&quot;Sparse&quot;, &quot;Dense&quot;, &quot;Other&quot;))
+DensityCol &lt;- c(&quot;darkorchid&quot;, &quot;darkorange&quot;, &quot;grey80&quot;)
+names(DensityCol) &lt;- levels(Bac.factorsDS$Density)
+
+# Reordenar las especies a Hierba marina, Caulerpa, Otro
+Bac.factorsDS$Species &lt;- factor(Bac.factorsDS$Species, levels = c(&quot;Seagrass&quot;, &quot;Caulerpa&quot;, &quot;Other&quot;))
+SpeciesCol &lt;- c(&quot;forestgreen&quot;, &quot;blue3&quot;, &quot;grey80&quot;)
+names(SpeciesCol) &lt;- levels(Bac.factorsDS$Species)
+
+# Agregar a una lista, donde los nombres coinciden con los del dataframe de factores
+AnnColour &lt;- list(
+  Density = DensityCol,
+  Species = SpeciesCol
+)
+
+# Verificar el resultado
+AnnColour</code></pre>
+<pre><code>$Density
+      Sparse        Dense        Other 
+&quot;darkorchid&quot; &quot;darkorange&quot;     &quot;grey80&quot; 
+
+$Species
+     Seagrass      Caulerpa         Other 
+&quot;forestgreen&quot;       &quot;blue3&quot;      &quot;grey80&quot; </code></pre>
+<p>Ahora podemos volver a dibujar el mapa de calor con los colores elegidos.</p>
+<pre class="r"><code>pheatmap(Bac.Log10.counts500, annotation_col = Bac.factorsDS, annotation_colors = AnnColour)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>En este caso, al permitir que los datos hablen por sí mismos (con agrupamiento de filas y columnas por defecto), se muestra que las muestras sin vegetación (Other) son diferentes de las muestras de macrófitos (independientemente de la densidad) y que las muestras de pastos marinos generalmente se agrupan juntas. Ten en cuenta que otros métodos (por ejemplo, ordenación) pueden mostrar comparaciones de muestra a muestra mucho mejores que los mapas de calor, pero los mapas de calor revelan los patrones de las variables a diferencia de esos métodos. Comprender lo que están haciendo los datos a menudo se pasa por alto en el análisis multivariante.</p>
+</div>
+<div id="métodos-de-agrupamiento-de-filas-y-columnas" class="section level3">
+<h3>Métodos de agrupamiento de filas y columnas</h3>
+<p>Por defecto, <code>pheatmap</code> utiliza la distancia euclidiana como medida de similitud y agrupa las muestras según el método ‘complete’. Hay varios otros métodos de distancia y agrupamiento disponibles mediante argumentos adicionales: <code>clustering_distance_rows</code>, <code>clustering_distance_cols</code> y <code>clustering_method</code>.</p>
+<p>Algunos son mejores que otros, pero tendrás que consultar más en la literatura sobre esto. Sin embargo, para el agrupamiento, el método de agrupamiento ‘average’ parece superior en muchas aplicaciones de ciencias de la computación. Una vez más, la ventaja de los mapas de calor es que puedes ver qué están haciendo los datos en relación a las opciones que has elegido.</p>
+<p>Veamos qué se produce al utilizar la distancia de ‘Manhattan’ como medida de similitud entre filas y columnas, y el método de agrupamiento ‘average’.</p>
+<pre class="r"><code>pheatmap(Bac.Log10.counts500,
+  clustering_distance_rows = &quot;manhattan&quot;,
+  clustering_distance_cols = &quot;manhattan&quot;, clustering_method = &quot;average&quot;,
+  annotation_colors = AnnColour, annotation_col = Bac.factorsDS
+)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-12-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Puedes ver que cambiar el agrupamiento ha cambiado significativamente el mapa de calor producido.</p>
+</div>
+<div id="escalamiento-de-variables" class="section level3">
+<h3>Escalamiento de variables</h3>
+<p>Es posible que deseemos comparar la abundancia de cada OTU bacteriano solo entre las muestras en lugar de contrastar su abundancia con otras OTUs de abundancia variable. Para hacer esto, podemos escalar las abundancias dentro de cada OTU de manera que la escala de colores muestre solo el rango relativo de abundancia para cada OTU individual. En este ejemplo, eso implica escalar la abundancia para cada fila con <code>scale="row"</code>.</p>
+<pre class="r"><code>pheatmap(Bac.Log10.counts500,
+  scale = &quot;row&quot;, clustering_distance_rows = &quot;manhattan&quot;,
+  clustering_method = &quot;average&quot;,
+  annotation_colors = AnnColour, annotation_col = Bac.factorsDS
+)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-13-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Ahora podemos ver cuántas desviaciones estándar se encuentra la abundancia en <code>Log10</code> de un solo OTU con respecto a la media para ese OTU en una muestra, en comparación solo con otras muestras para ese OTU. La leyenda muestra que el número de desviaciones estándar va desde +3 hasta -3. Podemos observar cómo varios OTUs bacterianos están subrepresentados en el sedimento no vegetado (abundancias azules en la parte inferior izquierda) en comparación con el sedimento con macrófitas (abundancias amarillas/rojas).</p>
+</div>
+<div id="ordenar-por-grupo" class="section level3">
+<h3>Ordenar por grupo</h3>
+<p>También podemos ordenar las muestras por sus grupos o tratamientos en lugar de ordenar por similitud entre filas o columnas. Esto se hace ordenando los datos de entrada y desactivando el agrupamiento de las columnas con <code>cluster_cols=FALSE</code>.</p>
+<pre class="r"><code>SampleOrder &lt;- order(Bac.factorsDS$Species, Bac.factorsDS$Density)
+
+pheatmap(Bac.Log10.counts500[, SampleOrder],
+  cluster_cols = FALSE,
+  clustering_method = &quot;average&quot;, annotation_colors = AnnColour, annotation_col = Bac.factorsDS
+)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-14-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="utilizar-mapas-de-calor-después-de-análisis-estadísticos" class="section level3">
+<h3>Utilizar mapas de calor después de análisis estadísticos</h3>
+<p>Si hemos analizado nuestros datos multivariados e identificado las variables que difieren entre tratamientos, podemos elegir mostrar solo esas variables en el mapa de calor. En este ejemplo, solo analizaremos los OTUs bacterianos que difieren entre los dos niveles del factor “Especie” después de eliminar las muestras no vegetadas.</p>
+<p>Analizaremos las abundancias de todos los OTUs con modelos lineales generalizados multivariados utilizando la función <code>manyglm</code> del paquete mvabund. Los detalles de ese análisis no se describen aquí (consulta la <a href="/statistics/mvabund/">Introducción a mvabund</a> para obtener ayuda con ese paquete). Ten en cuenta que ejecutar <code>anova.manyglm</code> puede ser bastante lento.</p>
+<pre class="r"><code># Crear factor y archivo de datos sin las muestras U1, U2 y U3
+Bac.factorsDS_noU &lt;- filter(Bac.factors, Treatment_ID != &quot;U&quot;)
+Bac.counts500DS_noU &lt;- select(Bac.counts500, -contains(&quot;U&quot;))
+
+# Mvabund
+library(mvabund)
+dat.mva &lt;- mvabund(t(Bac.counts500DS_noU))
+plot(dat.mva)
+dat.nb &lt;- manyglm(dat.mva ~ Species * Density, data = Bac.factorsDS_noU)
+dat.aov &lt;- anova.manyglm(dat.nb, p.uni = &quot;unadjusted&quot;, nBoot = 500)
+dat.aov$uni.p[, 1:5]
+SpeciesDiffs &lt;- which(dat.aov$uni.p[&quot;Species&quot;, ] &lt; 0.05 &amp; dat.aov$uni.p[&quot;Species:Density&quot;, ] &gt; 0.05)</code></pre>
+<p>Podemos incluir el argumento <code>cutree</code> para las filas y columnas, para dividir los datos en los dos grupos esperados. Cruzamos los dedos para que muestre lo que esperamos.</p>
+<pre class="r"><code># Crear un vector que se utilizará para seleccionar muestras que no son del sedimento
+DS &lt;- Bac.factors$Treatment_ID != &quot;U&quot;
+
+pheatmap(Bac.Log10.counts500[SpeciesDiffs, DS],
+  scale = &quot;row&quot;,
+  clustering_method = &quot;average&quot;, annotation_col = Bac.factorsDS,
+  cutree_rows = 2, cutree_cols = 2
+)</code></pre>
+<p><img src="/Graphics/multivariate-vis/heatmaps/_index_files/figure-html/unnamed-chunk-17-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Y los resultados son como se esperaba. La mitad superior del mapa de calor muestra aquellas variables sobre-representadas en la especie Caulerpa. La mitad inferior muestra aquellas sobre-representadas en las praderas marinas.</p>
+</div>
+<div id="más-ayuda" class="section level3">
+<h3>Más ayuda</h3>
+<p>Escribe <code>?pheatmap</code> para obtener ayuda de R sobre esta función.</p>
+<p><strong>Autor:</strong> Shaun Nielsen</p>
+<p><strong>Año:</strong> 2016</p>
+<p><strong>Última actualización:</strong> Jun. 2023</p>
+</div>
