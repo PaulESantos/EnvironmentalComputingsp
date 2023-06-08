@@ -56,12 +56,13 @@ First, install and load the `metafor` package.
 
 ```{r setup, tidy=TRUE, message=FALSE, warning=FALSE}
 library(metafor)
+library(metadat)
 ```
 
 Have a look at the data set named `dat.curtis1998` included in the package. If you have to see the other data sets included in this package, try `help(package="metafor")`.
 
 ```{r}
-dat <- metafor::dat.curtis1998
+dat <- metadat::dat.curtis1998
 str(dat)
 ```
 

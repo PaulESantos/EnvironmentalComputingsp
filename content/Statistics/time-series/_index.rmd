@@ -1,25 +1,29 @@
 ---
 weight: 9
-title: "Time Series Forecast"
+title: "Predicción de series temporales"
 output: html_document
 editor_options: 
   chunk_output_type: console
 aliases: /forecasting-time-series/
 ---
 
-In the environmental sciences, we don't always want to understand current and past processes, sometimes we want to look into the future. For example, we may want to project how long it will take an endangered species to become extinct if threats continue. We may also want to project how populations or distributions will respond to continuing anthropogenic climate change. Predicting the future, or *forecasting* has the been the focus of a great deal of statistical research in the field of economics and we can apply the same techniques to ecological questions. Here we will focus on *time-series forecasting*, where we will use historical data collected over time to predict conditions in the future. We will use Rob Hyndman's [forecast](https://cran.r-project.org/web/packages/forecast/index.html) R-package.
+
+En las ciencias ambientales, no siempre queremos entender los procesos actuales y pasados, a veces queremos mirar hacia el futuro. Por ejemplo, podemos querer proyectar cuánto tiempo tomará que una especie en peligro de extinción se extinga si las amenazas continúan. También podemos querer proyectar cómo responderán las poblaciones o distribuciones al cambio climático antropogénico en curso. Predecir el futuro, o *pronosticar*, ha sido el foco de una gran cantidad de investigaciones estadísticas en el campo de la economía y podemos aplicar las mismas técnicas a preguntas ecológicas. Aquí nos enfocaremos en la *predicción de series temporales*, donde utilizaremos datos históricos recolectados a lo largo del tiempo para predecir las condiciones en el futuro. Utilizaremos el paquete R [forecast](https://cran.r-project.org/web/packages/forecast/index.html) de Rob Hyndman.
+
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(forecast)
 ```
 
-###Simple exponential smoothing models
+### Modelos de suavización exponencial simple
 
 ![](Forecasting_image.jpg)
 
-Our first example will use annual rainforest loss (ha) in the in the Tocantins region of the Brazilian Amazon collected by satellite imagery over 25 years (data from [Global Forest Watch](http://data.globalforestwatch.org/) and analysed in further detail in [Virah-Sawmy *et al.* 2015](http://www.sciencedirect.com/science/article/pii/S2351989415000992)).
 
-We will enter the data manually.
+Nuestro primer ejemplo utilizará la pérdida anual de bosque tropical (ha) en la región de Tocantins en la Amazonia brasileña, recolectada mediante imágenes de satélite durante 25 años (datos de [Global Forest Watch](http://data.globalforestwatch.org/) y analizados en más detalle en [Virah-Sawmy *et al.* 2015](http://www.sciencedirect.com/science/article/pii/S2351989415000992)).
+
+Introduciremos los datos manualmente.
+  
 
 ```{r}
 Area <- c(
@@ -29,42 +33,53 @@ Area <- c(
 Year <- c(1988:2012)
 ```
 
-First, we use the `ts` function to create a time series object in R, specifying the data, the start and end times, and the frequency (in this case, one year). 
+
+Primero, utilizamos la función `ts` para crear un objeto de series temporales en R, especificando los datos, el tiempo de inicio y finalización, y la frecuencia (en este caso, un año).
+
 
 ```{r}
 Area_loss <- ts(Area, start = 1988, end = 2012, frequency = 1)
 Area_loss
 ```
 
-We can then split the data into training and test data using the `window` function. In this example, we will try to forecast rainforest loss for the last three years in the time series (2010-2012). These three years will be the test data, and the previous years the training data. In this way, we will be able to check our forecasted values against real observations. 
+Luego, podemos dividir los datos en datos de entrenamiento y datos de prueba utilizando la función `window`. En este ejemplo, trataremos de pronosticar la pérdida de bosque tropical para los últimos tres años de la serie temporal (2010-2012). Estos tres años serán los datos de prueba y los años anteriores serán los datos de entrenamiento. De esta manera, podremos comparar nuestros valores pronosticados con las observaciones reales.
 
 ```{r}
 Area_loss_train <- window(Area_loss, start = 1988, end = 2009, frequency = 1)
 Area_loss_test <- window(Area_loss, start = 2010, end = 2012, frequency = 1)
 ```
 
-Now that we have formatted our data appropriately, we will fit a simple exponential smoothing model using the `ets` function. This model uses a weighted average of past observations, with the weights decreasing exponentially into the past. This means that the most recent observations get the highest weight and therefore influence the predictions the most.
 
-In the `ets` function, the model type is expressed as a three-character code representing the error type (first character), the trend type (second character) and the season type (third character). We will use the `model type = ANN` which is a simple exponential smoothing model with additive errors (A), no assumed trend (N) and no seasonality (N). 
+Ahora que hemos formateado nuestros datos de manera adecuada, ajustaremos un modelo simple de suavizado exponencial utilizando la función `ets`. Este modelo utiliza un promedio ponderado de observaciones pasadas, donde los pesos disminuyen exponencialmente hacia el pasado. Esto significa que las observaciones más recientes tienen el peso más alto y, por lo tanto, influyen más en las predicciones.
+
+En la función `ets`, el tipo de modelo se expresa como un código de tres caracteres que representa el tipo de error (primer carácter), el tipo de tendencia (segundo carácter) y el tipo de estacionalidad (tercer carácter). Utilizaremos el `tipo de modelo = ANN`, que es un modelo simple de suavizado exponencial con errores aditivos (A), sin tendencia asumida (N) y sin estacionalidad (N).
+
 
 ```{r}
 fit1 <- ets(Area_loss_train, model = "ANN")
 ```
 
-Now that we have fit the model using our training data (1988-2009), we can use the model to predict rainforest loss in the most recent 3 years (2010-2012), specifying `h` as the number of time points that we want to forecast (in this case 3 years).
+
+Ahora que hemos ajustado el modelo utilizando nuestros datos de entrenamiento (1988-2009), podemos utilizar el modelo para predecir la pérdida de bosque lluvioso en los últimos 3 años (2010-2012), especificando `h` como el número de puntos de tiempo que queremos pronosticar (en este caso, 3 años).
+
 
 ```{r}
 fit1_forecast <- forecast(fit1, h = 3)
 fit1_forecast
 ```
 
-The output of our forecast gives us the forecasted values (Forecast) for each year (Point) and then the 80% and 95% confidence intervals. How did we do? By using the `plot` function on a *forecast* object, we can see a plot of the historical trend (line), with our forecast observations (blue points) and our confidence intervales (95% - grey shading, 80% - blue shading).
+
+La salida de nuestra predicción nos proporciona los valores pronosticados (Forecast) para cada año (Punto) y luego los intervalos de confianza del 80% y del 95%. ¿Cómo nos fue? Al utilizar la función `plot` en un objeto *forecast*, podemos ver un gráfico de la tendencia histórica (línea), junto con nuestras observaciones pronosticadas (puntos azules) y nuestros intervalos de confianza (95% - sombreado gris, 80% - sombreado azul).
+
+
 
 ```{r}
 plot(fit1_forecast)
 ```
 
-In this case, we already have historical data for our predicted points, so we will plot them on top using the `points` function (black squares), selecting the last three values in the Year and Area vectors (23:25). 
+
+En este caso, ya tenemos datos históricos para nuestros puntos pronosticados, así que los representaremos en el gráfico utilizando la función `points` (cuadrados negros), seleccionando los últimos tres valores en los vectores de Año y Área (23:25).
+
 
 ```{r}
 plot(fit1_forecast)
@@ -76,16 +91,18 @@ legend("topright",
 )
 ```
 
-The value for alpha (the smoothing parameter) was estimated to be 0.7587, which means a relatively fast decay of observation weights into the past. In other words, the past observations have a relatively small influence on future predictions. 
+El valor de alfa (el parámetro de suavizado) se estimó en 0.7587, lo que significa un decaimiento relativamente rápido de los pesos de las observaciones hacia el pasado. En otras palabras, las observaciones pasadas tienen una influencia relativamente pequeña en las predicciones futuras.
 
-From our figure we see a strong downward trend, so we could add an additive trend in the model. This is simply done by changing the second character in our model code to "A" (additive) and repeating the process. 
+En nuestro gráfico, observamos una fuerte tendencia descendente, por lo que podríamos agregar una tendencia aditiva en el modelo. Esto se hace simplemente cambiando el segundo carácter en nuestro código de modelo a "A" (aditiva) y repitiendo el proceso.
 
 ```{r}
 fit2 <- ets(Area_loss_train, model = "AAN")
 fit2_forecast <- forecast(fit2, h = 3)
 ```
 
-We can compare the simple exponential model with the model incorporating the additive trend by plotting them side by side.
+Podemos comparar el modelo exponencial simple con el modelo que incorpora la tendencia aditiva al representarlos lado a lado.
+
+
 ```{r}
 par(mfrow = c(1, 2))
 
@@ -102,7 +119,9 @@ legend("topright",
 )
 ```
 
-Which model do you think performs better? Another option is to fit all possible models and select the best model using AIC. This is done simply by not specifying any model structure in the `ets` command. 
+
+¿Qué modelo crees que funciona mejor? Otra opción es ajustar todos los posibles modelos y seleccionar el mejor modelo utilizando el AIC. Esto se hace simplemente no especificando ninguna estructura de modelo en el comando `ets`.
+
 
 ```{r}
 fit3 <- ets(Area_loss_train)
@@ -110,7 +129,9 @@ fit3_forecast <- forecast(fit3, h = 3)
 fit3$method
 ```
 
-If you are interested in which model structure was selected you can extract it from the model object `fit_3$method`. In this case, the model structure was MNN: a model with multiplicative errors (M), but no overall trend (N) or seasonality (N) assumed. Now we can plot all three models to see which is giving us the best approximation of our observed measurements of rainforest loss.  
+
+Si estás interesado en qué estructura de modelo se seleccionó, puedes extraerla del objeto del modelo `fit_3$method`. En este caso, la estructura del modelo fue MNN: un modelo con errores multiplicativos (M), pero sin tendencia general (N) ni estacionalidad (N) asumida. Ahora podemos representar los tres modelos para ver cuál nos brinda la mejor aproximación de nuestras mediciones observadas de pérdida de selva tropical.
+
 
 ```{r}
 par(mfrow = c(1, 3))
@@ -127,7 +148,9 @@ legend("topright",
 )
 ```
 
-We can also predict future rainforest loss (so no test data). Let's keep the prediction at three years but include all of our historical observations in the training data. We will again use the AIC model selection method. 
+
+También podemos predecir la pérdida futura de selva tropical (sin datos de prueba). Mantengamos la predicción en tres años pero incluyamos todas nuestras observaciones históricas en los datos de entrenamiento. Nuevamente utilizaremos el método de selección de modelo AIC.
+  
 
 ```{r}
 Area_loss_train_2 <- window(Area_loss, start = 1988, end = 2012, frequency = 1)
@@ -141,12 +164,13 @@ par(mfrow = c(1, 1))
 plot(fit4_forecast)
 ```
 
-Bad news! The forecast is for decreasing rainforest area in the Amazon.
-  
 
-###Models incorporating seasonal variability
+¡Malas noticias! El pronóstico es de una disminución del área de selva tropical en la Amazonia.
+  
+### Modelos que incorporan variabilidad estacional
  
-Let's try another example that incorporates not only long-term trends but also seasonal variability. We will use an example used in Rob Hyndman and George Athanasopoulos' [online textbook](https://www.otexts.org/fpp) and included in the *forecast* package: Australian monthly gas production. We will start by plotting the historical data from 1956 to 1995. If we plot the data, we can see two patterns: an overall positive trend and a zig-zagging seasonal pattern. 
+Probemos otro ejemplo que incorpora no solo tendencias a largo plazo sino también variabilidad estacional. Utilizaremos un ejemplo utilizado en el libro de texto en línea de Rob Hyndman y George Athanasopoulos [online textbook](https://www.otexts.org/fpp) e incluido en el paquete *forecast*: la producción mensual de gas en Australia. Comenzaremos representando los datos históricos desde 1956 hasta 1995. Si representamos los datos, podemos ver dos patrones: una tendencia general positiva y un patrón estacional zigzagueante.
+
 
 ```{r}
 data(gas)
@@ -154,7 +178,7 @@ data(gas)
 plot(gas)
 ```
 
-If we use our first model, the simple exponential model that doesn't assume a trend or seasonality (*ANN*), we get the following when we are predicting the next 3 years. Note that `h` is now 36 time points (= 3 years x 12 months).
+Si utilizamos nuestro primer modelo, el modelo exponencial simple que no asume una tendencia ni estacionalidad (*ANN*), obtenemos lo siguiente al predecir los próximos 3 años. Ten en cuenta que `h` ahora son 36 puntos de tiempo (= 3 años x 12 meses).
 
 ```{r}
 fit_gas1 <- ets(gas, model = "ANN")
@@ -164,9 +188,11 @@ fit_gas1_forecast <- forecast(fit_gas1, h = 36)
 plot(fit_gas1_forecast, main = "Simple exponential model")
 ```
 
-As expected, we can see that the model does a pretty poor job of predicting the overall trend or the seasonal variability. In fact the model predicts constant gas production over the 3 years (or 36 monthly time steps). 
 
-Now let's fit the model assuming additive seasonal varibility (*ANA*). 
+Como era de esperar, podemos ver que el modelo no logra predecir correctamente la tendencia general ni la variabilidad estacional. De hecho, el modelo predice una producción constante de gas durante los 3 años (o 36 pasos de tiempo mensuales).
+
+Ahora ajustemos el modelo asumiendo una variabilidad estacional aditiva (*ANA*).
+
 
 ```{r}
 fit_gas2 <- ets(gas, model = "ANA")
@@ -179,7 +205,8 @@ plot(fit_gas1_forecast, main = "Simple exponential model")
 plot(fit_gas2_forecast, main = "Seasonal trend model")
 ```
 
-This model looks a lot more convincing that the simple exponential fit. Finally, let's let the `ets` function choose the best model using AIC.
+Este modelo parece mucho más convincente que el ajuste exponencial simple. Por último, permitamos que la función `ets` elija el mejor modelo utilizando el criterio de información de Akaike (AIC).
+
 
 ```{r}
 fit_gas3 <- ets(gas)
@@ -192,16 +219,14 @@ plot(fit_gas2_forecast, main = "Seasonal trend model")
 plot(fit_gas3_forecast, main = "Best model (lowest AIC)")
 ```
   
+### Más ayuda
 
-###Further help
- 
-Type `?forecast` for the R help with the package forecast.
+Escribe `?forecast` para obtener ayuda en R sobre el paquete forecast.
 
-For more details on the package and time-series forecasting in general, 
-see Rob Hyndman and George Athanasopoulos' [online textbook](https://www.otexts.org/fpp). This script is based on the [Ecostats Research Blog post](http://eco-stats.blogspot.com.au/2015/07/forecasting-with-time-series-data.html) and BEES R User group meeting workshop by Jakub Stoklosa.
+Para obtener más detalles sobre el paquete y pronóstico de series de tiempo en general, consulta el [libro en línea](https://www.otexts.org/fpp) de Rob Hyndman y George Athanasopoulos. Este script se basa en la publicación del [blog de investigación Ecostats](http://eco-stats.blogspot.com.au/2015/07/forecasting-with-time-series-data.html) y en el taller del grupo de usuarios de R BEES de Jakub Stoklosa.
 
-**Author**: Jakub Stoklosa & Rachel V. Blakey
+**Autor**: Jakub Stoklosa y Rachel V. Blakey
 
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

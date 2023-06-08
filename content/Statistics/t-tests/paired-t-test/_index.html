@@ -1,0 +1,75 @@
+---
+weight: 3
+title: "T-test emparejado"
+output: html_document
+aliases: /paired-t-tests/
+---
+
+
+
+<p>Los t-tests emparejados se utilizan para comparar las medias de dos grupos de medidas cuando los objetos individuales se miden dos veces, una vez para cada tipo de medida. Los datos pueden estar emparejados de varias formas: si se toma la misma medida de un objeto individual en dos tratamientos diferentes o en dos momentos diferentes, o si se contrastan diferentes tipos de medidas del mismo objeto.</p>
+<p><img src="Paired_t_test_image.jpg" /></p>
+<p>Por ejemplo, para contrastar el rendimiento fotosintético de diez plantas en dos entornos de un invernadero (sombreado y soleado), podríamos medir el rendimiento en cada planta individual dos veces, una vez a la sombra y otra vez al sol. Las medidas están emparejadas por pertenecer a la misma planta individual.</p>
+<p>Para este diseño experimental, utilizaríamos un t-test emparejado para comparar las mediciones realizadas en los dos entornos. Las 20 mediciones individuales no son independientes entre sí, porque esperaríamos que el par de mediciones tomadas de la misma planta individual sean más similares entre sí que si se tomaran al azar de todas las plantas disponibles. Por lo tanto, no podemos utilizar un <a href="/statistics/t-tests/two-sample-t-test/">t-test de muestras independientes</a> - ese test sería apropiado si cada planta se utilizara solo una vez, con algunas plantas medidas en el tratamiento de sombra y un conjunto diferente de plantas medidas en el tratamiento soleado.</p>
+<p>Emparejar datos de esta manera se hace generalmente para reducir la variación probable entre las mediciones con el objetivo de detectar mejor las diferencias entre los grupos. En este ejemplo, la diferencia entre las dos medidas de rendimiento fotosintético en una planta determinada debería reflejar principalmente el efecto de la luz solar, mientras que en un diseño de muestras independientes, la diferencia entre una planta a la sombra y otra planta al sol reflejará tanto las diferencias en los efectos de la luz solar como las diferencias entre las plantas individuales.</p>
+<p>Para un t-test emparejado, la estadística de prueba, <em>t</em>, es:</p>
+<p><span class="math display">\[t = \frac{\bar{d}}{SE_{d}}\]</span></p>
+<p>Donde <span class="math inline">\(\bar{d}\)</span> es la media de las diferencias entre los valores de cada par, y <em>SE<sub>d</sub></em> es el error estándar de ese conjunto de diferencias.</p>
+<p>Cabe destacar que esta ecuación es idéntica a un <a href="/statistics/t-tests/one-sample-t-test/">t-test de muestra única</a>, utilizado para contrastar cualquier media de muestra (<span class="math inline">\(\bar{x}\)</span>) con una media poblacional conocida (<span class="math inline">\(\mu\)</span>) o un valor hipotético. Lo que estás haciendo aquí es probar si tu muestra de diferencias probablemente proviene de una población de diferencias que tienen una media de cero (otra forma de decir que tus grupos son iguales).</p>
+<p><span class="math display">\[t = \frac{\bar{x}-\mu}{SE}\]</span></p>
+<div id="ejecución-del-análisis" class="section level3">
+<h3>Ejecución del análisis</h3>
+<p>El estadístico de prueba <em>t</em> es relativamente sencillo de calcular manualmente. Luego, se puede verificar el estadístico de prueba con una distribución <em>t</em> para determinar la probabilidad de obtener ese valor del estadístico de prueba si la hipótesis nula es cierta. En R, para calcular la probabilidad asociada a un valor dado de <em>t</em>, utiliza:</p>
+<pre class="r"><code>pt(q, df = your.df, lower.tail = FALSE) * 2</code></pre>
+<p>where <em>q</em> es tu valor de t, <em>your.df</em> es el número de grados de libertad (el número de pares - 1). El argumento <code>lower.tail = FALSE</code> asegura que estás calculando la probabilidad de obtener un valor de <em>t</em> mayor que el tuyo (es decir, la cola superior, P[X &gt; x]). Ten en cuenta que el valor crítico para <em>t</em> (<span class="math inline">\(\alpha = 0.05\)</span>) varía dependiendo del número de grados de libertad: mayores grados de libertad = menor valor crítico de t.</p>
+<p>La función <code>t.test</code> te proporciona el estadístico de prueba y su probabilidad asociada en una única salida. Para un <code>t-test</code> emparejado, usaríamos:</p>
+<pre class="r"><code>t.test(x = my_sample1, y = my_sample2, paired = TRUE)</code></pre>
+<p>where <em>my_sample1</em> y <em>my_sample2</em> son vectores que contienen las mediciones de cada muestra. Debes asegurarte de que los dos vectores tengan el mismo número de valores y de que los datos de cada par estén en las filas correspondientes.</p>
+<p>Alternativamente, si tienes un marco de datos con las variables de respuesta y predictor en columnas separadas, puedes utilizar una fórmula <code>y ~ x</code> en lugar del código anterior. Nuevamente, debes asegurarte de que los pares coincidentes estén en el orden correcto (por ejemplo, la cuarta fila del tratamiento sombreado corresponde a los datos recopilados de la misma planta que la cuarta fila del tratamiento soleado).</p>
+<p>Descarga un conjunto de datos de ejemplo en este formato, <a href="/datasets/Greenhouse.csv/">Greenhouse.csv</a>, e impórtalo en R.</p>
+<pre class="r"><code>Greenhouse &lt;- read.csv(file = &quot;Greenhouse.csv&quot;, header = TRUE)</code></pre>
+<p>El t-test emparejado se realiza con la función <code>t.test</code>, con los argumentos que especifican la variable de respuesta (Performance) a la izquierda de ~, la variable predictora (Treatment) a la derecha de ~, el marco de datos a utilizar y el hecho de que es un t-test emparejado.</p>
+<pre class="r"><code>t.test(Performance ~ Treatment, data = Greenhouse, paired = TRUE)</code></pre>
+</div>
+<div id="interpretación-de-los-resultados" class="section level3">
+<h3>Interpretación de los resultados</h3>
+<pre><code>## 
+## 	Paired t-test
+## 
+## data:  Performance by Treatment
+## t = -18.812, df = 9, p-value = 1.557e-08
+## alternative hypothesis: true mean difference is not equal to 0
+## 95 percent confidence interval:
+##  -0.2111674 -0.1658326
+## sample estimates:
+## mean difference 
+##         -0.1885</code></pre>
+<p>El resultado importante de una prueba <em>t</em> pareada incluye la estadística de prueba <em>t</em>, en este caso 18.8, los grados de libertad (en este caso 9) y la probabilidad asociada con ese valor de <em>t</em>. En este caso, tenemos un valor de <em>p</em> muy bajo (<em>p</em> &lt; 0.001) y podemos rechazar la hipótesis nula de que las plantas puedan realizar la fotosíntesis con el mismo rendimiento en los dos entornos de luz.</p>
+<p>También se obtienen la media y los intervalos de confianza del 95% para las diferencias entre las mediciones de cada par (estos no se superponen con cero cuando la prueba es significativa).</p>
+</div>
+<div id="supuestos-a-verificar" class="section level3">
+<h3>Supuestos a verificar</h3>
+<p>Las pruebas <em>t</em> son pruebas paramétricas, lo que implica que podemos especificar una distribución de probabilidad para la población de la variable de la cual se tomaron las muestras. Las pruebas paramétricas (y no paramétricas) tienen varios supuestos. Si se violan estos supuestos, ya no podemos estar seguros de que la estadística de prueba siga una distribución <em>t</em>, en cuyo caso los valores de <em>p</em> pueden ser inexactos.</p>
+<p><strong>Normalidad.</strong> Para una prueba <em>t</em> pareada, se asume que la muestra de diferencias sigue una distribución normal. Si estas diferencias tienen una distribución muy sesgada, se pueden utilizar transformaciones para obtener una distribución más cercana a la normal.</p>
+<p><strong>Independencia.</strong> El diseño pareado tiene en cuenta que las dos medidas de cada par no son independientes. Sin embargo, es importante que cada par de objetos medidos sea independiente de otros pares. Si están relacionados de alguna manera (por ejemplo, grupos de plantas que comparten una bandeja de agua), puede ser necesario un diseño analítico más complejo que tenga en cuenta factores adicionales.</p>
+</div>
+<div id="comunicar-los-resultados" class="section level3">
+<h3>Comunicar los resultados</h3>
+<p><strong>Escrito.</strong> Como mínimo, se deben informar la estadística <em>t</em> observada, el valor de <em>p</em> y el número de grados de libertad. Por ejemplo, se podría escribir “El rendimiento fotosintético de las plantas fue significativamente mayor en entornos soleados en contraste con los entornos sombreados (prueba <em>t</em> pareada: <em>t</em> = 18.81, df = 9, P &lt; 0.001)”.</p>
+<p><strong>Visual.</strong> Los diagramas de caja o gráficos de columnas con barras de error son formas efectivas de comunicar la variación en una variable de respuesta continua en relación con un único predictor categórico.</p>
+<pre class="r"><code>boxplot(Performance ~ Treatment, data = Greenhouse, xlab = &quot;Light environment&quot;, ylab = &quot;Photosynthetic performance (FvFm)&quot;)</code></pre>
+<p><img src="/Statistics/t-tests/paired-t-test/_index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="más-ayuda" class="section level3">
+<h3>Más ayuda</h3>
+<p>Escribe <code>?t.test</code> para obtener la ayuda de R sobre esta función.</p>
+<p style="margin-left:.5in;text-indent:-.5in">
+Quinn y Keough (2002) <em>Experimental design and data analysis for biologists</em>. Cambridge University Press. Capítulo 9: Prueba de hipótesis.
+</p>
+<p style="margin-left:.5in;text-indent:-.5in">
+McKillup (2012) <em>Statistics explained. An introductory guide for life scientists.</em> Cambridge University Press. Capítulo 9: Comparación de las medias de una y dos muestras de datos distribuidos normalmente.
+</p>
+<p><strong>Autor</strong>: Alistair Poore</p>
+<p><strong>Año</strong>: 2016</p>
+<p><strong>Última actualización</strong>: Jun. 2023</p>
+</div>

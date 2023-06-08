@@ -1,0 +1,223 @@
+---
+weight: 5
+title: "Preguntas sobre código"
+output: html_document
+aliases: /asking-code-questions/
+---
+
+
+
+<p>Cuando comenzaste a aprender R, una de las primeras cosas que probablemente descubriste fue cómo importar tus datos a R. Tuviste que utilizar algún método para leer tus adorables conjuntos de datos de Excel en R para poder lograr lo que querías. Tal vez utilizaste <code>read.csv</code> o <code>read.table</code>, o tal vez utilizaste el paquete reciente de Hadley Wickham, <code>readr</code>.</p>
+<p>Este tutorial tiene la intención de “volver a lo básico” un poco y aprender a “crear” nuestros propios datos.</p>
+<div id="por-qué-querrías-crear-tus-propios-datos" class="section level3">
+<h3>¿Por qué querrías crear tus propios datos?</h3>
+<p>Probablemente ya tengas tus datos en un hermoso documento de Excel y, como tal, puede que no parezca haber una buena razón para “inventar” datos. Sin embargo, hay varias buenas razones por las que esto puede ser útil:</p>
+<p><strong>1.</strong> Trabajar en problemas a pequeña escala antes de utilizar todos tus datos.</p>
+<p><strong>2.</strong> Es posible que desees realizar algún tipo de estudio de simulación.</p>
+<p><strong>3.</strong> Es posible que desees simular datos que esperas recopilar para asegurarte de tener los métodos correctos enumerados en tu propuesta.</p>
+<p><strong>4.</strong> Es posible que te quedes atascado y quieras pedir ayuda.</p>
+<p>El enfoque aquí estará en el último punto. Es bastante inevitable que te encuentres con algún tipo de problema de programación. ¡Todos lo hacemos! Cuando esto sucede y deseas enviar algún código a un amigo, colega o incluso hacer una pregunta en internet, debes proporcionar un <a href="https://stackoverflow.com/help/mcve">ejemplo reproducible</a>.</p>
+<p>Al hacer esto, evitas la necesidad de enviar tu archivo de código y todo el conjunto de datos como adjuntos a un amigo o colega para que lo revisen. Un ejemplo reproducible significa que alguien puede copiar y pegar rápidamente solo el código que envías y reproducir tu error o el problema que tienes.</p>
+<p>Es importante tener en cuenta aquí que para que alguien pueda ayudarte, no necesitan todo el conjunto de datos. Solo necesitan poder ver el problema y tener la pregunta asociada para solucionarlo.</p>
+<p><img src="https://cdn.shopify.com/s/files/1/1202/6984/files/1nenhs_large.jpg?v=1565849932" /></p>
+<p>Este tutorial tiene la intención de ayudar a las personas que son relativamente nuevas en R a crear un ejemplo reproducible y también a generar datos falsos para otros propósitos.</p>
+</div>
+<div id="entonces-cómo-se-crea-un-conjunto-de-datos-falso" class="section level3">
+<h3>Entonces, ¿cómo se crea un conjunto de datos ‘falso’?</h3>
+<p>En el caso más sencillo, puedes crear múltiples <a href="http://www.r-tutor.com/r-introduction/vector">vectores</a> y luego combinarlos en un data.frame.</p>
+<pre class="r"><code>factor &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;)
+
+value &lt;- c(1, 2, 3, 4, 5)
+
+df &lt;- data.frame(factor, value)
+
+df</code></pre>
+<pre><code>##   factor value
+## 1      a     1
+## 2      b     2
+## 3      c     3
+## 4      d     4
+## 5      e     5</code></pre>
+<p>Alternativamente, puedes hacerlo todo en un solo paso (ten en cuenta que ahora estás utilizando <code>=</code> en lugar de <code>&lt;-</code> al especificar los vectores con una llamada a <code>data.frame</code>):</p>
+<pre class="r"><code>df &lt;- data.frame(
+  factor = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;),
+  value = c(1, 2, 3, 4, 5)
+)
+
+df</code></pre>
+<pre><code>##   factor value
+## 1      a     1
+## 2      b     2
+## 3      c     3
+## 4      d     4
+## 5      e     5</code></pre>
+<p>Esta técnica puede funcionar para una variedad de situaciones, pero también puede ser demasiado simple en ocasiones. Por ejemplo, si tienes múltiples vectores, puede resultar complicado crear muchos vectores y luego combinarlos, o si tienes un diseño experimental complicado (como un diseño jerárquico en bloques) que te gustaría replicar.</p>
+<p>Un atajo útil es usar <code>sample</code>, <code>rnorm</code> o <code>runif</code> para crear algunos datos.</p>
+<p><strong><code>sample</code></strong> crea datos ALEATORIOS del tamaño especificado con o sin reemplazo. Por ejemplo, 10 números aleatorios sin reemplazo:</p>
+<pre class="r"><code>data &lt;- sample(10)
+
+data</code></pre>
+<pre><code>##  [1]  3  2 10  6  7  1  5  9  4  8</code></pre>
+<p>O, 10 números aleatorios con reemplazo:</p>
+<pre class="r"><code>data &lt;- sample(10, replace = TRUE)
+
+data</code></pre>
+<pre><code>##  [1] 6 8 5 2 8 1 6 2 1 2</code></pre>
+<p>Puedes crear un vector y luego realizar una muestra de él:</p>
+<pre class="r"><code>factor &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;)
+
+data &lt;- sample(factor, replace = TRUE)
+
+data</code></pre>
+<pre><code>## [1] &quot;d&quot; &quot;a&quot; &quot;c&quot; &quot;c&quot; &quot;c&quot;</code></pre>
+<p>También puedes realizar muestras n veces, lo cual hace que sea una función muy conveniente. Por ejemplo, tomar muestras de los cuatro palos de cartas, 100 veces:</p>
+<pre class="r"><code>suits &lt;- c(&quot;Hearts&quot;, &quot;Spades&quot;, &quot;Clubs&quot;, &quot;Hearts&quot;)
+
+cards &lt;- sample(suits, size = 100, replace = TRUE)</code></pre>
+<p>Ten en cuenta que en los ejemplos anteriores, no devuelve data frames, lo cual puede ser o no importante. Utiliza <code>as.data.frame</code> para esto, si es necesario.</p>
+<pre class="r"><code>data &lt;- as.data.frame(sample(10))</code></pre>
+<p><strong>Creando datos a partir de una distribución conocida</strong></p>
+<p><code>rnorm</code> crea datos a partir de una distribución normal.</p>
+<pre class="r"><code>data &lt;- rnorm(100)</code></pre>
+<p>Por defecto, <code>rnorm</code> extrae de una población con media = 0 y desviación estándar = 1. Podemos cambiar cualquiera de estos valores para obtener una muestra de una distribución normal con una media y desviación estándar especificadas. Por ejemplo, para obtener 100 números de una distribución normal con una media de 25 y una desviación estándar de 1.5:</p>
+<pre class="r"><code>data &lt;- rnorm(100, mean = 25, sd = 1.5)</code></pre>
+<p><code>runif</code> crea datos a partir de una distribución uniforme.</p>
+<pre class="r"><code>data &lt;- runif(100)
+
+head(data)</code></pre>
+<pre><code>## [1] 0.23697213 0.25094171 0.07797913 0.76432406 0.24149993 0.22871180</code></pre>
+<p>Al igual que arriba, <code>runif</code> genera valores de una distribución con min = 0 y max = 1. Podemos cambiar esto a lo que queramos. Por ejemplo, para obtener 100 números aleatorios entre -10 y 5:</p>
+<pre class="r"><code>data &lt;- runif(100, min = -10, max = -5)</code></pre>
+<p>Afortunadamente, R tiene prácticamente todas las distribuciones incorporadas para generar muestras. ¡Esto es realmente útil si estás teorizando datos antes de comenzar la recopilación de datos! Una lista completa se encuentra <a href="http://www.stat.umn.edu/geyer/old/5101/rlook.html">aquí</a>.</p>
+</div>
+<div id="y-si-tu-problema-es-un-poco-más-complicado" class="section level3">
+<h3>¿Y si tu problema es un poco más complicado?</h3>
+<p>Por ejemplo, ¿qué sucede si tus datos provienen de cuatro réplicas de cada uno de los cinco sitios y deseas recrear un vector para los valores de factor repetidos?</p>
+<p>Podrías hacer esto:</p>
+<pre class="r"><code>site &lt;- c(&quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;c&quot;, &quot;c&quot;, &quot;c&quot;, &quot;c&quot;, &quot;d&quot;, &quot;d&quot;, &quot;d&quot;, &quot;d&quot;, &quot;e&quot;, &quot;e&quot;, &quot;e&quot;, &quot;e&quot;)</code></pre>
+<p>Mucho mejor es aprovechar la función <code>rep</code>. Esta función replica valores en un vector o lista. Se logra el mismo resultado que se mostró anteriormente con esto.</p>
+<pre class="r"><code>site &lt;- c(rep(&quot;a&quot;, 4), rep(&quot;b&quot;, 4), rep(&quot;c&quot;, 4), rep(&quot;e&quot;, 4))</code></pre>
+<p>Alternativamente:</p>
+<pre class="r"><code>site &lt;- rep(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), each = 4)</code></pre>
+<p>O, puedes replicar hasta alcanzar una cierta longitud del vector. Para obtener 50 réplicas de cada uno de los cuatro sitios, usaríamos lo siguiente:</p>
+<pre class="r"><code>site &lt;- rep(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), length = 50)</code></pre>
+<p>¡Esto se vuelve cada vez más valioso a medida que aumentas el número de repeticiones y/o factores a incluir!</p>
+</div>
+<div id="creando-todas-las-combinaciones-de-múltiples-factores-categóricos" class="section level3">
+<h3>Creando todas las combinaciones de múltiples factores categóricos</h3>
+<p><code>expand.grid</code> es muy útil para crear un marco de datos que contenga todas las combinaciones de todos los niveles de múltiples factores. Por ejemplo, si hubiéramos muestreado cuatro sitios de cada una de las cuatro regiones en cada uno de los tres estados, podríamos usar esto para crear</p>
+<pre class="r"><code>study &lt;- expand.grid(
+  state = c(&quot;NSW&quot;, &quot;VIC&quot;, &quot;QLD&quot;),
+  region = c(&quot;N&quot;, &quot;E&quot;, &quot;S&quot;, &quot;W&quot;),
+  site = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+)</code></pre>
+<p>Luego podríamos agregar algunos datos para simular la riqueza de especies en cada sitio:</p>
+<pre class="r"><code>study$richness &lt;- rnorm(nrow(study), mean = 15, sd = 3)</code></pre>
+<p>El argumento <code>nrow</code> se utiliza para reemplazar la cantidad correcta de datos en un data.frame (en este caso, 48, que es el número de filas en tu diseño de estudio).</p>
+</div>
+<div id="cuáles-son-algunas-otras-opciones-para-crear-un-ejemplo-reproducible" class="section level3">
+<h3>¿Cuáles son algunas otras opciones para crear un ejemplo reproducible?</h3>
+<p>Podrías usar un conjunto de datos incorporado que se carga en R base para reproducir tu problema. Puedes ver rápidamente la lista de conjuntos de datos incorporados.</p>
+<pre class="r"><code>library(help = &quot;datasets&quot;)</code></pre>
+<p>Luego carga un conjunto de datos utilizando:</p>
+<pre class="r"><code>data(iris)</code></pre>
+</div>
+<div id="y-si-necesitas-utilizar-tus-propios-datos" class="section level3">
+<h3>¿Y si <strong>NECESITAS</strong> utilizar tus propios datos?</h3>
+<p>Tal vez tengas datos ultra complicados y no puedas encontrar la forma de reproducir el problema utilizando datos falsos. Bueno, para eso sirve <code>dput</code>. Esta función se utiliza comúnmente para escribir un objeto en un archivo o para recrearlo.</p>
+<p>Veamos un ejemplo. Supongamos que estás trabajando con el conjunto de datos <code>quakes</code>.</p>
+<pre class="r"><code>data(quakes)
+
+head(quakes)</code></pre>
+<pre><code>##      lat   long depth mag stations
+## 1 -20.42 181.62   562 4.8       41
+## 2 -20.62 181.03   650 4.2       15
+## 3 -26.00 184.10    42 5.4       43
+## 4 -17.97 181.66   626 4.1       19
+## 5 -20.42 181.96   649 4.0       11
+## 6 -19.68 184.31   195 4.0       12</code></pre>
+<p>Si solo queremos reproducir la estructura de los datos, podríamos utilizar <code>head</code> en combinación con <code>dput</code>.</p>
+<pre class="r"><code>dput(head(quakes))</code></pre>
+<pre><code>## structure(list(lat = c(-20.42, -20.62, -26, -17.97, -20.42, -19.68
+## ), long = c(181.62, 181.03, 184.1, 181.66, 181.96, 184.31), depth = c(562L, 
+## 650L, 42L, 626L, 649L, 195L), mag = c(4.8, 4.2, 5.4, 4.1, 4, 
+## 4), stations = c(41L, 15L, 43L, 19L, 11L, 12L)), row.names = c(NA, 
+## 6L), class = &quot;data.frame&quot;)</code></pre>
+<p>Podemos luego copiar y pegar esta salida en un correo electrónico, etc. Sin embargo, asegúrate de nombrar primero el data.frame para crear un objeto para quien lo vaya a utilizar.</p>
+<pre class="r"><code>reproduced_df &lt;- structure(list(lat = c(-20.42, -20.62, -26, -17.97, -20.42, -19.68), long = c(181.62, 181.03, 184.1, 181.66, 181.96, 184.31), depth = c(
+  562L,
+  650L, 42L, 626L, 649L, 195L
+), mag = c(
+  4.8, 4.2, 5.4, 4.1, 4,
+  4
+), stations = c(41L, 15L, 43L, 19L, 11L, 12L)), .Names = c(
+  &quot;lat&quot;,
+  &quot;long&quot;, &quot;depth&quot;, &quot;mag&quot;, &quot;stations&quot;
+), row.names = c(NA, 6L), class = &quot;data.frame&quot;)</code></pre>
+<p>¿Qué sucede si solo tenemos problemas con ciertas filas?</p>
+<pre class="r"><code>tmp &lt;- quakes[30:40, ]
+dput(tmp)</code></pre>
+<pre><code>## structure(list(lat = c(-19.84, -22.58, -16.32, -15.55, -23.55, 
+## -16.3, -25.82, -18.73, -17.64, -17.66, -18.82), long = c(182.37, 
+## 179.24, 166.74, 185.05, 180.8, 186, 179.33, 169.23, 181.28, 181.4, 
+## 169.33), depth = c(328L, 553L, 50L, 292L, 349L, 48L, 600L, 206L, 
+## 574L, 585L, 230L), mag = c(4.4, 4.6, 4.7, 4.8, 4, 4.5, 4.3, 4.5, 
+## 4.6, 4.1, 4.4), stations = c(17L, 21L, 30L, 42L, 10L, 10L, 13L, 
+## 17L, 17L, 17L, 11L)), row.names = 30:40, class = &quot;data.frame&quot;)</code></pre>
+<p>¡Esta es una excelente forma de enviar código a alguien para pedir ayuda!</p>
+</div>
+<div id="y-qué-sucede-con-los-problemas-realmente-complejos" class="section level3">
+<h3>¿Y qué sucede con los problemas realmente complejos?</h3>
+<p>Este tutorial está principalmente destinado a nuevos usuarios de R, y es probable que los consejos y trucos mencionados anteriormente ayuden a otras personas a ayudarte en la gran mayoría de los casos. Sin embargo, en caso de que no sea así, podría ser necesario proporcionar información adicional. <code>sessionInfo()</code> proporciona un resumen de la versión de R que se está ejecutando actualmente, el sistema operativo y los paquetes que están cargados.</p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.3.0 (2023-04-21 ucrt)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 11 x64 (build 22621)
+## 
+## Matrix products: default
+## 
+## 
+## locale:
+## [1] LC_COLLATE=Spanish_Peru.utf8  LC_CTYPE=Spanish_Peru.utf8   
+## [3] LC_MONETARY=Spanish_Peru.utf8 LC_NUMERIC=C                 
+## [5] LC_TIME=Spanish_Peru.utf8    
+## 
+## time zone: America/Lima
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## loaded via a namespace (and not attached):
+##  [1] digest_0.6.31   R6_2.5.1        bookdown_0.34   fastmap_1.1.1  
+##  [5] xfun_0.39       blogdown_1.17   cachem_1.0.8    knitr_1.43     
+##  [9] htmltools_0.5.5 rmarkdown_2.22  cli_3.6.1       sass_0.4.6     
+## [13] jquerylib_0.1.4 compiler_4.3.0  rstudioapi_0.14 tools_4.3.0    
+## [17] evaluate_0.21   bslib_0.4.2     yaml_2.3.7      jsonlite_1.8.4 
+## [21] rlang_1.1.1</code></pre>
+<p><strong>Otros puntos importantes</strong></p>
+<ol style="list-style-type: decimal">
+<li>Asegúrate de definir claramente lo que estás buscando. ¿Tienes una pregunta puramente estadística o una pregunta de programación?</li>
+<li>Es una buena idea incluir los paquetes necesarios que estás utilizando y en los cuales ocurre el problema.</li>
+<li>Siempre debes indicar lo que has intentado hasta ahora en cuanto a código y/o cualquier sitio de referencia que estés utilizando.</li>
+</ol>
+<p><strong>Conclusiones</strong></p>
+<ol style="list-style-type: decimal">
+<li>Hay varias razones por las que podemos querer usar datos falsos.</li>
+<li>Es bastante fácil crear datos falsos.</li>
+<li>Si envías el ejemplo reproducible más sencillo posible a alguien, hay una mayor probabilidad de que te ayuden de manera más eficiente.</li>
+<li>Muchas veces, al simplificar el problema, incluso puedes resolverlo tú mismo.</li>
+<li>Aprende a usar <code>dput</code>, pero no olvides nombrar el objeto al copiar el código desde la consola de R.</li>
+</ol>
+</div>
+<div id="dónde-puedes-obtener-más-ayuda" class="section level2">
+<h2>¿Dónde puedes obtener más ayuda?</h2>
+<p>Toda esta información no es realmente útil a menos que tengas a alguien que responda tu pregunta después de haber creado tu buen ejemplo reproducible. Una alternativa para solicitar ayuda a colegas y amigos es utilizar sitios web en línea, como <a href="https://stackoverflow.com/">Stack Overflow</a>. Los consejos de este tutorial te ayudarán a formular una pregunta que no sea eliminada o prohibida. Además, cuando <a href="http://www.wikihow.com/Ask-a-Question-on-Stack-Overflow">hagas una pregunta</a>, asegúrate de mostrar que has realizado investigaciones previas.</p>
+<center>
+<img src="stack.png" />
+</center>
+<p>Hay más ayuda en la web para crear ejemplos reproducibles. Por ejemplo, consulta <a href="https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example">aquí</a>, <a href="http://clayford.github.io/dwir/dwr_12_generating_data.html">aquí</a>, <a href="http://adv-r.had.co.nz/Reproducibility.html">aquí</a> o <a href="https://www.r-bloggers.com/minimal-reproducible-examples/">aquí</a>.</p>
+<p><strong>Autor</strong>: Corey T. Callaghan</p>
+<p><strong>Año</strong>: 2017</p>
+<p><strong>Última actualización</strong>: Jun. 2023</p>
+</div>

@@ -1,14 +1,13 @@
 ---
-title: 'Spatial Data'
+title: 'Datos espaciales'
 weight: 5
 output: html_document
 aliases: /visualising-spatial-data/
 ---
 
-R has a very wide range of functions and packages for visualising spatial data. This page will link to a series of tutorials for handling spatial data and making maps.  
+R cuenta con una amplia variedad de funciones y paquetes para visualizar datos espaciales. Esta página enlazará con una serie de tutoriales para manejar datos espaciales y crear mapas.
 
-* [Making simple maps with ggmap](simple-maps/)  
-* [Making maps from shapefiles]
-* More soon...
+* [Creación de mapas simples con ggmap](simple-maps/)
+* [Creación de mapas a partir de shapefiles]
 
 ![](images/Visualising_spatial_data_intro_image.jpg)

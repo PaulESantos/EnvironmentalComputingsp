@@ -1,13 +1,14 @@
 ---
-title: 'Simple Maps with ggmap'
+title: 'Mapas simples con ggmap'
 weight: 2
 output: html_document
 aliases: /making-simple-maps/
 ---
 
-Being able to make a simple map is a very useful skill for all sorts of applications. Here, we will introduce some of the basics of working with spatial data, and use R to produce simple and easy maps. You could use the same technique to make a map for a presentation, or a figure for a report or publication. 
+Saber hacer un mapa simple es una habilidad muy útil para todo tipo de aplicaciones. Aquí, introduciremos algunos conceptos básicos para trabajar con datos espaciales y utilizaremos R para producir mapas simples y fáciles. Podrías utilizar la misma técnica para crear un mapa para una presentación o una figura para un informe o publicación.
 
-There are many packages that are useful for plotting and manipulating spatial data in R. For simplicity, we're going to solely use the package [ggmap](https://cran.r-project.org/web/packages/ggmap/index.html) for this exercise. To get started, install this package and load into R.
+Existen muchos paquetes útiles para graficar y manipular datos espaciales en R. Para simplificar, vamos a utilizar únicamente el paquete [ggmap](https://cran.r-project.org/web/packages/ggmap/index.html) en este ejercicio. Para comenzar, instala este paquete y cárgalo en R.
+
 
 ```{r, warning=F,message=F, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
@@ -17,17 +18,18 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(ggmap)
 ```
   
-## Setting up ggmap 
+## Configuración de ggmap
 
-The ggmap package "makes it easy to retrieve raster map tiles from popular online mapping services like Google Maps and Stamen Maps and plot them using the ggplot2 framework". 
+El paquete ggmap "facilita la obtención de teselas de mapas raster de servicios populares de mapas en línea como Google Maps y Stamen Maps, y su representación utilizando el marco de trabajo ggplot2".
 
-**To use the package you'll need to setup an API key to google maps.** For information on how to do this see the [package homepage on GitHub](https://github.com/dkahle/ggmap). An alternative interface to OpenStreetMap can also be used with slightly different functions.
+**Para utilizar el paquete, necesitarás configurar una clave de API de Google Maps**. Para obtener información sobre cómo hacer esto, consulta la [página principal del paquete en GitHub](https://github.com/dkahle/ggmap). También se puede utilizar una interfaz alternativa a OpenStreetMap con funciones ligeramente diferentes.
 
-### Making your first map
+### Creando tu primer mapa
 
-In this example, let's say we collected data from five sites near Royal National Park in New South Wales, Australia, and want to display the locations we visited. 
+En este ejemplo, supongamos que hemos recopilado datos de cinco sitios cerca del Parque Nacional Royal en Nueva Gales del Sur, Australia, y queremos mostrar las ubicaciones que visitamos.
 
-Using the function `get_map`, we can download an image from Google maps at any named location:
+Utilizando la función `get_map`, podemos descargar una imagen de Google Maps en cualquier ubicación especificada por su nombre:
+
 
 ```{r, echo=TRUE, eval=FALSE}
 basemap <- get_map("Royal National Park", zoom = 12)
@@ -43,16 +45,16 @@ saveRDS(basemap, "basemap.rds")
 basemap <- readRDS("basemap.rds")
 ```
 
-and then plot it with the function `ggmap`: 
+y luego representarla con la función `ggmap`:
 
 ```{r}
 ggmap(basemap)
 ```
 
 
-The argument of `get_map` is simply any place searchable on Google Maps (in this case 'Royal National Park') - easy!   
+El argumento de `get_map` es simplemente cualquier lugar que se pueda buscar en Google Maps (en este caso, 'Parque Nacional Royal') - ¡fácil!
 
-To add point data for our five survey sites, we first need to make a new data frame holding the place name, latitude and longitude of each site (or import this data from a spreadsheet).
+Para agregar datos de puntos para nuestros cinco sitios de estudio, primero necesitamos crear un nuevo marco de datos que contenga el nombre del lugar, la latitud y la longitud de cada sitio (o importar estos datos desde una hoja de cálculo).
 
 ```{r}
 ptdata <- data.frame(
@@ -72,25 +74,27 @@ ptdata <- data.frame(
 )
 ```
 
-We can add these points to our map based on the Latitude (y) and Longitude (x) coordinates. It is important that the points and the other features on the map work on the same scale - or 'projection'. These locations were estimated from Google Maps data for this reason - estimate your own via [LatLong.net](http://latlong.net)).
+
+Podemos agregar estos puntos a nuestro mapa basándonos en las coordenadas de `latitud (y)` y `longitud (x)`. Es importante que los puntos y las otras características del mapa funcionen en la misma escala, o 'proyección'. Estas ubicaciones se estimaron a partir de datos de Google Maps por esta razón, puedes estimar las tuyas propias a través de [LatLong.net](http://latlong.net)).
+
 
 ```{r}
 ggmap(basemap) + geom_point(data = ptdata, aes(x = Long, y = Lat))
 ```
+ 
+  
+¡Bien hecho! ¡Has creado tu primer mapa con R! ¡Fácil! Puede que hayas notado que `ggmap` utiliza código gráfico familiar del paquete ggplot (consulta [plotting with ggplot](/graphics/ggplot/)).
 
+### Creación de un mapa listo para presentación
 
-Well done -you made your first map with R! Easy! You may have noticed that `ggmap` uses familiar graphics code from the package ggplot (see [plotting with ggplot](/graphics/ggplot/)).  
+Ajustando algunas opciones, podemos hacer que se vea más adecuado para una presentación.
 
+Primero, ajusta algunas opciones en `get_map`:
 
-### Making a presentation-ready map
+* usa `bound` para elegir la extensión / cuadro delimitador del mapa. Aquí, estamos utilizando los valores mínimo y máximo de latitud y longitud de nuestras coordenadas del sitio.
+* prueba `maptype = "hybrid"` para ver imágenes de satélite y datos de carreteras.
+* aumenta el nivel de `zoom` para mejorar los detalles.
 
-By tweaking a few options, we can make this look more suitable for a presentation.   
-
-First, adjust some of the options in `get_map`:
-
-* use `bound` to choose the extent/bounding box of the map. Here, we are using the minimum and maximum values of latitude and longitude from our site coordinates 
-* try `maptype = "hybrid"` to see the satellite imagery and roads data   
-* increase the `zoom` level to improve detail   
   
 ```{r}
 bound <- c(
@@ -113,18 +117,19 @@ saveRDS(Pres_basemap, "Pres_basemap.rds")
 Pres_basemap <- readRDS("Pres_basemap.rds")
 ```
 
-Second, adjust some of the options for plotting:
 
-`geom_point` tweaks for the dots at each site location:
-* use `colour = "white"` to have the points stand out  
-* use `size` to change point size  
+Segundo, ajusta algunas opciones para la representación gráfica:
 
-`geom_text` tweaks for the labels for each site:  
+Ajustes de `geom_point` para los puntos en cada ubicación del sitio:
+* usa `colour = "white"` para que los puntos destaquen.
+* usa `size` para cambiar el tamaño de los puntos.
 
-* use `size` to change text size 
-* use `colour = "white"` to have the labels stand out 
-* use `hjust` and `vjust` adjust the horizontal and vertical position of labels  
-* use `labs` to define the *x* and *y* axis labels  
+Ajustes de `geom_text` para las etiquetas de cada sitio:
+* usa `size` para cambiar el tamaño del texto.
+* usa `colour = "white"` para que las etiquetas destaquen.
+* usa `hjust` y `vjust` para ajustar la posición horizontal y vertical de las etiquetas.
+* usa `labs` para definir las etiquetas de los ejes *x* e *y*.
+
 
 ```{r}
 ggmap(Pres_basemap) +
@@ -142,15 +147,14 @@ ggmap(Pres_basemap) +
   labs(x = "Longitude", y = "Latitude")
 ```
 
+### Creación de un mapa listo para publicación
 
-### Making a publication-ready map
+Para un artículo o informe, probablemente desees un mapa más simple en blanco y negro.
 
-For a paper or report, you probably want a simpler black and white map.
-
-* use `bound` to set the extent as above  
-* try `get_stamenmap` to get an austere basemap (eg. Stamen "toner-lite")   
-* use `theme_bw()` from ggplot to get a stripped-back theme   
-  
+* usa `bound` para establecer la extensión como se mencionó anteriormente.
+* prueba `get_stamenmap` para obtener un mapa base austero (por ejemplo, Stamen "toner-lite").
+* usa `theme_bw()` de ggplot para obtener un tema despojado.
+ 
 
 ```{r, echo=TRUE, eval=FALSE}
 Pub_basemap <- get_stamenmap(bound, zoom = 13, maptype = "toner-lite")
@@ -181,18 +185,16 @@ ggmap(Pub_basemap) +
   theme(axis.title = element_blank())
 ```
 
+### Más ayuda
 
-### Further help
+Lee la documentación de [ggmap](https://cran.r-project.org/web/packages/ggmap/index.html) para obtener más ejemplos e ideas.
 
-Read the [ggmap](https://cran.r-project.org/web/packages/ggmap/index.html) documentation for more examples and ideas.
+Consulta la [hoja de referencia de ggmap](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf) del Centro Nacional para el Análisis y la Síntesis Ecológica.
 
-[ggmap cheat sheet](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf) from the National Centre for Ecological Analysis and Synthesis.
+**Autor**: Kingsley Griffin, ediciones de Daniel Falster
 
+**Año**: 2017
 
-**Author**: Kingsley Griffin, edits by Daniel Falster
-
-**Year:** 2017
-
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 
 

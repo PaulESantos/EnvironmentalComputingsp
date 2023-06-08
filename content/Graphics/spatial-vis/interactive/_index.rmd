@@ -1,25 +1,27 @@
 ---
-title: 'Interactive Maps in R'
+title: 'Mapas interactivos en R'
 weight: 3
 output: html_document
 aliases: /visualising-spatial-data/making-interactive-maps-in-r-with-leaflet/
 ---
 
-Being able to produce interactive maps on the fly can greatly speed up exploratory analysis and is a useful tool for displaying data that would be less informative on a [static map](../simple-maps).
 
-Leaflet is an open source JavaScript library that is used to create interactive maps on websites. In this post we will look at the the [leaflet R package](https://github.com/rstudio/leaflet) and create some cool interactive maps!
+Ser capaz de producir mapas interactivos sobre la marcha puede acelerar considerablemente el análisis exploratorio y es una herramienta útil para mostrar datos que serían menos informativos en un [mapa estático](../simple-maps).
 
-## Installation
+Leaflet es una biblioteca de JavaScript de código abierto que se utiliza para crear mapas interactivos en sitios web. En esta publicación, vamos a ver el [paquete leaflet para R](https://github.com/rstudio/leaflet) y ¡crear algunos mapas interactivos geniales!
 
-The `leaflet` R package can be installed from CRAN by running: 
+## Instalación
+
+El paquete `leaflet` de R se puede instalar desde CRAN ejecutando:
+
 
 ```{r, eval = F}
 install.packages("leaflet")
 ```
 
-## Basics
+## Fundamentos
 
-Creating a basic interactive map is simple! 
+¡Crear un mapa interactivo básico es simple!
 
 ```{r basic, fig.width=8}
 library(leaflet)
@@ -27,9 +29,10 @@ leaflet() %>%
   addTiles()
 ```
 
-The Leaflet R package has been designed to be used with pipes (`%>%`), which makes it easy to add layers and controls such as a scale bar and a mini map.
+El paquete Leaflet de R ha sido diseñado para ser utilizado con el operador pipe (`%>%`), lo que facilita la adición de capas y controles como una barra de escala y un mini mapa.
 
-Most of the time however we will have an area or a study site that we are interested in that we want to view:
+Sin embargo, la mayoría de las veces tendremos un área o un sitio de estudio en el que estamos interesados y que queremos ver:
+
 
 ```{r b2,fig.width=8}
 leaflet() %>%
@@ -39,14 +42,14 @@ leaflet() %>%
   addMiniMap()
 ```
 
+## Marcadores
 
-## Markers
+Veamos algunos datos de ocurrencia de especies de [GBIF](https://www.gbif.org/) utilizando el paquete [rgbif](https://github.com/ropensci/rgbif):
+Mostraremos todas las observaciones de eucaliptos dentro de la región de los Macquarie Marshes:
 
-Lets plot some species occurence data from [GBIF](https://www.gbif.org/) using the [rgbif](https://github.com/ropensci/rgbif) package:
-We will be displaying all eucalypt observations within the Macquarie Marshes region:
 
 ```{r b3,fig.width=8}
-## Getting the data
+
 # install.packages('gbif')
 library(rgbif)
 gbif_query <- occ_search(
@@ -55,7 +58,7 @@ gbif_query <- occ_search(
 )
 euc <- gbif_query$data
 euc$label <- paste(euc$name, "|", euc$vernacularName, "|", euc$year, "-", month.abb[euc$month])
-## Creating a map
+## 
 base <- leaflet() %>%
   addTiles() %>%
   addScaleBar() %>%
@@ -67,9 +70,11 @@ base %>% addMarkers(
 )
 ```
 
-## Clustering markers
 
-Nice! but it is a bit cluttered, we can add clustering by specifying the clusterOptions argument to try and solve this issue:
+## Agrupamiento de marcadores
+
+¡Bien! pero está un poco desordenado, podemos agregar agrupamiento especificando el argumento `clusterOptions` para intentar solucionar este problema:
+
 
 ```{r b4,fig.width=8}
 base %>%
@@ -80,9 +85,10 @@ base %>%
   )
 ```
 
-## Colouring markers
+## Colorear marcadores
 
-You can also add circle markers which can have custom colours, and add a legend:
+También puedes agregar marcadores circulares que pueden tener colores personalizados y agregar una leyenda:
+
 
 ```{r b5,fig.width=8}
 color_function <- colorFactor("RdYlBu", domain = NULL)
@@ -96,21 +102,21 @@ base %>%
   addLegend(pal = color_function, values = euc$name)
 ```
 
-## Other stuff to try out!
+## ¡Otras cosas para probar!
 
-* `addMeasure()` adds a ruler and an area estimator control to the map
-* `addProviderTiles()` Other tiles (base maps) can be added by using this function. Try out: `leaflet() %>% addProviderTiles(provider = providers$CartoDB)` !
-* `addLayersControl()` adds a selector for choosing multiple layers if you have added them.
-* `addRasterImage()` creates an image overlay from raster data!
-* `addGeoJSON()` adds GeoJSON polygons to the interactive map!
+* `addMeasure()` agrega una regla y un control de estimación de área al mapa.
+* `addProviderTiles()` Otros tiles (mapas base) se pueden agregar utilizando esta función. ¡Prueba: `leaflet() %>% addProviderTiles(provider = providers$CartoDB)`!
+* `addLayersControl()` agrega un selector para elegir múltiples capas si las has agregado.
+* `addRasterImage()` ¡crea una superposición de imagen a partir de datos ráster!
+* `addGeoJSON()` agrega polígonos GeoJSON al mapa interactivo.
 
-## Resources: 
+## Recursos:
 
-* [RStudios leaflet guide](https://rstudio.github.io/leaflet/)
+* [Guía de leaflet de RStudio](https://rstudio.github.io/leaflet/)
 * [rgbif](https://github.com/ropensci/rgbif)
 
-**Author**: John Wilshire
+**Autor**: John Wilshire
 
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

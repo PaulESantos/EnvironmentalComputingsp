@@ -1,5 +1,5 @@
 ---
-title: 'Principal Component Analysis'
+title: 'Análisis de Componentes Principales'
 weight: 2
 output: html_document
 editor_options: 
@@ -7,11 +7,12 @@ editor_options:
 aliases: /principal-components-analysis/
 ---
 
-Principal Components Analysis (PCA) is the one of the most widely used multivariate statistical techniques. The primary motivation behind PCA is to reduce, or summarize, a large number of variables into a smaller number of derived variables that may be readily visualised in 2- or 3-dimensional space. For example, PCA might be used to compare the chemistry of different watersheds based on multiple variables or to quantify phenotypic variation amongst species based on multiple morphological measurements.
+El Análisis de Componentes Principales (PCA) es una de las técnicas estadística multivariada más utilizadas. La motivación principal detrás del PCA es reducir o resumir un gran número de variables en un número menor de variables derivadas que puedan ser fácilmente visualizadas en un espacio bidimensional o tridimensional. Por ejemplo, el PCA podría ser utilizado para comparar la química de diferentes cuencas hidrográficas basado en múltiples variables o para cuantificar la variación fenotípica entre especies basado en múltiples medidas morfológicas.
 
-The new set of variables created by PCA can be used in other analyses, but most commonly as a new set of axes on which to plot your multivariate data.
+El nuevo conjunto de variables creado por el PCA puede ser utilizado en otros análisis, pero más comúnmente como un nuevo conjunto de ejes en los cuales se pueden graficar los datos multivariados.
 
-The first principal component (PC) is fitted such that it explains the maximum amount of variation in the data. Think of this as a line of best fit in multivariate space, as close as possible to all the points with the variation maximised along the line and minimised on the perpindicular away from the line. The second PC is fitted at right angles to the first (i.e., orthogonally, with with no correlation) such that it explains as much of the remaining variation as possible. Additional PCs, which must be orthogonal to existing PCs, can then be fitted by the same iterative process.
+El **primer componente principal** (PC) se ajusta de tal manera que explique la máxima cantidad de variación en los datos. Puedes pensar en esto como una línea de mejor ajuste en el espacio multivariado, lo más cerca posible de todos los puntos con la variación maximizada a lo largo de la línea y minimizada en la dirección perpendicular a la línea. El **segundo PC** se ajusta en ángulo recto al primero (es decir, ortogonalmente, sin correlación) de manera que explique la mayor cantidad posible de la variación restante. Luego, se pueden ajustar componentes adicionales, que deben ser ortogonales a los componentes existentes, mediante el mismo proceso iterativo.
+
 
 ```{r,echo=F,fig.width=5,fig.height=5}
 x <- rnorm(100, mean = 30, sd = 10)
@@ -40,37 +41,37 @@ text(55, 50, "PC1", col = "blue")
 text(10, 45, "PC2", col = "blue")
 ```
 
-Visualising this in two dimensions helps to understand the approach. The data points will be plotted on the new blue axes (the principal components) rather than the original black axes. Now imagine fitting those lines in more than three dimensions!
+Visualizar esto en dos dimensiones ayuda a entender el enfoque. Los puntos de datos se graficarán en los nuevos ejes azules (los componentes principales) en lugar de los ejes originales negros. ¡Ahora imagina ajustar esas líneas en más de tres dimensiones!
 
-Consider a plant physiologist attempting to quantify differences in leaf shape between two species of tree. She recorded total length (leaf + petiole), leaf length, width at the widest point, width half way along the leaf and petiole length from ten leaves of each species. These data are five dimensional (i.e., five measured variables) and we can use PCA to extract two new variables that will allow us to visualise the data in fewer dimensions.
+Considera a una fisióloga vegetal que intenta cuantificar las diferencias en la forma de las hojas entre dos especies de árboles. Registró la longitud total (hoja + pecíolo), la longitud de la hoja, el ancho en el punto más ancho, el ancho a la mitad de la hoja y la longitud del pecíolo de diez hojas de cada especie. Estos datos son de cinco dimensiones (es decir, cinco variables medidas) y podemos usar el PCA para extraer dos nuevas variables que nos permitirán visualizar los datos en menos dimensiones.
 
 ![](PCA_image.png)
 
-It is highly likely that there are strong relationships between variables in our example data set (e.g., leaf length vs total length). This means that the principal components are likely to explain a fair bit of the variation (imagine fitting a straight line along a sausage-shaped collection of points in multivariate space). If all variables were completely uncorrelated with each other, then PCA is not going to work very well (imagine trying to fit a line of best best fit a ball-shaped collection of points in multivariate space).
-  
 
-### Running the analysis
+Es muy probable que existan relaciones fuertes entre las variables en nuestro conjunto de datos de ejemplo (por ejemplo, longitud de la hoja versus longitud total). Esto significa que los componentes principales probablemente expliquen una buena parte de la variación (imagina ajustar una línea recta a lo largo de una colección de puntos con forma de salchicha en el espacio multivariado). Si todas las variables estuvieran completamente no correlacionadas entre sí, entonces el PCA no funcionaría muy bien (imagina tratar de ajustar una línea de mejor ajuste a una colección de puntos en forma de esfera en el espacio multivariado).
+  
+### Ejecutando el análisis
  
-Your data should be formatted with variables as columns and observations as rows. Download the sample leaf shape data set, [Leafshape.csv.](/datasets/Leafshape.csv), and import into R to see the required format.
+Tus datos deben estar formateados con las variables como columnas y las observaciones como filas. Descarga el conjunto de datos de ejemplo sobre la forma de las hojas, [Leafshape.csv](/datasets/Leafshape.csv), importalo a R:
 
 ```{r}
 Leaf_shape <- read.csv(file = "Leafshape.csv", header = TRUE)
 ```
 
-The first column is a categorical variable that labels the leaves by species (A or B). We need to extract that to a new object (Species) that we can use later for plotting, and make a new data frame (Leaf_data) with just the variables to be analysed by PCA (columns 2-6).
+
+La primera columna es una variable categórica que etiqueta las hojas por especie (A o B). Necesitamos extraer eso a un nuevo objeto (Especie) que podamos usar más tarde para graficar, y crear un nuevo dataframe (Datos_Hoja) con solo las variables que se analizarán mediante PCA (columnas 2-6).
 
 ```{r}
 Species <- Leaf_shape$Species
 Leaf_data <- Leaf_shape[, 2:6]
 ```
-
-There are a number of function and packages in R available for conducting PCA, one of the simplest of which is the `princomp` function in base stats. To run a PCA, we simply use:
+Existen varias funciones y paquetes en R disponibles para realizar PCA, uno de los más simples es la función `princomp` en el paquete base stats. Para ejecutar una PCA, simplemente usamos:
 
 ```{r}
 Leaf_PCA <- princomp(Leaf_data, cor = FALSE)
 ```
 
-Calling the `plot` function on the scores of the `princomp` output produces a score plot. This is the ordination of all 20 leaf samples in the new two-dimensional space defined by PC1 and PC2. Here, we can also label the samples by species with the colour argument, and add a legend. 
+Llamar a la función `plot` en los resultados de `princomp` produce un gráfico de dispersión. Este es el ordenamiento de las 20 muestras de hojas en el nuevo espacio bidimensional definido por PC1 y PC2. Aquí también podemos etiquetar las muestras por especie utilizando el argumento de color y agregar una leyenda.
 
 ```{r}
 plot(Leaf_PCA$scores, pch = 16, col = as.factor(Species))
@@ -78,84 +79,85 @@ legend(0, 0.4, c("Species A", "Species B"), pch = 16, col = c("black", "red"))
 ```
   
 
-### Interpreting the results
- 
+### Interpretación de los resultados
 
-The interpretation of the score plot is the same as for any ordination plot: points that are close together have similar values of the original variables (in this case, would have been close together in five dimensional space if you can imagine that).
+La interpretación del gráfico de dispersión es la misma que para cualquier gráfico de ordenación: los puntos que están cerca tienen valores similares de las variables originales (en este caso, estarían cerca en un espacio de cinco dimensiones si puedes imaginarlo).
 
-Principal components analysis produces a lot of graphical and numerical output. To fully interpret the results you need to understand several things:
+El análisis de componentes principales produce una gran cantidad de resultados gráficos y numéricos. Para interpretar completamente los resultados, necesitas entender varias cosas:
 
-**1)** How much variance is explained by each component? This can be found  by using the `summary` object produced by the PCA.
+**1)** ¿Cuánta varianza explica cada componente? Esto se puede encontrar utilizando el objeto `summary` generado por el PCA.
+
 
 ```{r}
 summary(Leaf_PCA)
 ```
 
-The proportion explained independently by each component is provided in the second row of the output from `summary`. In this example, PC1 explains 90% of the variation between the two species with PC2 2 explaining a further 6.6%. Together, those two axes (the ones you are now plotting on) explain 96.7% of the variance (the cumulative proportion row in the output). This means that those original data in five dimensions can be placed almost perfectly on this new two-dimensional plane. 
+La proporción explicada independientemente por cada componente se proporciona en la segunda fila de la salida de `summary`. En este ejemplo, PC1 explica el 90% de la variación entre las dos especies, mientras que PC2 explica un 6.6% adicional. Juntos, estos dos ejes (los que ahora estás graficando) explican el 96.7% de la varianza (fila de proporción acumulativa en el resultado). Esto significa que esos datos originales en cinco dimensiones se pueden colocar casi perfectamente en este nuevo plano bidimensional.
 
-The relative contribution of each component can also also visualised by a scree plot. Note that the Y-axis presented is not the % of variation explained. The contributions always decline with the number of the component, and ideally we would want as much variation as possible explained by the first two, as these are the ones we are using to visualise the data.
+La contribución relativa de cada componente también se puede visualizar mediante un gráfico lineal. Ten en cuenta que el eje `y` presentado no es el `%` de varianza explicada. Las contribuciones siempre disminuyen con el número de componente, e idealmente queremos que la mayor cantidad posible de variación esté explicada por los dos primeros componentes, ya que son los que utilizamos para visualizar los datos.
 
 ```{r}
 screeplot(Leaf_PCA, type = "lines")
 ```
 
-**2** How are the original variables related to the principal components?
 
-These relationships can obtained numerically by extracting the loadings from the object produced by the PCA. 
+**2** ¿Cómo se relacionan las variables originales con los componentes principales?
+
+Estas relaciones se pueden obtener numéricamente extrayendo las cargas del objeto producido por el PCA.
+
 
 ```{r}
 loadings(Leaf_PCA)
 ```
 
-The loadings are simple correlations between the principal components and the original variables (Pearson's *r*). Values closest to 1 (positive) or -1 (negative) will represent the strongest relationships, with zero being uncorrelated.
+Las cargas son correlaciones simples entre los componentes principales y las variables originales (correlación de Pearson *r*). Los valores más cercanos a 1 (positivos) o -1 (negativos) representarán las relaciones más fuertes, mientras que cero representa la falta de correlación.
 
-In this example, you can see that PC1 is positively correlated with the two width variables. R doesn't bother printing very low correlations, so you can also see that PC1 is uncorrelated with the three length variables. Given the the two species are split along the x-axis in the score plot (PC1), we now know that species A with high values of PC1 has wider leaves than species B with low values of PC1. We also know that leaves toward the top of the plot are the longest due to the positive correlations between PC2 and the three length variables (but this does not separate the two species on the plot).
+En este ejemplo, puedes observar que PC1 está correlacionado positivamente con las dos variables de anchura. R no muestra correlaciones muy bajas, por lo que también puedes ver que PC1 no está correlacionado con las tres variables de longitud. Dado que las dos especies están separadas a lo largo del eje x en el gráfico de dispersión (PC1), ahora sabemos que la especie A con valores altos de PC1 tiene hojas más anchas que la especie B con valores bajos de PC1. También sabemos que las hojas hacia la parte superior del gráfico son las más largas debido a las correlaciones positivas entre PC2 y las tres variables de longitud (pero esto no separa a las dos especies en el gráfico).
 
-You can also produce a biplot with the relationships between the original variables and the principal components overlaid on the score plot. The original variables (in red) will have a strong relationship with one of the principal components if they are parallel to that component (eg Width 1 and PC1) and longer arrows represent stronger correlations.
+También puedes producir un biplot con las relaciones entre las variables originales y los componentes principales superpuestas en el gráfico de puntuación. Las variables originales (en rojo) tendrán una fuerte relación con uno de los componentes principales si son paralelas a ese componente (por ejemplo, Width 1 y PC1) y las flechas más largas representan correlaciones más fuertes.
+
 
 ```{r}
 biplot(Leaf_PCA)
 ```
   
-
-### Assumptions to check
+### Supuestos a verificar
  
-**Linearity.** PCA works best when the relationship between variables are approximately linear. In the absence of linearity it is best to transform variables (e.g., log transform) prior to the analysis.
+**Linealidad.** El PCA funciona mejor cuando la relación entre las variables es aproximadamente lineal. En ausencia de linealidad, es mejor transformar las variables (por ejemplo, transformación logarítmica) antes del análisis.
 
-**Correlation vs covariance matrices.** You can run PCA using a covariance matrix, which is appropriate when all variables are measured on the same scale, or a correlation matrix, which is appropriate if variables are measured on very different scales. These will produce different output because using a covariance matrix is affected by differences in the size of variances among the variables. Researchers also commonly standardise variables prior to the analysis if they would like  variables that were measured on different scales to have an equal influence on the output.
+**Matrices de correlación frente a covarianza.** Puedes realizar PCA utilizando una matriz de covarianza, lo cual es apropiado cuando todas las variables se miden en la misma escala, o una matriz de correlación, lo cual es apropiado si las variables se miden en escalas muy diferentes. Esto producirá resultados diferentes debido a que el uso de una matriz de covarianza se ve afectado por las diferencias en el tamaño de las varianzas entre las variables. Los investigadores también suelen estandarizar las variables antes del análisis si desean que las variables medidas en diferentes escalas tengan una influencia igual en los resultados.
 
-Change between these two options with the `cor` argument in the `princomp` function. 
+Cambia entre estas dos opciones con el argumento `cor` en la función `princomp`.
+
+
 
 ```{r, eval=FALSE}
-Leaf_PCA <- princomp(Leaf_data, cor = FALSE) # uses a covariance matrix
-Leaf_PCA2 <- princomp(Leaf_data, cor = TRUE) # uses a correlation matrix
+Leaf_PCA <- princomp(Leaf_data, cor = FALSE) # utiliza una matriz de covarianza
+Leaf_PCA2 <- princomp(Leaf_data, cor = TRUE) # utiliza una matriz de correlación
 ```
 
-**Outliers.** Outliers can have big influence on the results of PCA, especially when using a covariance matrix.
+**Valores atípicos.** Los valores atípicos pueden tener una gran influencia en los resultados del ACP, especialmente cuando se utiliza una matriz de covarianza.
 
-**Rotating axes.** The `princomp` function produces an unrotated principal components analysis. There are options in other R packages for rotating the principal components after they have been derived with the aim of an output that is easier to interpret (e.g., where the loadings within a component are close to one or zero). There are several methods for doing this, and you would need to read more than this help module before attempting such methods.  
-  
+**Rotación de ejes.** La función `princomp` produce un análisis de componentes principales no rotado. Existen opciones en otros paquetes de R para rotar los componentes principales después de haber sido derivados, con el objetivo de obtener una salida más fácil de interpretar (por ejemplo, donde las cargas dentro de un componente sean cercanas a uno o cero). Existen varios métodos para hacer esto, y necesitarías leer más que este módulo de ayuda antes de intentar dichos métodos.
 
-### Communicating the results
- 
-**Written.** In the results section, it would be typical to state the amount of variation explained by the first two (or three) PCs and the contribution of different variables to those PCs. In this example, you would state that the first principal component explained 90% of the variation in leaf morphology and was most strongly related to leaf width at the widest point.
+### Comunicación de los resultados
 
-**Visual.** PCA results are best presented visually as a 2-dimensional or, rarely, a 3-dimensional ordination plot (see above) where the position of each observation represents is position in relation to the first two (or three) principal components. It is common to label the points in some way to seek patterns on the plot (like how we labelled leaves by species above).
-  
+**Escrito.** En la sección de resultados, sería típico indicar la cantidad de variación explicada por los dos (o tres) primeros componentes principales y la contribución de diferentes variables a esos componentes principales. En este ejemplo, indicarías que el primer componente principal explica el 90% de la variación en la morfología de las hojas y está más fuertemente relacionado con el ancho de la hoja en su punto más ancho.
 
-## Further help
- 
-Type `?princomp` to get the R help for this function. 
+**Visual.** Los resultados del ACP se presentan mejor visualmente como un gráfico de ordenación bidimensional o, raramente, tridimensional (ver arriba) donde la posición de cada observación representa su posición en relación a los dos (o tres) primeros componentes principales. Es común etiquetar los puntos de alguna manera para buscar patrones en el gráfico (como etiquetamos las hojas por especie arriba).
 
-An nice interactive page to help you understand what PCA is doing can be found [here](http://setosa.io/ev/principal-component-analysis/).
+## Más ayuda
 
-<p style="margin-left:.5in;text-indent:-.5in">Quinn, GP and MJ Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Ch. 17. Principal Components and Correspondence Analysis.</p>
+Escribe `?princomp` para obtener ayuda en R sobre esta función.
 
-<p style="margin-left:.5in;text-indent:-.5in">McKillup, S (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Ch. 22. Introductory concepts of multivariate analysis.</p>
-  
+Una página interactiva interesante que te ayudará a comprender qué hace el ACP se encuentra [aquí](http://setosa.io/ev/principal-component-analysis/).
 
-**Author**: Andrew Letten
- 
-**Year:** 2016
+<p style="margin-left:.5in;text-indent:-.5in">Quinn, GP y MJ Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Cap. 17. Componentes principales y análisis de correspondencia.</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+<p style="margin-left:.5in;text-indent:-.5in">McKillup, S (2012) *Statistics explained. An introductory guide for life scientists.*. Cambridge University Press. Cap. 22. Conceptos introductorios del análisis multivariado.</p>
+
+**Autor**: Andrew Letten
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

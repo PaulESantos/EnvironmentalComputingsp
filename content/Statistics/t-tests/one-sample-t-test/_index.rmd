@@ -1,88 +1,96 @@
 ---
 weight: 1
-title: "One Sample T-test"
+title: "Prueba de una muestra con t de Student"
 output: html_document
 aliases: /one-sample-t-test/
 ---
 
-One of the simplest hypothesis tests in statistics is to test whether a single parameter from a sample of measurements differs from a hypothesised population parameter. The test is asking what is the likelihood of obtaining that sample from a population with certain properties.
+Una de las pruebas de hipótesis más simples en estadística consiste en evaluar si un parámetro único obtenido de una muestra de mediciones difiere de un parámetro poblacional hipotético. La prueba busca determinar la probabilidad de obtener esa muestra a partir de una población con ciertas propiedades.
 
-For this, we use a one sample *t*-test. The test statistic, *t*, has the general form of:
+Para esto, utilizamos una prueba de una muestra con *t* de Student. La estadística de prueba, *t*, tiene la siguiente forma general:
 
 $$t = \frac{St-\theta}{S_{St}}$$
 
-where *St* is the value of the statistic from your sample, $\theta$ is the population value against which you are comparing your sample, and $S_{St}$ is the standard error of your sample statistic.
 
-Such tests can be used for a variety of parameters sampled from populations (e.g., means, slopes and intercepts in linear regression etc.). Here, lets look at a simple example where we test whether the mean of a set of replicated measures differs from a hypothesised value.
+
+Donde *St* es el valor de la estadística de tu muestra, $\theta$ es el valor poblacional con el que estás comparando tu muestra, y $S_{St}$ es el error estándar de tu estadística de muestra.
+
+Estas pruebas se pueden utilizar para una variedad de parámetros muestreados de poblaciones (por ejemplo, medias, pendientes e interceptos en regresión lineal, etc.). Aquí, veamos un ejemplo sencillo en el que probamos si la media de un conjunto de medidas replicadas difiere de un valor hipotético.
 
 ![](One_sample_t_test_image.png)
 
-Imagine that a forensic scientist was trying to track the origin of some soil samples taken from footprints at a crime scene. She collected 10 samples and analysed the concentration of pollen from a species of pine tree found in a local forest. It was known that soil from that local forest had an average concentration of 125 grains per gram of soil. The one sample *t*-test will test the likelihood of the ten samples coming from that forest by contrasting the mean concentration in the ten new samples to the value expected if they came from that forest.
 
-The test statistic, *t* is:
+
+Imagina que un científico forense intentaba rastrear el origen de algunas muestras de suelo tomadas de huellas en una escena del crimen. Recogió 10 muestras y analizó la concentración de polen de una especie de pino que se encuentra en un bosque local. Se sabía que el suelo de ese bosque local tenía una concentración promedio de 125 granos por gramo de suelo. La prueba de *t* de una muestra probará la probabilidad de que las diez muestras provengan de ese bosque al comparar la concentración promedio en las diez nuevas muestras con el valor esperado si provinieran de ese bosque.
+
+La estadística de prueba, *t*, es:
+
 
 $$t = \frac{\bar{x}-\mu}{SE}$$
 
-where $\bar{x}$ is the sample mean, $\mu$ is the population mean and *SE* is the standard error of the sample.
 
-Note that the size of test statistic depends on two things: 1) how different the sample mean is to the population mean (the numerator) and 2) how much variation is present within the sample (the denominator). The null hypothesis is that the population mean from which the sample was taken is the known value, i.e., $H_o: \mu=125$.
+donde $\bar{x}$ es la media de la muestra, $\mu$ es la media poblacional y *SE* es el error estándar de la muestra.
+
+Ten en cuenta que el tamaño de la estadística de prueba depende de dos cosas: 1) qué tan diferente es la media de la muestra de la media poblacional (el numerador) y 2) cuánta variación está presente dentro de la muestra (el denominador). La hipótesis nula es que la media poblacional de la cual se tomó la muestra es el valor conocido, es decir, $H_o: \mu=125$.
   
 
-### Running the analysis
+### Ejecutando el análisis
  
-The test statistic *t* is relatively straightforward to manually calculate. The test statistic can then checked against a *t* distribution in order to determine the probability of obtaining that value of the test statistic if the null hypothesis is true.
+La estadística de prueba *t* es relativamente sencilla de calcular manualmente. Luego, puedes comparar la estadística de prueba con una distribución *t* para determinar la probabilidad de obtener ese valor de la estadística de prueba si la hipótesis nula es verdadera.
 
-To calculate the probability associated with a given value of t in R, use
+Para calcular la probabilidad asociada a un valor dado de *t* en R, usa
+
 
 ```{r,eval=FALSE}
 pt(q, df = your.df, lower.tail = FALSE) * 2
 ```
 
-where *q* is your value of t, *your.df* is the degrees of freedom (*n*-1). The `lower.tail = FALSE` ensures that you are calculating the probability of getting a *t* value larger than yours (i.e., the upper tail, P[X > x]). Note that the critical value for $t_{\alpha = 0.05}$ varies depending on the number of degrees of freedom - larger degrees of freedom = smaller critical value of *t*.
 
-Much easier is to use the `t.test` function in R to give you the test statistic and its associated probability in one output. For a one sample *t*-test, we would use: 
+donde *q* es tu valor de *t*, *your.df* son los grados de libertad (*n*-1). El `lower.tail = FALSE` asegura que estás calculando la probabilidad de obtener un valor de *t* más grande que el tuyo (es decir, la cola superior, P[X > x]). Ten en cuenta que el valor crítico para $t_{\alpha = 0.05}$ varía según el número de grados de libertad: a mayor número de grados de libertad, menor es el valor crítico de *t*.
+
+Es mucho más fácil utilizar la función `t.test` en R para obtener la estadística de prueba y su probabilidad asociada en una sola salida. Para una prueba de *t* de una muestra, usaríamos:
 
 
 ```{r,eval = FALSE}
 t.test(y, mu = your.mu)
 ```
 
-where *y* is a vector with your sample data and *your.mu* is the population parameter you are comparing the sample to.
+donde *y* es un vector con tus datos de muestra y *your.mu* es el parámetro de la población con el que estás comparando la muestra.
 
-For our crime scene example, we could assign our ten measurements to an object called pollen and run the *t*-test on that object.
+En nuestro ejemplo de la escena del crimen, podríamos asignar nuestras diez mediciones a un objeto llamado "polen" y ejecutar el test de *t* en ese objeto.
 
 ```{r,eval=FALSE}
 pollen <- c(94, 135, 78, 98, 137, 114, 114, 101, 112, 121)
 t.test(pollen, mu = 125)
 ```
   
-
-### Interpreting the results
+### Interpretación de los resultados
  
 ```{r,echo=FALSE}
 pollen <- c(94, 135, 78, 98, 123, 114, 114, 101, 112, 121)
 t.test(pollen, mu = 125)
 ```
 
-The output of a one sample *t*-test is straight-forward to interpret. In the above output, the test statistic *t* = -3.0691 with 9 degrees of freedom, and a low *p* value (*p* = 0.013). We can therefore reject the null hypothesis and conclude that it was unlikely that the soil samples from the crime scene came from the nearby pine forest.
+La salida de una prueba *t* de una muestra es fácil de interpretar. En la salida anterior, la estadística de prueba *t* es -3.0691 con 9 grados de libertad, y un valor de *p* bajo (*p* = 0.013). Por lo tanto, podemos rechazar la hipótesis nula y concluir que es poco probable que las muestras de suelo de la escena del crimen provengan del bosque de pinos cercano.
 
-You also get the mean of your sample (109) and the 95% confidence interval for population mean estimated from that sample (this will not overlap your hypothesised mean when the test is significant).
+También se obtiene la media de la muestra (109) y el intervalo de confianza del 95% para la media de la población estimada a partir de esa muestra (este no se superpondrá con la media hipotetizada cuando la prueba sea significativa).
   
 
-### Assumptions to check       
+### Supuestos a verificar
  
-*t*-tests are parametric tests, which implies we can specify a probability distribution for the population of the variable from which samples were taken. Parametric (and non-parametric) tests have a number of assumptions. If these assumptions are violated we can no longer be sure that the test statistic follows a *t* distribution, in which case *p*-values may be inaccurate.   
+Las pruebas *t* son pruebas paramétricas, lo que implica que podemos especificar una distribución de probabilidad para la población de la variable de la cual se tomaron las muestras. Las pruebas paramétricas (y no paramétricas) tienen varios supuestos. Si se violan estos supuestos, no podemos estar seguros de que la estadística de prueba siga una distribución *t*, en cuyo caso los valores de *p* pueden ser inexactos.   
 
-**Normality**. The *t* distribution describes paramaters sampled from a normal population, so assumes that the data are normally distributed. Note however that *t tests* are reasonably robust to violations of normality (although watch out for the influence of outliers).  
+**Normalidad**. La distribución *t* describe parámetros muestreados de una población normal, por lo que asume que los datos tienen una distribución normal. Sin embargo, hay que tener en cuenta que las pruebas *t* son bastante robustas ante violaciones de la normalidad (aunque hay que tener cuidado con la influencia de los valores atípicos).  
 
-**Independence**. The observations should have been sampled randomly from a defined population so that sample mean is an unbiased estimate of the population mean. If individual replicates are linked in any way, then the assumption of independence will be violated.
+**Independencia**. Las observaciones deben haber sido muestreadas al azar de una población definida para que la media de la muestra sea una estimación imparcial de la media de la población. Si los datos individuales están vinculados de alguna manera, se violará el supuesto de independencia.
   
 
-### Communicating the results
+### Comunicación de los resultados
  
-**Written.** As a minimum, the observed *t* statistic, the *p* value and the number of degrees of freedom should be reported. For example, you could write "The mean pollen count from the footprints (109 ) was significantly lower than expected if it was derived from the nearby forest with an average count of 125 (*t* = 3.07, df = 9, P = 0.01)". 
+**Escrito.** Como mínimo, se debe informar la estadística de prueba *t* observada, el valor de *p* y el número de grados de libertad. Por ejemplo, se podría escribir "La media del recuento de polen de las huellas (109) fue significativamente más baja de lo esperado si proviniera del bosque cercano con un recuento promedio de 125 (*t* = 3.07, df = 9, P = 0.01)".
 
-**Visual.** Box plots or frequency histograms can be used to visualise the variation in a single variable. In this example, you might use a line or arrow to indicate the single value (125) that you were comparing the sample to.
+**Visual.** Los diagramas de caja o histogramas de frecuencia se pueden utilizar para visualizar la variación en una sola variable. En este ejemplo, se podría utilizar una línea o una flecha para indicar el valor único (125) con el que se estaba comparando la muestra.
+
 
 ```{r}
 hist(pollen, xlab = "Pollen count", main = NULL)
@@ -92,17 +100,17 @@ abline(v = 125, col = "red")
 ```
   
 
-### Further help
- 
-Type `?t.test` to get the R help for this function. 
+### Más ayuda
 
-<p style="margin-left:.5in;text-indent:-.5in">Quinn and Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Chapter 3: Hypothesis testing.</p>
+Escribe `?t.test` para obtener la ayuda de R sobre esta función.
 
-<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Chapter 9: Comparing the means of one and two samples of normally distributed data.</p>
-  
+<p style="margin-left:.5in;text-indent:-.5in">Quinn and Keough (2002) **Experimental design and data analysis for biologists*. Cambridge University Press. Capítulo 3: Prueba de hipótesis.</p>
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Capítulo 9: Comparación de las medias de una y dos muestras de datos distribuidos normalmente.</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autor**: Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
+
