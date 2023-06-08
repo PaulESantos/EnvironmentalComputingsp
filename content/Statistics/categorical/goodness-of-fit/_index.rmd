@@ -1,92 +1,98 @@
 ---
 weight: 1
-title: "Goodness of Fit"
+title: "Prueba de bondad de ajuste"
 output: html_document
 aliases: /goodness-of-fit-tests/
 editor_options: 
   chunk_output_type: console
 ---
-$\chi^2$ goodness of fit tests are used to test whether the counts of observations belonging to two or more categories differ from those under an expected model. For example, what is the likelihood of a sample of 60 women and 40 men in a class coming from a population where the sex ratio is actually 1:1? In this example, there is a single categorical variable of sex, with two categories of male and female.
+
+Las pruebas de bondad de ajuste $\chi^2$ se utilizan para comprobar si las frecuencias observadas en dos o más categorías difieren de las esperadas bajo un modelo dado. Por ejemplo, ¿cuál es la probabilidad de que una muestra de 60 mujeres y 40 hombres en una clase provenga de una población donde la proporción de sexos sea en realidad de 1:1? En este ejemplo, hay una variable categórica única de sexo, con dos categorías: masculino y femenino.
+
  
 
 ![](Goodness_of_fit_test_image.jpg)  
 
  
-The test statistic is: 
+La estadística de prueba es:
 
 $\chi^{2} = \sum_{i=1}^{k} \frac{(O_{i}-E_{i})^2}{E_{i}}$
 
+donde *O* y *E* son los números observados y esperados en cada una de las categorías de 1 a *k*.
 
- 
-where *O* and *E* are the observed and expected numbers in each of the categories from 1 to k.
-
-The observed numbers come from your actual observations, in this example 60 and 40.The expected numbers are from a theoretical expectation of the frequencies under the model being tested. In this example, if you were testing against an expectation of a male:female ratio of 1:1, then you would expect 50 women and 50 men in a sample of 100 people.    
-For this example, 
+Los números observados provienen de tus observaciones reales, en este ejemplo 60 y 40. Los números esperados son obtenidos a partir de una expectativa teórica de las frecuencias bajo el modelo que se está probando. En este ejemplo, si estuvieras probando una proporción esperada de hombres y mujeres de 1:1, entonces esperarías tener 50 mujeres y 50 hombres en una muestra de 100 personas.
+Para este ejemplo,
 
 $\chi^2 = \frac{(60-50)^2}{50}+\frac{(40-50)^2}{50}$
-  
 
-### Running the analysis
- 
-You can calculate $\chi^2$ pretty easily with a calculator. You would then need to determine the probability of obtaining that $\chi^2$ value from the known probability distribution of $\chi^2$.
+### Ejecutando el análisis
+
+Puedes calcular $\chi^2$ fácilmente con una calculadora. Luego tendrías que determinar la probabilidad de obtener ese valor de $\chi^2$ a partir de la distribución de probabilidad conocida de $\chi^2$.
+
 
 ```{r, eval = FALSE}
 pchisq(x, df, lower.tail = FALSE)
 ```
 
-with *x* = your value of $\chi^2$, and degrees of freedom (*df*) = number of categories-1. The `lower.tail = FALSE` bit gives you the probability that $\chi^2$ is greater than your value.
+con *x* = el valor de $\chi^2$ y grados de libertad (*df*) = número de categorías - 1. La parte `lower.tail = FALSE` te da la probabilidad de que $\chi^2$ sea mayor que tu valor.
 
-Alternatively, you can do all of this in one go with the `chisq.test` function. 
+Alternativamente, puedes hacer todo esto de una sola vez con la función `chisq.test`.
+
 
 ```{r, eval = FALSE}
 chisq.test(x, p)
 ```
     
-where *x* = the observed data (i.e., counts in each category) and *p* are the expected probabilities for each category.
 
-In this example we would use:
+donde *x* = los datos observados (es decir, las frecuencias en cada categoría) y *p* son las probabilidades esperadas para cada categoría.
+
+En este ejemplo, usaríamos:
+
 
 ```{r, eval = FALSE}
 chisq.test(x = c(60, 40), p = c(0.5, 0.5))
 ```
 
-where *x* is the observed range of numbers and *p* has the expected probabilities.
+donde *x* es el rango de números observados y *p* tiene las probabilidades esperadas.
 
-Note that it is very important that you use the actual counts as your observed data, not their proportions (i.e., 60 and 40, not 0.6 and 0.4). This makes sense if you understand that a sex ratio of 6:4 in a sample of 10 people is more likely to occur by chance when sampling from an equal sex ratio than a ratio of 600:400 in a sample of 1000 people.  
+Es importante destacar que debes utilizar los conteos reales como tus datos observados, no sus proporciones (es decir, 60 y 40, no 0.6 y 0.4). Esto tiene sentido si comprendes que una proporción de sexos de 6:4 en una muestra de 10 personas es más probable que ocurra por casualidad al muestrear de una proporción igual de sexos que una proporción de 600:400 en una muestra de 1000 personas.
 
-You are not constrained to just two categories, or an expectation that the counts in each are equal. For example, to test whether the counts 10, 20 and 70 in three categories came from a population with expected frequencies of 0.25, 0.25 and 0.5, you would use:
+No estás limitado a solo dos categorías, ni a una expectativa de que los conteos en cada categoría sean iguales. Por ejemplo, para probar si los conteos 10, 20 y 70 en tres categorías provienen de una población con frecuencias esperadas de 0.25, 0.25 y 0.5, utilizarías:
 
 ```{r, eval = FALSE}
 chisq.test(x = c(10, 20, 70), p = c(0.25, 0.25, 0.5))
 ```
   
 
-### Interpreting the results
- 
-The output from a goodness of fit test is very simple: the value of $\chi^2$, the degrees of freedom (number of categories - 1) and the p-value. The p-value gives the likelihood of your observed counts coming from a population with the expected frequencies that you specified.
+### Interpretación de los resultados
+
+El resultado de una prueba de bondad de ajuste es muy simple: el valor de $\chi^2$, los grados de libertad (número de categorías - 1) y el valor p. El valor p indica la probabilidad de que tus conteos observados provengan de una población con las frecuencias esperadas que especificaste.
+
 
 ```{r, echo = FALSE}
 chisq.test(x = c(60, 40), p = c(0.5, 0.5))
 ```
 
-In the sex ratio example, you should have obtained a p-value of 0.0455, which tells us that it is unlikely to obtain a sample of 60 women and 40 men from a population with an equal sex ratio. We would then conclude that they were likely to be sampled from a population that did not have an equal sex ratio.  
 
-To explore which of the categories had more observations than expected, or had fewer observations than expected, look at the standardised residuals. 
+En el ejemplo de la proporción de sexos, deberías haber obtenido un valor p de 0.0455, lo que nos indica que es poco probable obtener una muestra de 60 mujeres y 40 hombres de una población con una proporción de sexos igual. Concluiríamos entonces que es probable que se hayan muestreado de una población que no tiene una proporción de sexos igual.
+
+Para explorar qué categorías tienen más observaciones de las esperadas o menos observaciones de las esperadas, observa los residuos estandarizados.
+
 
 ```{r, eval = FALSE}
 chisq.test(x = c(60, 40), p = c(0.5, 0.5))$residuals
 ```
 
-These are the differences between the observed and expected, standardised by the square root of the expected. These are standardised because any contrast of the absolute differences (observed - expected) can be misleading when the size of the expected values vary. For example, a difference of 5 from an expectation of 10 is an increase of 50%, but a difference of 5 from an expectation of 100 is only a 5% change.  
+Estos son las diferencias entre lo observado y lo esperado, estandarizadas por la raíz cuadrada de lo esperado. Están estandarizadas porque cualquier contraste de las diferencias absolutas (observado - esperado) puede ser engañoso cuando el tamaño de los valores esperados varía. Por ejemplo, una diferencia de 5 en comparación con una expectativa de 10 representa un aumento del 50%, pero una diferencia de 5 en comparación con una expectativa de 100 es solo un cambio del 5%.
 
-Exploring the residuals becomes important when there are more than two categories in the test, as the $\chi^2$ test will only tell you if the observed frequencies differ from the expected across all categories, not which particular category is over- or under-represented.
-  
+Explorar los residuos se vuelve importante cuando hay más de dos categorías en la prueba, ya que la prueba de $\chi^2$ solo te dirá si las frecuencias observadas difieren de las esperadas en todas las categorías, no en qué categoría en particular está sobre o subrepresentada.
 
-### Assumptions to check
- 
-**Independence.** The $\chi^2$ test assumes that the observations are classfied into each category independently of each other. This is a sampling design issue and is usually avoided by random sampling. In the sex ratio example, there would be problems is you deliberately chose women to add to your sample if you thought that you had enough men already.  
+### Supuestos a verificar
 
-**Sample size.** The $\chi^2$ statistic can only be reliably compared to the $\chi^2$ distribution if sample sizes are sufficiently large. You should check that at least 20% of the expected frequencies are larger than 5. You can see the expected counts for each category by adding <font face="monospace">$expected</font> to the end of your $\chi^2$ test. For example,
+**Independencia.** La prueba de $\chi^2$ asume que las observaciones se clasifican en cada categoría de forma independiente entre sí. Este es un problema de diseño de muestreo y generalmente se evita mediante un muestreo aleatorio. En el ejemplo de la proporción de sexos, habría problemas si eligieras deliberadamente mujeres para agregar a tu muestra si crees que ya tienes suficientes hombres.
+
+**Tamaño de muestra.** La estadística de $\chi^2$ solo se puede comparar de manera confiable con la distribución de $\chi^2$ si los tamaños de muestra son lo suficientemente grandes. Debes verificar que al menos el 20% de las frecuencias esperadas sean mayores que 5. Puedes ver los conteos esperados para cada categoría al agregar <font face="monospace">$expected</font> al final de tu prueba de $\chi^2$. Por ejemplo,
+
 
 
 ```{r, eval = FALSE}
@@ -94,33 +100,31 @@ chisq.test(x = c(60, 40), p = c(0.5, 0.5))$expected
 ```
 
 
-If this assumption has not been met, you could combine categories (if you have more than two), run a randomisation test or consider log-linear modelling.
-  
+Si no se cumple esta suposición, puedes combinar categorías (si tienes más de dos), realizar una prueba de aleatorización o considerar el modelado log-lineal.
 
-### Communicating the results
- 
-**Written.** The results of a $\chi^2$ goodness of fit test can be easily presented in the text of a results section. For example, "The sex ratio of the class of 100 students differed significantly from a 1:1 ratio ("$\chi^2$ = 4, df = 1, P = 0.0455)."  
+### Comunicación de los resultados
 
-**Visual.** Count data are best presented as a bar plot with the counts on the Y axis and the categories on the X axis 
+**Escrito.** Los resultados de una prueba de bondad de ajuste $\chi^2$ se pueden presentar fácilmente en el texto de la sección de resultados. Por ejemplo, "La proporción de sexos de la clase de 100 estudiantes difirió significativamente de una proporción 1:1 ("$\chi^2$ = 4, gl = 1, P = 0.0455)".
+
+**Visual.** Los datos de conteo se presentan mejor como un gráfico de barras con los conteos en el eje Y y las categorías en el eje X.
 
 ```{r}
 barplot(c(60, 40), xlab = "Sex", ylab = "Count", names = c("Female", "Male"))
 ```
 
-See the graphing modules for making better versions of these figures that are suitable for reports or publications.
-  
 
-### Further help
- 
-Type `?chisq.test` to get the R help for this function. 
+Consulta los módulos de gráficos para obtener versiones mejoradas de estas figuras adecuadas para informes o publicaciones.
 
-Quinn and Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Chapter 14. Analyzing frequencies.
+### Más ayuda
 
-McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Chapter 20.2 Comparing observed and expected frequencies: the chi-square test for goodness of fit.
-  
+Escribe `?chisq.test` para obtener la ayuda de R sobre esta función.
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+Quinn y Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Capítulo 14. Análisis de frecuencias.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+McKillup (2012) *Statistics explained. An introductory guide for life scientists.*. Cambridge University Press. Capítulo 20.2. Comparación de frecuencias observadas y esperadas: la prueba de chi-cuadrado de bondad de ajuste.
+
+**Autor**: Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

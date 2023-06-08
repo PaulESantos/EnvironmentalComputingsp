@@ -1,0 +1,87 @@
+---
+weight: 2
+title: "Tablas de contingencia"
+output: html_document
+aliases: /contingency-tables/
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<p>Las tablas de contingencia se utilizan para probar asociaciones entre dos o más variables categóricas. Los datos toman la forma de recuentos de observaciones que han sido clasificadas por estas variables categóricas.</p>
+<p><img src="Contingency_tables_image.jpg" /></p>
+<p>Por ejemplo, considera los colores del pico y la cara del ave en peligro de extinción Gouldian Finch (<em>Erythrura gouldiae</em>) que vive en las sabanas del norte de Australia. Son polimórficos, teniendo caras de color rojo, amarillo o negro. Sus picos también son de color rojo, amarillo o negro, pero el color del pico no siempre es igual al color de la cara. Todas las aves en una muestra podrían ser clasificadas en las nueve combinaciones posibles de color de cara y color de pico, y los recuentos de cada combinación se mantendrían en una tabla bidimensional:</p>
+<pre><code>##             Black face Red face Yellow face
+## Black bill          16        5           6
+## Red bill            19       20           6
+## Yellow bill         18       22          22</code></pre>
+<p>Para probar si una variable está asociada con la otra, contrastamos los recuentos observados con los recuentos esperados si no hubiera asociación (es decir, si las dos variables fueran completamente independientes entre sí). En este ejemplo, estaríamos probando si el color del pico varía de forma independiente al color de la cara.</p>
+<p>Los recuentos esperados bajo este modelo nulo se calculan a partir de los totales de filas y columnas de la tabla que contiene los datos observados. Para cada celda de la tabla, el recuento esperado es:</p>
+<p><em>(total de la fila x total de la columna) / total general</em></p>
+<p>Cuando hacemos esto para cada celda, obtenemos una nueva tabla con todos los valores esperados:</p>
+<pre><code>##             Black face  Red face Yellow face
+## Black bill    10.67910  9.470149    6.850746
+## Red bill      17.79851 15.783582   11.417910
+## Yellow bill   24.52239 21.746269   15.731343</code></pre>
+<p>Estos son los recuentos esperados si la hipótesis nula es verdadera. En este ejemplo, si el número de aves con cara negra, roja y amarilla está en las mismas proporciones para cada uno de los colores del pico.</p>
+<p>Luego, los recuentos observados se contrastan con los recuentos esperados utilizando la estadística de prueba <span class="math inline">\(\chi^2\)</span>.</p>
+<p><span class="math inline">\(\chi^{2} = \sum_{i=1}^{k} \frac{(O_{i}-E_{i})^2}{E_{i}}\)</span></p>
+<p>donde <em>O</em> y <em>E</em> son los números observados y esperados en cada una de las celdas de la tabla.</p>
+<div id="ejecutando-el-análisis" class="section level3">
+<h3>Ejecutando el análisis</h3>
+<p>Con una calculadora, podrías calcular <span class="math inline">\(\chi^2\)</span> y luego determinar la probabilidad de obtener ese valor de <span class="math inline">\(\chi^2\)</span> a partir de una tabla de la distribución de probabilidad conocida de <span class="math inline">\(\chi^2\)</span>. En R, podemos obtener esa probabilidad de la siguiente manera:</p>
+<pre class="r"><code>pchisq(x, df, lower.tail = FALSE)</code></pre>
+<p>con <em>x</em> = tu valor de <span class="math inline">\(\chi^2\)</span>, y grados de libertad (<em>df</em>) = (número de filas-1) x (número de columnas-1). La parte <code>lower.tail = FALSE</code> te da la probabilidad de que <span class="math inline">\(\chi^2\)</span> sea mayor que tu valor.</p>
+<p>Más fácil es ejecutar todo el análisis en R. Primero, debes ingresar las frecuencias observadas como una matriz.</p>
+<pre class="r"><code>Gfinch &lt;- matrix(c(16, 19, 18, 5, 20, 22, 6, 6, 22), nrow = 3, dimnames = list(c(&quot;Black bill&quot;, &quot;Red bill&quot;, &quot;Yellow bill&quot;), c(&quot;Black face&quot;, &quot;Red face&quot;, &quot;Yellow face&quot;)))</code></pre>
+<p><code>nrow</code> le indica a R cuántas filas tienes. <code>dimnames</code> etiqueta las filas y columnas.</p>
+<p>Verifica que has ingresado los datos correctamente simplemente ingresando el nombre de la matriz que acabas de crear.</p>
+<pre class="r"><code>Gfinch</code></pre>
+<p>Ejecuta el análisis de contingencia con la función <code>chisq.test</code>.</p>
+<pre class="r"><code>chisq.test(x, correct = F)</code></pre>
+<p>donde <em>x</em> es el nombre de la matriz que contiene los datos observados (para este ejemplo, usa el objeto Gfinch).</p>
+</div>
+<div id="interpretando-los-resultados" class="section level3">
+<h3>Interpretando los resultados</h3>
+<p>La salida de una tabla de contingencia es muy simple: el valor de <span class="math inline">\(\chi^2\)</span>, los grados de libertad y el valor <em>p</em>. El valor <em>p</em> proporciona la probabilidad de que tus frecuencias observadas provengan de una población donde la hipótesis nula era verdadera.</p>
+<pre><code>## 
+## 	Pearson&#39;s Chi-squared test
+## 
+## data:  Gfinch
+## X-squared = 12.881, df = 4, p-value = 0.01187</code></pre>
+<p>En este ejemplo, la probabilidad de que las frecuencias observadas provengan de una población donde la hipótesis nula era verdadera es 0.01187. Luego, rechazaríamos la hipótesis nula y concluiríamos que existe una asociación entre el color del pico y el color de la cara.</p>
+<p>Es importante recordar que esto no está probando ninguna de las variables por separado (por ejemplo, si las aves de cara negra se encuentran más comúnmente que las aves de cara roja o amarilla), sino una asociación entre ambas variables (es decir, si el color del pico es independiente del color de la cara).</p>
+<p>Para explorar qué celdas de la tabla tienen más observaciones de las esperadas o menos observaciones de las esperadas, observa los residuos estandarizados. Estos son las diferencias entre los valores observados y esperados, estandarizados por la raíz cuadrada de los valores esperados. Están estandarizados porque la comparación de las diferencias absolutas (observado - esperado) puede ser engañosa cuando el tamaño de los valores esperados varía. Por ejemplo, una diferencia de 5 a partir de una expectativa de 10 es un aumento del 50%, pero una diferencia de 5 a partir de una expectativa de 100 es solo un cambio del 5%.</p>
+<pre class="r"><code>chisq.test(Gfinch)$residuals</code></pre>
+<pre><code>##             Black face    Red face Yellow face
+## Black bill    1.628236 -1.45259188  -0.3250357
+## Red bill      0.284793  1.06130659  -1.6033875
+## Yellow bill  -1.317120  0.05441038   1.5804894</code></pre>
+<p>En este ejemplo, se puede observar que las aves con cara negra tienen más probabilidades de tener un pico negro de lo que se esperaría por casualidad, y menos probabilidades de tener un pico amarillo.</p>
+</div>
+<div id="supuestos-a-verificar" class="section level3">
+<h3>Supuestos a verificar</h3>
+<p><strong>Independencia.</strong> La prueba de <span class="math inline">\(\chi^2\)</span> asume que las observaciones se clasifican en cada categoría de manera independiente entre sí. Esto es un problema de diseño de muestreo y generalmente se evita mediante el muestreo aleatorio. En este ejemplo, habría problemas si eligieras deliberadamente aves con una combinación de color de pico y cara que no estuviera presente en las aves ya muestreadas.</p>
+<p><strong>Tamaño de la muestra.</strong> La estadística <span class="math inline">\(\chi^2\)</span> solo se puede comparar de manera confiable con la distribución <span class="math inline">\(\chi^2\)</span> si los tamaños de muestra son lo suficientemente grandes. Debes verificar que al menos el 20% de las frecuencias esperadas sean mayores que 5. Puedes ver las frecuencias esperadas para cada categoría al agregar <font face="monospace">$expected</font> al final de tu prueba de <span class="math inline">\(\chi^2\)</span>. Por ejemplo,</p>
+<pre class="r"><code>chisq.test(Gfinch)$expected</code></pre>
+<p>Si este supuesto no se cumple, puedes combinar categorías (si tienes más de dos y tiene sentido hacerlo), realizar una prueba de aleatorización o considerar un modelo log-lineal.</p>
+</div>
+<div id="comunicación-de-los-resultados" class="section level3">
+<h3>Comunicación de los resultados</h3>
+<p><strong>Escrito.</strong> Los resultados del análisis de una tabla de contingencia se pueden presentar fácilmente en el texto de la sección de resultados. Por ejemplo, “Hubo una asociación significativa entre el color del pico y el color de la cara de los pinzones Gouldianos (<span class="math inline">\(\chi^2\)</span> = 12.88, df = 2, P = 0.01).”</p>
+<p><strong>Visual.</strong> Los datos de recuento se presentan mejor en un gráfico de barras con los recuentos en el eje Y y las categorías en el eje X.</p>
+<pre class="r"><code>barplot(Gfinch, beside = T, ylab = &quot;Count&quot;, xlab = &quot;Face colour&quot;, col = c(&quot;black&quot;, &quot;red&quot;, &quot;yellow&quot;))
+legend(&quot;topright&quot;, inset = 0.15, c(&quot;Black bill&quot;, &quot;Red bill&quot;, &quot;Yellow bill&quot;), pch = 15, col = c(&quot;black&quot;, &quot;red&quot;, &quot;yellow&quot;))</code></pre>
+<p><img src="/Statistics/categorical/contingency-tables/_index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Consulta los módulos de visualización para obtener versiones mejoradas de estas figuras que sean adecuadas para informes o publicaciones.</p>
+</div>
+<div id="más-ayuda" class="section level3">
+<h3>Más ayuda</h3>
+<p>Escribe <code>chisq.test</code> para obtener la ayuda de R para esta función.</p>
+<p>Quinn y Keough (2002) **Experimental design and data analysis for biologists*. Cambridge University Press. Capítulo 14. Análisis de frecuencias.</p>
+<p>McKillup (2012) <em>Statistics explained. An introductory guide for life scientists.</em>. Cambridge University Press. Capítulo 20.3 Comparación de proporciones entre dos o más muestras independientes.</p>
+<p><strong>Autor</strong>: Alistair Poore</p>
+<p><strong>Año</strong>: 2016</p>
+<p><strong>Última actualización</strong>: Jun. 2023</p>
+</div>

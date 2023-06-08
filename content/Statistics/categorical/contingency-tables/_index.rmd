@@ -1,85 +1,86 @@
 ---
 weight: 2
-title: "Contingency Tables"
+title: "Tablas de contingencia"
 output: html_document
 aliases: /contingency-tables/
 editor_options: 
   chunk_output_type: console
 ---
 
-Contingency tables are used to test for associations between two or more categorical variables. The data take the form of counts of observations that have been classified by these categorical variables. 
+
+Las tablas de contingencia se utilizan para probar asociaciones entre dos o más variables categóricas. Los datos toman la forma de recuentos de observaciones que han sido clasificadas por estas variables categóricas.
+
 
 ![](Contingency_tables_image.jpg)
 
-For example, consider the bill and face colours of the endangered Gouldian Finch (*Erythrura gouldiae*) living in the savannahs of northern Australia. They are polymorphic, having either red, yellow or black faces. Their bills are also either red, yellow or black, but bill colour is not always the same as face colour. All birds in a sample could be classified into all nine combinations of face and bill colour and the counts of each held in a two-way table:
-
+Por ejemplo, considera los colores del pico y la cara del ave en peligro de extinción Gouldian Finch (*Erythrura gouldiae*) que vive en las sabanas del norte de Australia. Son polimórficos, teniendo caras de color rojo, amarillo o negro. Sus picos también son de color rojo, amarillo o negro, pero el color del pico no siempre es igual al color de la cara. Todas las aves en una muestra podrían ser clasificadas en las nueve combinaciones posibles de color de cara y color de pico, y los recuentos de cada combinación se mantendrían en una tabla bidimensional:
 
 ```{r, echo = F}
 Gfinch <- matrix(c(16, 19, 18, 5, 20, 22, 6, 6, 22), nrow = 3, dimnames = list(c("Black bill", "Red bill", "Yellow bill"), c("Black face", "Red face", "Yellow face")))
 Gfinch
 ```
 
+Para probar si una variable está asociada con la otra, contrastamos los recuentos observados con los recuentos esperados si no hubiera asociación (es decir, si las dos variables fueran completamente independientes entre sí). En este ejemplo, estaríamos probando si el color del pico varía de forma independiente al color de la cara.
 
-To test whether one variable is associated with the other we contrast the observed counts to the expected counts if there was no association (in other words if the two variables were entirely independent of each other). In this example, we would be testing whether bill colour varied independently from face colour.
+Los recuentos esperados bajo este modelo nulo se calculan a partir de los totales de filas y columnas de la tabla que contiene los datos observados. Para cada celda de la tabla, el recuento esperado es:
 
-The counts expected under this null model are calculated from the row and column totals of the table holding the observed data. For each cell in the table, the expected count is:
+*(total de la fila x total de la columna) / total general*
 
-*(row total x column total)/grand total*
-
-When we do this for each cell, we obtain a new table with all expected values:
+Cuando hacemos esto para cada celda, obtenemos una nueva tabla con todos los valores esperados:
 
 ```{r, echo= F}
 chisq.test(Gfinch)$exp
 ```
 
-These are the expected counts if the null hypothesis is true. In this example, if the numbers of black, red and yellow faced birds are in the same proportions for each of the bill colours. 
+Estos son los recuentos esperados si la hipótesis nula es verdadera. En este ejemplo, si el número de aves con cara negra, roja y amarilla está en las mismas proporciones para cada uno de los colores del pico.
 
-The observed counts are then contrasted to the expected counts with the $\chi^2$ test statistic,
+Luego, los recuentos observados se contrastan con los recuentos esperados utilizando la estadística de prueba $\chi^2$.
 
 $\chi^{2} = \sum_{i=1}^{k} \frac{(O_{i}-E_{i})^2}{E_{i}}$
 
-where *O* and *E* are the observed and expected numbers in each of the cells of the table.
-  
 
-### Running the analysis
- 
-With a calculator, you could calculate $\chi^2$ and then determine the probability of obtaining that $\chi^2$ value from a table of the known probability distribution of $\chi^2$. In R, we can obtain that probability by:
+donde *O* y *E* son los números observados y esperados en cada una de las celdas de la tabla.
+
+### Ejecutando el análisis
+
+Con una calculadora, podrías calcular $\chi^2$ y luego determinar la probabilidad de obtener ese valor de $\chi^2$ a partir de una tabla de la distribución de probabilidad conocida de $\chi^2$. En R, podemos obtener esa probabilidad de la siguiente manera:
+
 
 ```{r, eval = FALSE}
 pchisq(x, df, lower.tail = FALSE)
 ```
 
-with *x* = your value of $\chi^2$, and degrees of freedom (*df*) = (number of row-1) x (number of columns-1). The `lower.tail = FALSE` bit gives you the probability that $\chi^2$ is greater than your value.
 
+con *x* = tu valor de $\chi^2$, y grados de libertad (*df*) = (número de filas-1) x (número de columnas-1). La parte `lower.tail = FALSE` te da la probabilidad de que $\chi^2$ sea mayor que tu valor.
 
-Easier, is to run the whole analysis in R. Firstly, you would need to enter the observed counts as a matrix.
+Más fácil es ejecutar todo el análisis en R. Primero, debes ingresar las frecuencias observadas como una matriz.
+
 
 ```{r, eval = F}
 Gfinch <- matrix(c(16, 19, 18, 5, 20, 22, 6, 6, 22), nrow = 3, dimnames = list(c("Black bill", "Red bill", "Yellow bill"), c("Black face", "Red face", "Yellow face")))
 ```
 
-`nrow` tells R how many rows you have. `dimnames` labels the rows and columns.
+`nrow` le indica a R cuántas filas tienes. `dimnames` etiqueta las filas y columnas.
 
+Verifica que has ingresado los datos correctamente simplemente ingresando el nombre de la matriz que acabas de crear.
 
-Check that you have entered the data correctly by simply entering the name of the matrix you just made.
 
 ```{r, eval = F}
 Gfinch
 ```
 
-
-Run the contingency analysis with the `chisq.test` function. 
+Ejecuta el análisis de contingencia con la función `chisq.test`.
 
 ```{r,eval = F}                                                                              
 chisq.test(x, correct = F)
 ```
 
-where *x* is the name of the matrix holding the observed data (for this example use the object Gfinch)
-  
+donde *x* es el nombre de la matriz que contiene los datos observados (para este ejemplo, usa el objeto Gfinch).
 
-### Interpreting the results
- 
-The output from a contingency table is very simple: the value of $\chi^2$, the degrees of freedom and the *p*-value. The *p*-value gives the likelihood of your observed counts coming from a population where the null hypothesis was true.
+### Interpretando los resultados
+
+La salida de una tabla de contingencia es muy simple: el valor de $\chi^2$, los grados de libertad y el valor *p*. El valor *p* proporciona la probabilidad de que tus frecuencias observadas provengan de una población donde la hipótesis nula era verdadera.
+
 
 
 ```{r, echo = FALSE}
@@ -87,59 +88,58 @@ chisq.test(Gfinch, correct = F)
 ```
 
 
-In this example, the probability that the observed counts are derived from a population where the null hypothesis was true is 0.01187. We would then reject the null hypothesis and conclude that there was an association between bill and face colour.
+En este ejemplo, la probabilidad de que las frecuencias observadas provengan de una población donde la hipótesis nula era verdadera es 0.01187. Luego, rechazaríamos la hipótesis nula y concluiríamos que existe una asociación entre el color del pico y el color de la cara.
 
-It is important to remember that this is not testing either of the variables in isolation (e.g., whether black faced birds are more commonly encountered that red or yellow faced birds), but an association between both variables (i.e., whether bill colour is independent of face colour).
+Es importante recordar que esto no está probando ninguna de las variables por separado (por ejemplo, si las aves de cara negra se encuentran más comúnmente que las aves de cara roja o amarilla), sino una asociación entre ambas variables (es decir, si el color del pico es independiente del color de la cara).
 
-To explore which of the cells is the table had more observations than expected, or had fewer observations than expected, look at the standardised residuals. These are the differences between the observed and expected, standardised by the square root of the expected. These are standardised because contrast of the absolute differences (observed - expected) can be misleading when the size of the expected values vary. For example, a difference of 5 from an expectation of 10 is an increase of 50%, but a difference of 5 from an expectation of 100 is only a 5% change).
+Para explorar qué celdas de la tabla tienen más observaciones de las esperadas o menos observaciones de las esperadas, observa los residuos estandarizados. Estos son las diferencias entre los valores observados y esperados, estandarizados por la raíz cuadrada de los valores esperados. Están estandarizados porque la comparación de las diferencias absolutas (observado - esperado) puede ser engañosa cuando el tamaño de los valores esperados varía. Por ejemplo, una diferencia de 5 a partir de una expectativa de 10 es un aumento del 50%, pero una diferencia de 5 a partir de una expectativa de 100 es solo un cambio del 5%.
 
 
 ```{r}
 chisq.test(Gfinch)$residuals
 ```
 
-In this example, you can see that birds with a black face are more likely to have a black bill than expected by chance, and less likely to have a yellow bill.
-  
+En este ejemplo, se puede observar que las aves con cara negra tienen más probabilidades de tener un pico negro de lo que se esperaría por casualidad, y menos probabilidades de tener un pico amarillo.
 
-### Assumptions to check
- 
-**Independence.**  The $\chi^2$ test assumes that the observations are classfied into each category independently of each other. This is a sampling design issue and is usually avoided by random sampling. In this example, there would be problems is you deliberately chose birds with a combination of bill and face colour if you were missing that combination in the birds already sampled.
+### Supuestos a verificar
 
-**Sample size.**  The $\chi^2$ statistic can only be reliably compared to the $\chi^2$ distribution if sample sizes are sufficiently large. You should check that at least 20% of the expected frequencies are larger than 5. You can see the expected counts for each category by adding <font face="monospace">$expected</font> to the end of your $\chi^2$ test. For example,
+**Independencia.** La prueba de $\chi^2$ asume que las observaciones se clasifican en cada categoría de manera independiente entre sí. Esto es un problema de diseño de muestreo y generalmente se evita mediante el muestreo aleatorio. En este ejemplo, habría problemas si eligieras deliberadamente aves con una combinación de color de pico y cara que no estuviera presente en las aves ya muestreadas.
+
+**Tamaño de la muestra.** La estadística $\chi^2$ solo se puede comparar de manera confiable con la distribución $\chi^2$ si los tamaños de muestra son lo suficientemente grandes. Debes verificar que al menos el 20% de las frecuencias esperadas sean mayores que 5. Puedes ver las frecuencias esperadas para cada categoría al agregar <font face="monospace">$expected</font> al final de tu prueba de $\chi^2$. Por ejemplo,
+
 
 ```{r, eval=FALSE}
 chisq.test(Gfinch)$expected
 ```
 
 
-If this assumption has not been met, you could combine categories (if you have more than two and makes sense to do so), run a randomisation test or consider log-linear modelling.
-  
+Si este supuesto no se cumple, puedes combinar categorías (si tienes más de dos y tiene sentido hacerlo), realizar una prueba de aleatorización o considerar un modelo log-lineal.
 
-### Communicating the results
- 
-**Written.** The results of analysing a contingency table can be easily presented in the text of a results section. For example, "There was a significant association between the bill colour and the face colour of Gouldian finches ($\chi^2$ = 12.88, df = 2, P = 0.01)."
+### Comunicación de los resultados
 
-**Visual.** Count data are best presented as a bar plot with the counts on the Y axis and the categories on the X axis.
+**Escrito.** Los resultados del análisis de una tabla de contingencia se pueden presentar fácilmente en el texto de la sección de resultados. Por ejemplo, "Hubo una asociación significativa entre el color del pico y el color de la cara de los pinzones Gouldianos ($\chi^2$ = 12.88, df = 2, P = 0.01)."
+
+**Visual.** Los datos de recuento se presentan mejor en un gráfico de barras con los recuentos en el eje Y y las categorías en el eje X.
+
 
 ```{r}
 barplot(Gfinch, beside = T, ylab = "Count", xlab = "Face colour", col = c("black", "red", "yellow"))
 legend("topright", inset = 0.15, c("Black bill", "Red bill", "Yellow bill"), pch = 15, col = c("black", "red", "yellow"))
 ```
 
-See the graphing modules for making better versions of these figures that are suitable for reports or publications.
-  
 
-### Further help
- 
-Type `chisq.test` to get the R help for this function. 
+Consulta los módulos de visualización para obtener versiones mejoradas de estas figuras que sean adecuadas para informes o publicaciones.
 
-Quinn and Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Chapter 14. Analyzing frequencies.
+### Más ayuda
 
-McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Chapter 20.3 Comparing proportions among two or more independent samples.
-  
+Escribe `chisq.test` para obtener la ayuda de R para esta función.
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+Quinn y Keough (2002) **Experimental design and data analysis for biologists*. Cambridge University Press. Capítulo 14. Análisis de frecuencias.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+McKillup (2012) *Statistics explained. An introductory guide for life scientists.*. Cambridge University Press. Capítulo 20.3 Comparación de proporciones entre dos o más muestras independientes.
+
+**Autor**: Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
