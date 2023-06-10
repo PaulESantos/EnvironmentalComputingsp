@@ -458,6 +458,12 @@ tree file and visualise the phylogeny.</p>
 <pre class="r"><code>library(ape)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;ape&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:raster&#39;:
+## 
+##     rotate, zoom</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dendextend&#39;:
+## 
+##     ladderize, rotate</code></pre>
 <pre><code>## The following object is masked from &#39;package:dplyr&#39;:
 ## 
 ##     where</code></pre>
@@ -484,8 +490,8 @@ dat[, &quot;phylo&quot;] &lt;- phylo</code></pre>
 <p>We now have our phylogenetic correlation <code>cor</code> and a
 column with species names <code>phylo</code>, and can run our
 meta-analysis again with a phylogenetic effect.</p>
-<pre class="r"><code>phylo_m &lt;- rma.mv(yi = yi, V = vi, random = list(~1 | phylo, ~1 | paper, ~1 | id),
-    R = list(phylo = cor), method = &quot;REML&quot;, data = dat)
+<pre class="r"><code>phylo_m &lt;- rma.mv(yi = yi, V = vi, random = list(~1 | phylo, ~1 | paper, ~1 | id), R = list(phylo = cor),
+    method = &quot;REML&quot;, data = dat)
 summary(phylo_m)</code></pre>
 <pre><code>## 
 ## Multivariate Meta-Analysis Model (k = 102; method: REML)
@@ -528,8 +534,8 @@ al. (2017). So read this as well if you are interested.</p>
 fit using the function <code>rma.mv</code> (we do not include
 <code>phylo</code> as it did not explain any variance).</p>
 <pre class="r"><code># you can put a marix or vector to W which is equivalent to &#39;weights&#39; in rma
-robustml_m &lt;- rma.mv(yi = yi, V = vi, W = wi, random = list(~1 | paper, ~1 | id),
-    method = &quot;REML&quot;, data = dat)
+robustml_m &lt;- rma.mv(yi = yi, V = vi, W = wi, random = list(~1 | paper, ~1 | id), method = &quot;REML&quot;,
+    data = dat)
 summary(robustml_m)</code></pre>
 <pre><code>## 
 ## Multivariate Meta-Analysis Model (k = 102; method: REML)

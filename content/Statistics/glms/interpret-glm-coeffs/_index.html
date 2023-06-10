@@ -394,10 +394,10 @@ Y &lt;- rpois(N, lambda = mu)
 glm1 &lt;- glm(Y ~ x, family = poisson)
 glm1$coefficients</code></pre>
 <pre><code>## (Intercept)           x 
-##   1.0121311   0.1988439</code></pre>
+##   1.0583306   0.1879846</code></pre>
 <pre class="r"><code>exp(glm1$coefficients[2])</code></pre>
 <pre><code>##        x 
-## 1.219991</code></pre>
+## 1.206815</code></pre>
 <p>So here increasing <span class="math inline">\(x\)</span> by 1 unit
 multiplies the mean value of Y by <span class="math inline">\(exp(
 \beta_1 ) = 1.25\)</span>. The same thing is true for negative binomial
@@ -433,16 +433,16 @@ summary(bin1)</code></pre>
 ## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)   3.2263     0.4948   6.520 7.01e-11 ***
-## x             0.4755     0.4406   1.079    0.281    
+## (Intercept)   3.1535     0.4731   6.665 2.65e-11 ***
+## x             0.4491     0.4499   0.998    0.318    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 41.569  on 119  degrees of freedom
-## Residual deviance: 40.420  on 118  degrees of freedom
-## AIC: 44.42
+## Residual deviance: 40.545  on 118  degrees of freedom
+## AIC: 44.545
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
 <p>So when we increase <span class="math inline">\(x\)</span> by one
@@ -465,8 +465,8 @@ the Poisson regression. When you increase <span class="math inline">\(x\)</span>
 bin2 &lt;- manyglm(bY ~ x, family = binomial(link = &quot;cloglog&quot;))
 coef(bin2)</code></pre>
 <pre><code>##                    bY
-## (Intercept) 1.1741987
-## x           0.1438431</code></pre>
+## (Intercept) 1.1541773
+## x           0.1427915</code></pre>
 <p>The interpretation is now the same as in the Poisson case, when we
 increase <span class="math inline">\(x\)</span> by 1, the mean of the
 underlying count is multiplied by <span class="math inline">\(exp(
@@ -512,17 +512,17 @@ summary(off_mod)</code></pre>
 ## glm(formula = Y ~ depth + offset(log(soil)), family = poisson)
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)  0.140107   0.054623   2.565   0.0103 *
-## depth       -0.005239   0.054265  -0.097   0.9231  
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) 0.217372   0.052408   4.148 3.36e-05 ***
+## depth       0.006265   0.053010   0.118    0.906    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for poisson family taken to be 1)
 ## 
-##     Null deviance: 123.68  on 119  degrees of freedom
-## Residual deviance: 123.67  on 118  degrees of freedom
-## AIC: 454.84
+##     Null deviance: 141.72  on 119  degrees of freedom
+## Residual deviance: 141.70  on 118  degrees of freedom
+## AIC: 479.2
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>If we ignored the soil amount, we could have misleading conclusions.
@@ -543,16 +543,18 @@ summary(coef_mod)</code></pre>
 ## glm(formula = Y ~ depth + log(soil), family = poisson)
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)  0.204673   0.542459   0.377    0.706
-## depth       -0.004441   0.054685  -0.081    0.935
-## log(soil)    0.928400   0.598702   1.551    0.121
+##              Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept) 0.9190078  0.5402714   1.701   0.0889 .
+## depth       0.0007355  0.0535495   0.014   0.9890  
+## log(soil)   0.2168192  0.6021425   0.360   0.7188  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for poisson family taken to be 1)
 ## 
-##     Null deviance: 126.18  on 119  degrees of freedom
-## Residual deviance: 123.66  on 117  degrees of freedom
-## AIC: 456.82
+##     Null deviance: 140.18  on 119  degrees of freedom
+## Residual deviance: 140.05  on 117  degrees of freedom
+## AIC: 479.54
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>The coefficient the model estimated is close to 1, which would be

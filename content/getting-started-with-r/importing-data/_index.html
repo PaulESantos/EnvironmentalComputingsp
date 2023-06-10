@@ -453,21 +453,21 @@ o grupos adicionales dentro de un vector categórico).</p>
 ##  3rd Qu.:12.25                                                        
 ##  Max.   :16.00                                                        
 ##                                                                       
-##    Distance             Depth              Temp          X          
-##  Length:768         Min.   :  1.000   Min.   :18.00   Mode:logical  
-##  Class :character   1st Qu.:  1.260   1st Qu.:19.00   NA&#39;s:768      
-##  Mode  :character   Median :  1.510   Median :19.00                 
-##                     Mean   :  1.716   Mean   :19.49                 
-##                     3rd Qu.:  1.760   3rd Qu.:20.00                 
-##                     Max.   :162.000   Max.   :21.00                 
-##                                       NA&#39;s   :6                     
-##    X.1            X.2            X.3            X.4         
-##  Mode:logical   Mode:logical   Mode:logical   Mode:logical  
-##  NA&#39;s:768       NA&#39;s:768       NA&#39;s:768       NA&#39;s:768      
-##                                                             
-##                                                             
-##                                                             
-##                                                             
+##    Distance             Depth              Temp          X             X.1         
+##  Length:768         Min.   :  1.000   Min.   :18.00   Mode:logical   Mode:logical  
+##  Class :character   1st Qu.:  1.260   1st Qu.:19.00   NA&#39;s:768       NA&#39;s:768      
+##  Mode  :character   Median :  1.510   Median :19.00                                
+##                     Mean   :  1.716   Mean   :19.49                                
+##                     3rd Qu.:  1.760   3rd Qu.:20.00                                
+##                     Max.   :162.000   Max.   :21.00                                
+##                                       NA&#39;s   :6                                    
+##    X.2            X.3            X.4         
+##  Mode:logical   Mode:logical   Mode:logical  
+##  NA&#39;s:768       NA&#39;s:768       NA&#39;s:768      
+##                                              
+##                                              
+##                                              
+##                                              
 ## </code></pre>
 <p>Ten en cuenta que para el factor de sexo, errores en la entrada de
 datos resultaron en cinco niveles (female, female s, male, Male y males)
@@ -571,7 +571,7 @@ con <code>which</code> para identificar dónde están los errores
 tipográficos o los valores faltantes dentro del vector.</p>
 <pre class="r"><code>Snail_feeding$Distance &lt;- as.character(Snail_feeding$Distance)
 Snail_feeding$Distance &lt;- as.numeric(Snail_feeding$Distance)
-## Warning: NAs introducidos por coerción
+## Warning: NAs introduced by coercion
 
 which(is.na(Snail_feeding$Distance))
 ## [1] 682 755</code></pre>
@@ -689,22 +689,22 @@ de cualquier cambio que realices.</p>
 ##  $ Temp    : int  21 21 18 19 21 21 20 20 19 19 ...
 ##  $ Snail   : Factor w/ 16 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
 summary(Snail_feeding)
-##     Snail.ID         Sex          Size            Feeding       
-##  Min.   : 1.00   female:384   Length:768         Mode :logical  
-##  1st Qu.: 4.75   male  :384   Class :character   FALSE:502      
-##  Median : 8.50                Mode  :character   TRUE :266      
-##  Mean   : 8.50                                                  
-##  3rd Qu.:12.25                                                  
-##  Max.   :16.00                                                  
-##                                                                 
-##     Distance          Depth            Temp           Snail    
-##  Min.   :0.0000   Min.   :1.000   Min.   :18.00   1      : 48  
-##  1st Qu.:0.2775   1st Qu.:1.260   1st Qu.:19.00   2      : 48  
-##  Median :0.5100   Median :1.510   Median :19.00   3      : 48  
-##  Mean   :0.5120   Mean   :1.507   Mean   :19.49   4      : 48  
-##  3rd Qu.:0.7500   3rd Qu.:1.760   3rd Qu.:20.00   5      : 48  
-##  Max.   :1.0000   Max.   :2.000   Max.   :21.00   6      : 48  
-##                                   NA&#39;s   :6       (Other):480</code></pre>
+##     Snail.ID         Sex          Size            Feeding           Distance     
+##  Min.   : 1.00   female:384   Length:768         Mode :logical   Min.   :0.0000  
+##  1st Qu.: 4.75   male  :384   Class :character   FALSE:502       1st Qu.:0.2775  
+##  Median : 8.50                Mode  :character   TRUE :266       Median :0.5100  
+##  Mean   : 8.50                                                   Mean   :0.5120  
+##  3rd Qu.:12.25                                                   3rd Qu.:0.7500  
+##  Max.   :16.00                                                   Max.   :1.0000  
+##                                                                                  
+##      Depth            Temp           Snail    
+##  Min.   :1.000   Min.   :18.00   1      : 48  
+##  1st Qu.:1.260   1st Qu.:19.00   2      : 48  
+##  Median :1.510   Median :19.00   3      : 48  
+##  Mean   :1.507   Mean   :19.49   4      : 48  
+##  3rd Qu.:1.760   3rd Qu.:20.00   5      : 48  
+##  Max.   :2.000   Max.   :21.00   6      : 48  
+##                  NA&#39;s   :6       (Other):480</code></pre>
 </div>
 <div id="más-ayuda" class="section level3">
 <h3>Más ayuda</h3>

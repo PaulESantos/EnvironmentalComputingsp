@@ -629,13 +629,9 @@ plot, and it will be a little different for your data and model.</p>
 <p>You can plot within each site, but this is a bit odd for a boxplot as
 there are only two observations per site, you might want to do this for
 your data if you have more observations within each Site.</p>
-<pre class="r"><code>library(Hmisc)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;Hmisc&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     format.pval, units</code></pre>
-<pre class="r"><code>ModEst &lt;- unique(Estuaries[c(&quot;SiteWithin&quot;, &quot;Modification&quot;)]) # find which Estuaries are modified
+<pre class="r"><code>library(Hmisc)
+
+ModEst &lt;- unique(Estuaries[c(&quot;SiteWithin&quot;, &quot;Modification&quot;)]) # find which Estuaries are modified
 cols &lt;- as.numeric(ModEst[order(ModEst[, 1]), 2]) + 3 # Assign colour by modification
 boxplot(log(Total) ~ SiteWithin, data = Estuaries, col = cols, xlab = &quot;Estuary&quot;, ylab = &quot;Total invertebrates&quot;)
 legend(&quot;bottomleft&quot;,

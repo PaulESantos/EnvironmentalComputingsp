@@ -528,8 +528,7 @@ example, let’s fit three moderators that were collected by the authors:
 <code>method</code> (different ways of increasing CO<span class="math inline">\(_2\)</span>), and 3) <code>fungroup</code>
 (functional group, i.e., angiosperm, gymnosperm or N<span class="math inline">\(_2\)</span> fixer).</p>
 <p>We use <code>rma</code> again, but now have a model statement.</p>
-<pre class="r"><code>metareg &lt;- rma(yi = yi, vi = vi, mod = ~time + method + fungrp, method = &quot;REML&quot;,
-    data = dat)
+<pre class="r"><code>metareg &lt;- rma(yi = yi, vi = vi, mod = ~time + method + fungrp, method = &quot;REML&quot;, data = dat)
 summary(metareg)</code></pre>
 <pre><code>## 
 ## Mixed-Effects Model (k = 102; tau^2 estimator: REML)

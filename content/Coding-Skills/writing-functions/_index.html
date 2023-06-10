@@ -730,8 +730,8 @@ datos</a>), pero en este caso, nos gustaría eliminar los <code>NA</code>
 antes de calcular la media. Esto se puede lograr estableciendo el
 argumento <code>na.rm</code> en <code>TRUE</code>:</p>
 <pre class="r"><code>mean(algae$strength, na.rm = TRUE)</code></pre>
-<pre><code>## Warning in mean.default(algae$strength, na.rm = TRUE): argument is not numeric
-## or logical: returning NA</code></pre>
+<pre><code>## Warning in mean.default(algae$strength, na.rm = TRUE): argument is not numeric or
+## logical: returning NA</code></pre>
 <pre><code>## [1] NA</code></pre>
 <p>Las funciones <code>mean</code>, <code>var</code>, <code>sd</code>,
 <code>sum</code> se comportan de manera similar. <strong>Sin especificar
@@ -743,13 +743,13 @@ mismo resultado.</p>
 ## returning NA</code></pre>
 <pre><code>## [1] NA</code></pre>
 <pre class="r"><code>mean(algae$strength, na.rm = FALSE)</code></pre>
-<pre><code>## Warning in mean.default(algae$strength, na.rm = FALSE): argument is not numeric
-## or logical: returning NA</code></pre>
+<pre><code>## Warning in mean.default(algae$strength, na.rm = FALSE): argument is not numeric or
+## logical: returning NA</code></pre>
 <pre><code>## [1] NA</code></pre>
 <p>Sin embargo, podemos anular esto si es lo que deseamos:</p>
 <pre class="r"><code>mean(algae$strength, na.rm = TRUE)</code></pre>
-<pre><code>## Warning in mean.default(algae$strength, na.rm = TRUE): argument is not numeric
-## or logical: returning NA</code></pre>
+<pre><code>## Warning in mean.default(algae$strength, na.rm = TRUE): argument is not numeric or
+## logical: returning NA</code></pre>
 <pre><code>## [1] NA</code></pre>
 <p><strong>Notarás que muchas funciones tienen argumentos con valores
 predeterminados</strong>.</p>
@@ -766,13 +766,13 @@ predeterminado de <code>na.rm</code> en <code>FALSE</code>.</p>
 datos faltantes, alternando entre <code>na.rm = TRUE</code> y
 <code>na.rm = FALSE</code>.</p>
 <pre class="r"><code>standard_error(algae$strength)</code></pre>
-<pre><code>## Warning in var(x, na.rm = na.rm): NAs introducidos por coerción</code></pre>
+<pre><code>## Warning in var(x, na.rm = na.rm): NAs introduced by coercion</code></pre>
 <pre><code>## [1] NA</code></pre>
 <pre class="r"><code>standard_error(algae$strength, na.rm = FALSE)</code></pre>
-<pre><code>## Warning in var(x, na.rm = na.rm): NAs introducidos por coerción</code></pre>
+<pre><code>## Warning in var(x, na.rm = na.rm): NAs introduced by coercion</code></pre>
 <pre><code>## [1] NA</code></pre>
 <pre class="r"><code>standard_error(algae$strength, na.rm = TRUE)</code></pre>
-<pre><code>## Warning in var(x, na.rm = na.rm): NAs introducidos por coerción</code></pre>
+<pre><code>## Warning in var(x, na.rm = na.rm): NAs introduced by coercion</code></pre>
 <pre><code>## [1] 0.03870419</code></pre>
 <p>Dentro de la función, el valor para <code>na.rm</code> que se recibe
 se pasa a la función <code>var</code>. La función <code>var</code> ya
@@ -803,7 +803,7 @@ función anterior pero con el comportamiento deseado. Por ejemplo,</p>
 <p>Podemos llamar ahora a la nueva función y obtener el mismo resultado
 que se muestra arriba especificando <code>na.rm=TRUE</code></p>
 <pre class="r"><code>standard_error_narm(algae$strength)</code></pre>
-<pre><code>## Warning in var(x, na.rm = na.rm): NAs introducidos por coerción</code></pre>
+<pre><code>## Warning in var(x, na.rm = na.rm): NAs introduced by coercion</code></pre>
 <pre><code>## [1] 0.03870419</code></pre>
 <p>Si bien el ejemplo con <code>standard_error</code> tal vez sea un
 poco trivial, puedes aplicar este enfoque en muchos casos. Por ejemplo,
@@ -933,9 +933,9 @@ comenzar a llamarlos por nombre:</p>
 is.list(fit)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>names(fit)</code></pre>
-<pre><code>##  [1] &quot;coefficients&quot;  &quot;residuals&quot;     &quot;effects&quot;       &quot;rank&quot;         
-##  [5] &quot;fitted.values&quot; &quot;assign&quot;        &quot;qr&quot;            &quot;df.residual&quot;  
-##  [9] &quot;xlevels&quot;       &quot;call&quot;          &quot;terms&quot;         &quot;model&quot;</code></pre>
+<pre><code>##  [1] &quot;coefficients&quot;  &quot;residuals&quot;     &quot;effects&quot;       &quot;rank&quot;          &quot;fitted.values&quot;
+##  [6] &quot;assign&quot;        &quot;qr&quot;            &quot;df.residual&quot;   &quot;xlevels&quot;       &quot;call&quot;         
+## [11] &quot;terms&quot;         &quot;model&quot;</code></pre>
 <pre class="r"><code>fit$coefficients</code></pre>
 <pre><code>##     (Intercept) algae$dryweight 
 ##       0.4054402       0.1276447</code></pre>
