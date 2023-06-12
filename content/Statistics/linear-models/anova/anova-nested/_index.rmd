@@ -1,81 +1,89 @@
 ---
 weight: 3
-title: "Nested ANOVA"
+title: "ANOVA anidado"
 output: html_document
 aliases: /analysis-variance-nested/
 ---
 
-### Usage
 
-In the two-way ANOVA design, the two factors are known as factorial (i.e., there was every combination of every level of each factor). Other experimental designs feature factors that are termed nested. This is when each level of one of the factors is unique to only one level of the other factor. The difference is best illustrated with the following two experimental designs where there are two factors, A and B.
+### Uso
 
-In the nested design, the levels of factor B appear in only one of the levels in factor A, not both. This often happens with factors like "site" or "area" - they usually belong to only one level of your other factor (e.g., if contrasting north and south of the harbour, a suburb could not be in both categories).
+En el diseño de ANOVA de dos vías, los dos factores se conocen como factoriales (es decir, hay todas las combinaciones de cada nivel de cada factor). Otros diseños experimentales presentan factores que se denominan anidados. Esto ocurre cuando cada nivel de uno de los factores es único para solo un nivel del otro factor. La diferencia se ilustra mejor con los siguientes dos diseños experimentales donde hay dos factores, A y B.
 
-Factor B is termed nested within factor A, usually written as B(A). These designs have different sources of variance to the factorial designs, and do not have an interaction term. The designs are quite common in ecology and environmental sciences, and are often used to partition variance in spatially hierarchical sampling (e.g., habitats, areas within habitats, plots within areas etc.).
+En el diseño anidado, los niveles del factor B aparecen en solo uno de los niveles del factor A, no en ambos. Esto suele suceder con factores como "sitio" o "área": generalmente pertenecen a solo un nivel de tu otro factor (por ejemplo, si se contrastan el norte y el sur del puerto, un suburbio no podría estar en ambas categorías).
 
-The examples below comes from an experiment investigating the impact of introduced American mink on small rodents (voles) in Finland. The hypothesis was that mink prey upon voles thereby reducing vole numbers and limiting their population size. To test this, minks were removed from large areas (> 20 km2) in the Baltic Sea. The Ho from the experiment is that the mean count of voles on islands in removal sites will be the same as the mean vole count on islands in control areas.
+Se dice que el factor B está anidado dentro del factor A, generalmente escrito como B(A). Estos diseños tienen diferentes fuentes de varianza en comparación con los diseños factoriales y no tienen un término de interacción. Los diseños son bastante comunes en ecología y ciencias ambientales, y se utilizan a menudo para descomponer la varianza en muestreos jerárquicos espaciales (por ejemplo, hábitats, áreas dentro de hábitats, parcelas dentro de áreas, etc.).
+
+Los ejemplos a continuación provienen de un experimento que investiga el impacto del visón americano introducido en pequeños roedores (topos) en Finlandia. La hipótesis era que el visón se alimenta de los topos, reduciendo así el número de topos y limitando su tamaño de población. Para probar esto, se eliminaron los visones de áreas grandes (> 20 km2) en el Mar Báltico. La hipótesis nula del experimento es que el recuento medio de topos en las islas de los sitios de eliminación será igual al recuento medio de topos en las áreas de control.
+
+
 
 ![](ANOVA_nested_method_image.png)
 
-The data represent two treatments (mink removal and control) and two areas nested within each treatment. Then there are 10 samples in each area. Each of these samples represents the numbers of individual voles trapped on an island (all islands were more than 300 m apart ensuring some independence) over 4 nights.
+Los datos representan dos tratamientos (eliminación de visones (mink) y control) y dos áreas anidadas dentro de cada tratamiento. Luego, hay 10 muestras en cada área. Cada una de estas muestras representa el número de topillos (voles) individuales atrapados en una isla (todas las islas estaban separadas por más de 300 m, lo que garantiza cierta independencia) durante 4 noches.
 
-The design is nested because an area cannot belong to both a removal treatment and a control. It is useful to think of areas as being the replicates for the treatment, and the individual samples as being replicates for each area.
+El diseño es anidado porque un área no puede pertenecer tanto a un tratamiento de eliminación como a un control. Es útil pensar en las áreas como las réplicas para el tratamiento, y las muestras individuales como las réplicas para cada área.
 
-### Running the analysis
+### Ejecutando el análisis
 
-Data for a nested design should be in the format of samples as rows and variables as columns. A coloumn should correspond to the dependent variable *y*, in this case, number of voles. Another coloumn should contain the levels of the fixed factor A, Treatment. Finally, a column for the levels of the nested random factor B, Area.
+Los datos para un diseño anidado deben estar en formato de muestras como filas y variables como columnas. Una columna debe corresponder a la variable dependiente *y*, en este caso, el número de topillos (voles). Otra columna debe contener los niveles del factor fijo A, Tratamiento. Finalmente, una columna para los niveles del factor aleatorio anidado B, Área.
 
 ```{r}
-# Input data file
-Mink <- read.csv(file = "Mink.csv", header = TRUE)
-# Check the structure of the data
+# Input 
+Mink <- read.csv(file = "Mink.csv", 
+                 header = TRUE)
+# Check the structure
 str(Mink)
-# Run the analysis
-Mink.nested <- aov(Voles ~ Treatment + Area %in% Treatment, data = Mink)
+# Analysis
+Mink.nested <- aov(Voles ~ Treatment + Area %in% Treatment,
+                   data = Mink)
+
 summary(Mink.nested)
 ```
 
-### Interpreting the results
+### Interpretación de los resultados
 
-The output is a little different to the factorial ANOVA. The top section gives a significance test of the fixed effect, *Treatment*, - this is what we're interested in. The residuals for this test are those associated with the random effect 'Area'.
+La salida es un poco diferente al ANOVA factorial. La sección superior proporciona una prueba de significancia del efecto fijo, *Tratamiento*, que es lo que nos interesa. Los residuos para esta prueba son aquellos asociados con el efecto aleatorio `Área`.
 
-A significant F-ratio (P<0.05) for a nested factor indicates high variance among subgroups within a group. For example, a difference in mean vole numbers of the two areas within a treatment. This is expected, however, leads to few degrees of freedom to test main effects. Additionally, it suggests treatments may not have a uniform effect across levels of the nested factor. For example, voles in one removal area showed a stronger response than another area.
+Un cociente F significativo `(P<0.05)` para un factor anidado indica una alta varianza entre subgrupos dentro de un grupo. Por ejemplo, una diferencia en el número medio de topillos(voles) entre las dos áreas dentro de un tratamiento. Esto se espera, sin embargo, conlleva pocos grados de libertad para probar efectos principales. Además, sugiere que los tratamientos pueden no tener un efecto uniforme en los niveles del factor anidado. Por ejemplo, los topillos(voles) en un área de eliminación mostraron una respuesta más fuerte que en otra área.
 
-**F-ratios**
+**Cocientes F**
 
-* Among groups = MSamong/MSsubgroup
-* Factor B = MSsubgroup/MSResidual
+* Entre grupos = MSentre/MSsubgrupo
+* Factor B = MSsubgrupo/MSResidual
 
-**Degrees of freedom**
+**Grados de libertad**
 
-* Among groups  = (a - 1) (where a = number of levels of Factor A)
-* Among subgroups = a(b - 1) (where b = number of levels of Factor B)
-* Within subgroups = ab(n - 1) (where n = sample size)
+* Entre grupos = (a - 1) (donde a = número de niveles del Factor A)
+* Entre subgrupos = a(b - 1) (donde b = número de niveles del Factor B)
+* Dentro de subgrupos = ab(n - 1) (donde n = tamaño de la muestra)
 
-Where there are greater than 2 levels of the the fixed factor of interest, post-hoc analysis can be used to determine which groups differ. Refer to the *post-hoc* module for further information.
+Cuando hay más de 2 niveles del factor fijo de interés, se puede utilizar un análisis post hoc para determinar qué grupos difieren. Consulta el módulo *post-hoc* para obtener más información.
 
-**Pooling**
+**Agrupamiento**
 
-Always examine nested factors before the upper levels. If the variance explained by the nested factor is negligible, it can be pooled. If the F ratio of MSsubgroup/MSwithin is non significant then you don't need subgroups and can perform a one factor analysis.
+Siempre examina los factores anidados antes de los niveles superiores. Si la varianza explicada por el factor anidado es insignificante, se puede agrupar. Si la razón F de MSsubgrupo/MSentre no es significativa, entonces no necesitas subgrupos y puedes realizar un análisis de un solo factor.
 
-Even if MSsubgroup/MSwithin is non-significant at a = 0.05, there may be subgroup effects (may be high Type II error). To be cautious, only pool SS when P>0.25, so there is very little chance that you are incorrectly accepting the null hypothesis of no effect.
+Incluso si MSsubgrupo/MSentre no es significativo a = 0.05, puede haber efectos de subgrupos (puede haber un alto error de Tipo II). Por precaución, solo agrupa SS cuando P>0.25, de modo que haya muy poca probabilidad de que aceptes incorrectamente la hipótesis nula de no efecto.
 
-### Assumptions to check
+### Supuestos a verificar
 
-The same assumptions of linear models apply to nested ANOVA's; independence, normality and heterogeneity of variances. Indpendence needs to be considered at the design stage (see *independence* module). We can now check the assumptions of homgeneity of variance (namely that the residuals are homgeneous i.e., approximately equal), and normality (even disturbiton of data about the mean, no wonky outliers).
+Los mismos supuestos de los modelos lineales se aplican a los ANOVA anidados: independencia, normalidad y homogeneidad de varianzas. La independencia debe considerarse en la etapa de diseño (ver el módulo de *independencia*). Ahora podemos verificar los supuestos de homogeneidad de varianza (es decir, que los residuos sean homogéneos, es decir, aproximadamente iguales) y normalidad (distribución equilibrada de los datos alrededor de la media, sin valores atípicos extraños).
 
-Because tests of the fixed factor A uses uses the means of the nested Factor B, the assumptions of homogeneity and normaility apply with respect to the means of Factor B. Normality of Factor A are likely to be normally distributed based upon the Central Limit Theorem.
+Debido a que las pruebas del factor fijo A utilizan las medias del factor anidado B, los supuestos de homogeneidad y normalidad se aplican con respecto a las medias del factor B. Es probable que la normalidad del factor A siga una distribución normal basada en el Teorema del Límite Central.
 
-We advocate a qualitative evalutation of the assumptions, rather than a formal test suc has Cochran's test. Linear models in general are quite 'robust' for violating these assumptions (heterogeneity and normality), within reason.
+Recomendamos una evaluación cualitativa de los supuestos, en lugar de una prueba formal como la prueba de Cochran. Los modelos lineales en general son bastante "robustos" ante la violación de estos supuestos (heterogeneidad y normalidad), dentro de ciertos límites.
 
-The assumption of normality can be checked by a frequency histogram of the residuals or using a quantile plot where the residuals are plotted against the values expected from a normal distribution. The historgram of residuals should follow a normal distribution. If the points in the quantile plot lie mostly on the line, the residuals are normally distributed. Violations of normality can be fixed via transformations or by using a different error-distribution in a GLM. See the GLM module for more information. The plot() function on a model object provides a series of four graphical model diagnostics, the second of which is a quantile plot.
+El supuesto de normalidad se puede verificar mediante un histograma de frecuencias de los residuos o mediante un gráfico de cuantiles donde los residuos se trazan en función de los valores esperados de una distribución normal. El histograma de residuos debe seguir una distribución normal. Si los puntos en el gráfico de cuantiles se encuentran principalmente en la línea, los residuos se distribuyen de manera normal. Las violaciones de la normalidad se pueden corregir mediante transformaciones o mediante el uso de una distribución de errores diferente en un GLM. Consulta el módulo de GLM para obtener más información. La función `plot()` en un objeto de modelo proporciona una serie de diagnósticos gráficos del modelo, el segundo de los cuales es un gráfico de cuantiles.
+
 
 ```{r}
 hist(Mink.nested$residuals)
 plot(Mink.nested, which = 2)
 ```
 
-Heterogenous variances is indicated by non-random pattern in the residuals vs. fitted plot. If there is strong patterns, one potential solution is to transform the response variable *y*. If this doesn't fix the problem the best solution is to use a different error disturbiton in a gnerealised linear model framework (GLM).
+Heterogeneidad de varianzas se indica por un patrón no aleatorio en el gráfico de residuos vs. ajustados. Si hay patrones fuertes, una solución potencial es transformar la variable de respuesta *y*. Si esto no soluciona el problema, la mejor solución es utilizar una distribución de error diferente en un marco de modelo lineal generalizado (GLM).
+
 
 ```{r}
 plot(Mink.nested$residuals ~ Mink.nested$fitted)
@@ -86,21 +94,24 @@ plot(Mink.nested$residuals ~ Mink.nested$fitted)
 plot(Turtles.ANOVA, which = 1)
 ```
 
-### Communicating the results
 
-**Written** The subgroup factor is rarely of interest and so is given little emphasis in the results. For example, the abundance of voles was significantly greater where minks have been removed (F = 38.39, P <0.001).
+### Comunicación de los resultados
 
-**Visual**  A boxplot would be a suitable means of displaying the differences between the groups of the factor of interest, in this case *Treatment*.
+**Escrita** El factor de subgrupo rara vez es de interés y, por lo tanto, se le da poco énfasis en los resultados. Por ejemplo, la abundancia de topos fue significativamente mayor donde se eliminaron visones(mink) (F = 38.39, P <0.001).
+
+**Visual** Un diagrama de caja sería una forma adecuada de mostrar las diferencias entre los grupos del factor de interés, en este caso *Treatment*.
+
 
 ```{r, echo=FALSE}
 # plot(Voles~Treatment,data=Mink)
 ```
 
-### Further help
 
-Type ?aov to get the R help for this function.
+### Más ayuda
 
-Quinn and Keough (2002) *Experimental design and data analysis for biologist.* Cambridge University Press
+Escribe `?aov` para obtener la ayuda de R para esta función.
 
-McKillup (2012) *Statistics explained. An introductory guide for life scientists* Cambridge University Press
+Quinn y Keough (2002) *Experimental design and data analysis for biologist.* Cambridge University Press.
+
+McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press.
 

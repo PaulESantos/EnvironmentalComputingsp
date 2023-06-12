@@ -1,72 +1,80 @@
 ---
 weight: 1
-title: "Single Factor ANOVA"
+title: "ANOVA de un solo factor"
 output: html_document
 aliases: /analysis-variance-single-factor/
 ---
 
-Analysis of variance (ANOVA) is one of the most frequently used techniques in the biological and environmental sciences. ANOVA is used to contrast a continuous dependent variable *y* across levels of one or more categorical independent variables *x*. The independent variables are termed the factor or treatment, and the various categories within that treatment are termed the levels. In this module, we will start with the simplest design - those with a single factor.
 
-Where an independent samples *t*-test would be used for comparison of group means across two levels, ANOVA is used for the comparison of >2 group means, or when there are more than two or more predictor variables (see [ANOVA: factorial](/statistics/linear-models/anova/anova-factorial/)). The logic of this test is essentially the same as the *t*-test - it compares variation between groups to variation within groups to determine whether the observed differences are due to chance or not.
+El análisis de varianza (ANOVA) es una de las técnicas más utilizadas en las ciencias biológicas y ambientales. El ANOVA se utiliza para contrastar una variable dependiente continua *y* en diferentes niveles de una o más variables independientes categóricas *x*. Las variables independientes se denominan factor o tratamiento, y las diferentes categorías dentro de ese tratamiento se denominan niveles. En este módulo, comenzaremos con el diseño más simple, aquellos con un solo factor.
+
+Cuando se desean comparar las medias de grupo entre dos niveles, se utiliza una prueba *t-test* independiente. El ANOVA se utiliza para comparar las medias de grupo cuando hay más de dos niveles o cuando hay más de dos variables predictoras (ver [ANOVA: factorial](/statistics/linear-models/anova/anova-factorial/)). La lógica de esta prueba es esencialmente la misma que la prueba *t-test*-independiente: compara la variación entre grupos con la variación dentro de los grupos para determinar si las diferencias observadas se deben al azar o no.
+
 
 ![](ANOVA_single_factor_image.png)
 
-For example, to contrast the the hatching times of turtle eggs incubated at four different temperatures (15°C, 20°C, 25°C and 30°C), hatching time is the continuous response variable and temperature is the categorical predictor variable with with four levels. The null hypothesis would be that mean hatching time is equal for all temperatures (H~o~: $\mu_{15} = \mu_{20} = \mu_{25} = \mu_{30}$).
 
-Note that an ANOVA is a linear model, just like linear regression except that the predictor variables are categorical rather than continuous.
+
+Por ejemplo, para contrastar los tiempos de eclosión de los huevos de tortuga incubados a cuatro temperaturas diferentes (15°C, 20°C, 25°C y 30°C), el tiempo de eclosión es la variable de respuesta continua y la temperatura es la variable predictora categórica con cuatro niveles. La hipótesis nula sería que el tiempo medio de eclosión es igual para todas las temperaturas (H~o~: $\mu_{15} = \mu_{20} = \mu_{25} = \mu_{30}$).
+
+Cabe destacar que un ANOVA es un modelo lineal, al igual que la regresión lineal, excepto que las variables predictoras son categóricas en lugar de continuas.
 
 $$y_{ij} = \mu + \alpha_i + \varepsilon_{ij}$$
 
-where $\mu$ is the overall mean and $\alpha_i$ is the effect of the i^th^ group.
+donde $\mu$ es la media general y $\alpha_i$ es el efecto del i-ésimo grupo.
 
-It is the same as a multiple linear regression with a predictor variable for each level of the categorical variable (each coded as a dummy variable). For the question of whether hatching time of turtles differs between four incubation tempeatures, we must fit four parameters to describe the mean response of each temperature (rather than just a single intercept and single slope in a simple linear regression). For this example, our linear model equation will have this form:
+Es lo mismo que una regresión lineal múltiple con una variable predictora para cada nivel de la variable categórica (cada una codificada como una variable ficticia). Para la pregunta de si el tiempo de eclosión de las tortugas difiere entre las cuatro temperaturas de incubación, debemos ajustar cuatro parámetros para describir la respuesta media de cada temperatura (en lugar de solo una intercepción y una pendiente en una regresión lineal simple). Para este ejemplo, nuestra ecuación del modelo lineal tendrá esta forma:
 
-$$HatchingTime = \mu + \beta_1.Temp_{15} + \beta_2.Temp_{20} + \beta_3.Temp_{25} + \beta_4.Temp_{30} + \varepsilon$$
+$$TiempoDeEclosion = \mu + \beta_1.Temp_{15} + \beta_2.Temp_{20} + \beta_3.Temp_{25} + \beta_4.Temp_{30} + \varepsilon$$
+
+El ANOVA descompone la varianza total en un componente que puede explicarse por la variable predictora (entre los niveles del tratamiento) y un componente que no puede explicarse (dentro de los niveles, la varianza residual). El estadístico de prueba, *F*, es la razón de estas dos fuentes de variación.
+
+$$F = \frac{MS_{entre}}{MS_{dentro}}$$
 
 
-ANOVA partitions the total variance into a component that can be explained by the predictor variable (among levels of the treatment), and a component that cannot be explained (within levels, the residual variance). The test statistic, *F*, is the ratio of these two  sources of variation.
-
-$$F = \frac{MS_{among}}{MS_{within}}$$
-
-where *MS* are the mean squares, a measure of variation. The probability of obtaining the observed value of *F* is calculated from the known probability distribution of *F*, with two degrees of freedom (one for the numerator = the number of levels -1) and one for the denominator (number of replicates per level - 1 x number of levels).
+donde *MS* son los cuadrados medios, una medida de variación. La probabilidad de obtener el valor observado de *F* se calcula a partir de la conocida distribución de probabilidad de *F*, con dos grados de libertad (uno para el numerador = el número de niveles - 1) y uno para el denominador (número de réplicas por nivel - 1 x número de niveles).
   
 
-### Running the analysis
+### Ejecutando el análisis
  
-The data should be formatted such that the individual replicates are rows and the variables are separate columns. Include a column for the dependent variable, *y*, and a corresponding column for the categorical variable, *x*. Download the sample data set for the turtle hatching example, [Turtles.csv](/datasets/Turtles.csv), import into R and check that temperature variable is a factor with the `str` function.
+Los datos deben estar formateados de tal manera que las réplicas individuales sean filas y las variables sean columnas separadas. Incluye una columna para la variable dependiente, *y*, y una columna correspondiente para la variable categórica, *x*. Descarga el conjunto de datos de muestra para el ejemplo de eclosión de tortugas, [Turtles.csv](/datasets/Turtles.csv), impórtalo en R y verifica que la variable de temperatura sea un factor con la función `str`.
+
 
 ```{r,eval=FALSE}
 Turtles <- read.csv(file = "Turtles.csv", header = TRUE)
 str(Turtles)
 ```
 
-In this case, because we have numbers for the four levels of the Temperature treatment, we need to change that variable to become a factor rather than an integer.
+En este caso, debido a que tenemos números para los cuatro niveles del tratamiento de Temperatura, necesitamos cambiar esa variable para que se convierta en un factor en lugar de un número entero.
+
 
 ```{r,eval=FALSE}
 Turtles$Temperature <- factor(Turtles$Temperature)
 ```
 
-Now, we can run the analysis of variance contrasting hatching time (days) across temperatures using the function `aov`. The arguments of the function are simply a formula statement, `y~x`, with the response variable to the left of the ~, the predictor variable to the right, and some code to specify which data frame holds those variables.
+Ahora podemos ejecutar el análisis de varianza que contrasta el tiempo de eclosión (días) en diferentes temperaturas utilizando la función `aov`. Los argumentos de la función son simplemente una declaración de fórmula, `y~x`, donde la variable de respuesta se encuentra a la izquierda de ~, la variable predictora a la derecha y algún código para especificar qué marco de datos contiene esas variables.
+
 
 ```{r,eval=FALSE}
 Turtles.aov <- aov(Days ~ Temperature, data = Turtles)
 ```
 
-The output from this analysis can be seen by using the `summary` function on the object created.
+
+La salida de este análisis se puede ver utilizando la función `summary` en el objeto creado.
+
 
 ```{r, eval=FALSE}
 summary(Turtles.aov)
 ```
 
-Exactly the same analysis can be reproduced using the linear model function `lm`.
+Exactamente el mismo análisis se puede reproducir utilizando la función de modelo lineal `lm`.
 
 ```{r,eval=FALSE}
 Turtles.lm <- lm(Days ~ Temperature, data = Turtles)
 summary(Turtles.lm)
 ```
   
-
-### Interpreting the results
+### Interpretación de los resultados
  
 ```{r,echo=FALSE}
 Turtles <- read.csv(file = "Turtles.csv", header = TRUE)
@@ -75,80 +83,88 @@ Turtles.aov <- aov(Days ~ Temperature, data = Turtles)
 summary(Turtles.aov)
 ```
 
-The summary output of an ANOVA object is a table with the degrees of freedom (Df), sums of squares (Sum Sq), mean squares (Mean Sq) for the predictor variable (i.e., variation among levels of your treatment) and for the Residuals (i.e., varation within the levels). The test statistic, *F* value and its associated *p*-value (Pr(>F)) are also presented.
+La salida resumida de un objeto ANOVA es una tabla con los grados de libertad (Df), sumas de cuadrados (Sum Sq), cuadrados medios (Mean Sq) para la variable predictora (es decir, la variación entre los niveles de tu tratamiento) y para los residuos (es decir, la variación dentro de los niveles). También se presentan la estadística de prueba, el valor *F* y su valor *p* asociado (Pr(>F)).
 
-First check the degrees of freedom. The factor Df = the number of levels of your factor - 1. The residual Df = *a(n-1)*, where *a* = the number of levels of your factor and *n* = sample size (replicates per level).
+Primero verifica los grados de libertad. Los grados de libertad del factor Df = el número de niveles de tu factor - 1. Los grados de libertad residuales Df = *a(n-1)*, donde :
+*a* es el número de niveles de tu factor y *n* es el tamaño de la muestra (repeticiones por nivel).
 
-The sums of squares and mean squares are measures of variation. The *F* statistic is the ratio of *MS~among~* and *MS~within~* and the *p*-value is the probability of the observed *F* value from the *F* distribution (with the given degrees of freedom). 
+Las sumas de cuadrados y los cuadrados medios son medidas de variación. La estadística *F* es la relación entre *MS~entre~* y *MS~dentro~* y el valor *p* es la probabilidad del valor *F* observado a partir de la distribución *F* (con los grados de libertad dados).
 
-The main thing to look at in the ANOVA table is whether your predictor variable had a significant effect on your response variable. In this example, the probability that all four incubation temperatures are equal is <0.001. This is very unlikely and much less than 0.05. We would conclude that there is a difference in hatching times between the temperatures. We are also interested in the R^2 value which tells us how much variation was explained by the model.
 
-If you use the `lm` function, you get a bit more information from the summary of the linear model output. 
+Lo principal a tener en cuenta en la tabla de ANOVA es si tu variable predictora tuvo un efecto significativo en tu variable de respuesta. En este ejemplo, la probabilidad de que las cuatro temperaturas de incubación sean iguales es <0.001. Esto es muy poco probable y mucho menos que 0.05. Concluiríamos que hay una diferencia en los tiempos de eclosión entre las temperaturas. También nos interesa el valor de R^2, que nos indica cuánta variación fue explicada por el modelo.
+
+Si utilizas la función `lm`, obtienes un poco más de información en el resumen de la salida del modelo lineal.
+
+
 ```{r,echo=FALSE}
 Turtles.lm <- lm(Days ~ Temperature, data = Turtles)
 summary(Turtles.lm)
 ```
 
-The output for the standard ANOVA table is down the bottom and above it you get the actual parameter estimates from the linear model (the $\beta_1$, $\beta_2$ etc from above). In this example, turtles at 15°C hatched after 58.4 days, on average (the intercept in the model). The other parameter estimates are differences between each level of temperature and the intercept. For example, at 20°C they were 13.8 days faster (i.e., the mean for 20°C = 58.4-13.8 = 44.6 days).
 
-If you detect any significant differences in the ANOVA, we are then interested in knowing exactly which groups differ from one another, and which do not. Remember that a significant *p* value in the test you just ran would reject the null hypothesis the means of the dependent variable were the same across all groups, but not identify which were different from each other. To see a comparison between each mean and each other mean, we can use a Tukey's post-hoc test.
+La salida para la tabla de ANOVA estándar se encuentra al final y, encima de ella, obtienes los estimados de parámetros reales del modelo lineal (los $\beta_1$, $\beta_2$, etc. de arriba). En este ejemplo, las tortugas a 15°C eclosionaron después de 58.4 días, en promedio (la intercepción en el modelo). Los otros estimados de parámetros son las diferencias entre cada nivel de temperatura y la intercepción. Por ejemplo, a 20°C fueron 13.8 días más rápidas (es decir, la media para 20°C = 58.4-13.8 = 44.6 días).
+
+Si detectas alguna diferencia significativa en el ANOVA, nos interesa saber exactamente qué grupos difieren entre sí y cuáles no. Recuerda que un valor *p* significativo en la prueba que acabas de realizar rechazaría la hipótesis nula de que las medias de la variable dependiente son iguales en todos los grupos, pero no identificaría cuáles son diferentes entre sí. Para ver una comparación entre cada media y cada otra media, podemos utilizar una prueba post hoc de Tukey.
+
+
 
 ```{r}
 TukeyHSD(Turtles.aov)
 ```
   
 
-### Assumptions to check
+### Supuestos a verificar
  
-The important assumptions of ANOVA are independence, homegeneity of variance and normality. We advocate a qualitative evalutation of the normality and homogeneity of variance assumptions, by examining the patterns of variation in the residuals, rather than a formal test such has Cochran's test. Linear models in general are quite 'robust' for violating these assumptions (heterogeneity and normality), within reason.
+Los supuestos importantes del ANOVA son la independencia, la homogeneidad de varianza y la normalidad. Recomendamos una evaluación cualitativa de los supuestos de normalidad y homogeneidad de varianza, examinando los patrones de variación en los residuos, en lugar de realizar una prueba formal como la prueba de Cochran. En general, los modelos lineales son bastante "robustos" frente a la violación de estos supuestos (heterogeneidad y normalidad), dentro de ciertos límites.
 
-**Normality.** The assumption of normality can be checked by a frequency histogram of the residuals or by using a quantile plot where the residuals are plotted against the values expected from a normal distribution. The histogram of residuals should follow a normal distribution. If the points in the quantile plot lie mostly on the line, the residuals are normally distributed. Both of these plots can be obtained from the model object created by the `aov` function.
+**Normalidad.** El supuesto de normalidad se puede verificar mediante un histograma de frecuencias de los residuos o mediante el uso de un gráfico de cuantiles en el que los residuos se trazan frente a los valores esperados de una distribución normal. El histograma de residuos debería seguir una distribución normal. Si los puntos en el gráfico de cuantiles se encuentran principalmente en la línea, los residuos tienen una distribución normal. Ambos gráficos se pueden obtener a partir del objeto de modelo creado por la función `aov`.
 
 ```{r}
-par(mfrow = c(1, 2)) # This code put two plots in the same window
+par(mfrow = c(1, 2)) 
 hist(Turtles.aov$residuals)
 plot(Turtles.aov, which = 2)
 ```
 
-Violations of normality can be fixed via transformations or by using a different error-distribution in a [generalised linear model (GLM)](/statistics/glms/).
+Violaciones de la normalidad se pueden solucionar mediante transformaciones o mediante el uso de una distribución de error diferente en un [modelo lineal generalizado (GLM)](/statistics/glms/).
 
-**Homogeneity of variance.** The assumption of homgeneity of variance, namely that the variation in the residuals is approximately equal across the range of the predictor variable, can be checked by plotting the residuals against the fitted values from the `aov` model object.
+**Homogeneidad de varianza.** La suposición de homogeneidad de varianza, es decir, que la variación en los residuos sea aproximadamente igual en todo el rango de la variable predictora, se puede verificar trazando los residuos contra los valores ajustados del objeto de modelo `aov`.
+
 
 ```{r}
 plot(Turtles.aov, which = 1)
 ```
 
-Heterogenous variances are indicated by non-random pattern in the residuals vs. fitted plot. Look for an even spread of the residuals on the *y* axis for each of the levels on the *x* axis. A fan-shaped distribution with more variance at higher values on the x axis is a common problem when data are skewed. See the testing assumptions of linear models module for more information. If there are strong patterns, one potential solution is to transform the response variable *y*. If this doesn't fix the problem the best solution is to use a different error distribution in a [generalised linear model (GLM)](/statistics/glms/).
+Varianzas heterogéneas se identifican por un patrón no aleatorio en el gráfico de residuos versus valores ajustados. Busca una distribución uniforme de los residuos en el eje *y* para cada uno de los niveles en el eje *x*. Un distribución en forma de abanico con mayor varianza en valores más altos del eje *x* es un problema común cuando los datos están sesgados. Consulta el módulo de pruebas de suposiciones de modelos lineales para obtener más información. Si hay patrones fuertes, una solución potencial es transformar la variable de respuesta *y*. Si esto no soluciona el problema, la mejor solución es usar una distribución de error diferente en un [modelo lineal generalizado (GLM)](/statistics/glms/).
 
-**Independence.** ANOVA assumes that all replicate measures are independent of each other (i.e., equally likely to be sampled from the population of possible values for each level). This issue needs to be considered at the design stage. If data are grouped in any way (e.g., half the turtle eggs measured at one time, then the other half measured later), then more complex designs are needed to account for additional factors (e.g., a design with both temperature and time as factors).
+**Independencia.** El ANOVA asume que todas las medidas replicadas son independientes entre sí (es decir, igualmente probables de ser muestreadas de la población de posibles valores para cada nivel). Este problema debe considerarse en la etapa de diseño. Si los datos están agrupados de alguna manera (por ejemplo, la mitad de los huevos de tortuga medidos en un momento y la otra mitad medidos más tarde), entonces se necesitan diseños más complejos para tener en cuenta factores adicionales (por ejemplo, un diseño con temperatura y tiempo como factores).
 
-There are a variety of measures for dealing with non-independence. These include ensuring all important predictors are in the model; averaging across nested observations; or using a [mixed-model](/statistics/mixed-models/mixed-model-1/).
-  
+Existen diversas medidas para tratar la no independencia. Estas incluyen asegurarse de que todos los predictores importantes estén en el modelo, promediar las observaciones anidadas o utilizar un [modelo mixto](/statistics/mixed-models/mixed-model-1/).
 
-### Communicating the results
- 
-**Written.**  The results of a one-way ANOVA are usually expressed in text as a short sentence, e.g., "Turtle hatching time differed among the four incubation temperatures (*F* = 15.98, *df* = 3,36, *p* < 0.001)". A significant effect would be followed by a written description of the post-hoc test results (i.e., exactly which temperatures differed from which). The results from post-hoc tests can also be added to the figure (e.g, by labelling which levels differed).
+### Comunicación de los resultados
 
-**Visual.**  A boxplot or column graph with error bars are suitable for contrasting a continuous variable across levels of categorical variable. See the graphics help for making publication ready versions of these figures.
+**Escrita.** Los resultados de un ANOVA de un factor se expresan generalmente en texto como una frase corta, por ejemplo: "El tiempo de eclosión de las tortugas difirió entre las cuatro temperaturas de incubación (*F* = 15.98, *gl* = 3,36, *p* < 0.001)". Un efecto significativo sería seguido de una descripción escrita de los resultados de las pruebas post hoc (es decir, qué temperaturas difirieron de cuáles). Los resultados de las pruebas post hoc también se pueden agregar a la figura (por ejemplo, mediante la incorporación de etiquetas de los niveles que difieren).
+
+**Visual.** Un diagrama de caja o un gráfico de columnas con barras de error son adecuados para comparar una variable continua entre niveles de una variable categórica. Consulta la ayuda de gráficos para obtener versiones listas para su publicación de estas figuras.
+
 
 ```{r}
-boxplot(Days ~ Temperature, data = Turtles, ylab = "Hatching time (days)", xlab = "Temperature (°C)")
+boxplot(Days ~ Temperature, data = Turtles, ylab = "Tiempo de eclosión (días)", xlab = "Temperatura (°C)")
 ```
   
 
-### Further help
- 
-Type `?aov` or `?lm` to get the R help for these functions.
 
-<p style="margin-left:.5in;text-indent:-.5in">Quinn and Keough (2002) *Experimental design and data analysis for biologists.* Cambridge University Press. Ch. 8 Comparing groups or treatments - analysis of variance.</p>
+### Más ayuda
 
-<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists* Cambridge University Press. Ch. 11. Single-factor analysis of variance.</p>
+Escribe `?aov` o `?lm` para obtener la ayuda de R sobre estas funciones.
 
-<p style="margin-left:.5in;text-indent:-.5in">Underood, AJ (1997) *Experiments in ecology: Their logical design and interpretation using analysis of variance.* Cambridge University Press.</p>
-  
+<p style="margin-left:.5in;text-indent:-.5in">Quinn y Keough (2002) *Experimental design and data analysis for biologists.* Cambridge University Press. Capítulo 8: Comparación de grupos o tratamientos - análisis de varianza.</p>
 
-**Author**: James Lavender
- 
-**Year:** 2016
+<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Capítulo 11: Análisis de varianza de un solo factor.</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+<p style="margin-left:.5in;text-indent:-.5in">Underwood, AJ (1997) *Experiments in ecology: Their logical design and interpretation using analysis of variance.* Cambridge University Press.</p>
+
+**Autor**: James Lavender
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

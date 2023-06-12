@@ -1,123 +1,135 @@
 ---
 weight: 2
-title: "Count Data"
+title: "Datos de recuento"
 output: html_document
 aliases: /generalised-linear-models-2/
 ---
-**Count data**
 
-This is a continuation of [Generalised linear models 1](/statistics/glms/glm-1) which introduced GLMs and gave instructions for binary data. Read that first to understand when GLMs are used. On this page, we will cover the use of GLM's for count data and briefly introduce how they can be used for other data types you may have.
-  
+**Datos de recuento**
 
-### Running the analysis
- 
+Esto es una continuación de [Modelos lineales generalizados 1](/statistics/glms/glm-1), que introdujo los GLM y proporcionó instrucciones para datos binarios. Lee eso primero para entender cuándo se utilizan los GLM. En esta página, cubriremos el uso de los GLM para datos de recuento y presentaremos brevemente cómo se pueden utilizar para otros tipos de datos que puedas tener.
+
+### Ejecución del análisis
 
 ![](GLM2_counts_image.jpg)
 
-For this worked example, we have counts of different animal groups at control sites and sites where bush regeneration has been carried out (treatment). We want to know if the the bush regeneration activities have affected the count of slugs. 
+Para este ejemplo práctico, tenemos recuentos de diferentes grupos de animales en sitios de control y sitios donde se ha llevado a cabo la regeneración del matorral (tratamiento). Queremos saber si las actividades de regeneración del matorral han afectado el recuento de babosas.
 
-Download the sample data set, [Revegetation.csv](/datasets/Revegetation.csv), and import into R to see how the data are arranged:
+Descarga el conjunto de datos de muestra, [Revegetation.csv](/datasets/Revegetation.csv), e impórtalo en R para ver cómo se organizan los datos:
 
 ```{r}
 Reveg <- read.csv("Revegetation.csv", header = T)
 ```
 
-If you view the frequency histogram of the slug counts, you will see that it is very skewed, with many small values and few large counts (the variable name, Soleolifera, is the order name of terrestrial slugs).
+Si visualizas el histograma de frecuencias de los recuentos de babosas, verás que está muy sesgado, con muchos valores pequeños y pocos recuentos grandes (el nombre de la variable, Soleolifera, es el nombre de orden de las babosas terrestres).
+
 
 ```{r,out.width = '500px'}
 hist(Reveg$Soleolifera)
 ```
 
-The default distribution for count data is the Poisson. The Poisson distribution assumes the variance equals the mean. This is quite a restrictive assumption which ecological count data often violate. We may need to use the more flexible negative-binomial distribution instead. 
 
-We can use a GLM to test whether the counts of slugs (from the order Soleolifera) differ between control and regenerated sites. To fit the GLM, we will use the `manyglm` function instead of `glm` so we have access to more useful residual plots. 
+La distribución predeterminada para datos de recuento es la distribución de Poisson. La distribución de Poisson asume que la varianza es igual a la media. Esta es una suposición bastante restrictiva que a menudo se viola en los datos de recuento ecológicos. Es posible que necesitemos utilizar la distribución negativa binomial, que es más flexible.
 
-To fit the GLM, load the mvabund package then fit the following model: 
+Podemos utilizar un GLM para probar si los recuentos de babosas (del orden Soleolifera) difieren entre los sitios de control y los sitios regenerados. Para ajustar el GLM, utilizaremos la función `manyglm` en lugar de `glm` para tener acceso a gráficos de residuos más útiles.
+
+Para ajustar el GLM, carga el paquete `mvabund` y luego ajusta el siguiente modelo:
 
 ```{r}
 library(mvabund)
 ft.sol.pois <- manyglm(Soleolifera ~ Treatment, family = "poisson", data = Reveg)
 ```
 
-where Soleolifera is the response variable, and Treatment is the predictor variable (with two levels, control and revegetated).
-  
 
-### Assumptions to check
- 
-Before we look at the results, we need to look at the residual plot to check the assumptions.
+donde Soleolifera es la variable de respuesta y Treatment es la variable predictora (con dos niveles, control y regenerado).
+
+### Suposiciones a verificar
+
+Antes de ver los resultados, debemos revisar el gráfico de residuos para verificar las suposiciones.
+
 
 ```{r,out.width = '500px'}
 plot(ft.sol.pois)
 ```
 
-It's hard to say whether there is any non-linearity in this plot, this is because the predictor is binary (treatment vs revegetated). Looking at the variance assumption, it does appear as though there is a fan shape. The residuals are more spread out on the right than the left - we call this overdispersion. 
+Es difícil decir si hay alguna no linealidad en este gráfico, esto se debe a que el predictor es binario (tratamiento vs reforestado). Al observar la suposición de varianza, parece que hay una forma de abanico. Los residuos están más dispersos a la derecha que a la izquierda, a esto lo llamamos sobredispersión.
 
-This tells us the variance assumption of the Poisson may be too restrictive and we should try a different distribution. We can instead fit a negative-binomial distribution in `manyglm` by changing the family argument to `family="negative binomial"`.
+Esto nos indica que la suposición de varianza de la distribución de Poisson puede ser demasiado restrictiva y deberíamos probar una distribución diferente. En cambio, podemos ajustar una distribución binomial negativa en `manyglm` cambiando el argumento `family` a `family="negative binomial"`.
+
 
 ```{r}
 ft.sol.nb <- manyglm(Soleolifera ~ Treatment, family = "negative binomial", data = Reveg)
 ```
 
-Look again at the residual plot:
+Observa nuevamente el gráfico de residuos:
 
 ```{r,out.width = '500px'}
 plot(ft.sol.nb)
 ```
 
-This seems to have improved the residual plot. There is no longer a strong fan shape, so we can go ahead and look at the results.
-  
+Esto parece haber mejorado el gráfico de residuos. Ya no hay una fuerte forma de abanico, así que podemos proceder y examinar los resultados.
 
-### Interpreting the results
- 
-If all the assumption checks are okay, we can have a look at the results the model gave us with the same two functions for inference as used for linear models: `summary` and `anova`.
+### Interpretación de los resultados
+
+Si todas las verificaciones de suposiciones están bien, podemos observar los resultados que nos proporcionó el modelo con las mismas dos funciones de inferencia utilizadas para los modelos lineales: `summary` y `anova`.
+
 
 ```{r}
 anova(ft.sol.nb)
 summary(ft.sol.nb)
 ```
 
-Both tests indicate strong evidence of a treatment effect (p<0.01). To extract the model equation we can look at the coefficients from the fit.
+Ambas pruebas indican una fuerte evidencia de un efecto del tratamiento (p\<0.01). Para extraer la ecuación del modelo, podemos observar los coeficientes obtenidos del ajuste.
+
 
 ```{r}
 ft.sol.nb$coefficients
 ```
 
-The default link function for Poisson and negative binomial models is $log()$. If we write the mean count as $\lambda$  
+La función de enlace predeterminada para modelos de Poisson y binomial negativo es $log()$. Si escribimos la media de conteo como $\lambda$
 
 $$ \log(\lambda) = -0.92 + 2.12 \times \text{Treatment}$$
-  
 
-### Communicating the results
- 
-**Written.** Results of GLM's are communicated in the same way as results for linear models. For one predictor it suffices to write one line, e.g. "There is strong evidence of positive effect of bush regeneration on the abundance of slugs from the order Soleolifera (p < 0.001)". For multiple predictors it's best to display the results in a table. You should also indicate which distribution was used (e.g. negative-binomial) and if resampling was used for inference. " We used a negative-binomial generalised linear model due to overdispersion evident in the data. Inference was carried out using bootstrap resampling with 1000 resamples (default when using manyglm)."
 
-**Visual.** In this example, a boxplot would be an effective way to visualse the differences in slug counts between control and revegetated sites.
+### Comunicación de los resultados
+
+**Escrita.** Los resultados de los GLM se comunican de la misma manera que los resultados de los modelos lineales. Para un predictor, basta con escribir una línea, por ejemplo: "Hay evidencia sólida de un efecto positivo de la regeneración de arbustos en la abundancia de babosas del orden Soleolifera (p \< 0.001)". Para múltiples predictores, es mejor mostrar los resultados en una tabla. También debes indicar qué distribución se utilizó (por ejemplo, binomial negativa) y si se utilizó remuestreo para inferencia. "Utilizamos un modelo lineal generalizado binomial negativo debido a la sobredispersión evidente en los datos. La inferencia se realizó utilizando remuestreo bootstrap con 1000 remuestras (valor predeterminado al usar `manyglm`)".
+
+**Visual.** En este ejemplo, un diagrama de caja sería una forma efectiva de visualizar las diferencias en los recuentos de babosas entre los sitios de control y los sitios revegetados.
+
+
 
 ```{r,out.width = '500px'}
 boxplot(Soleolifera ~ Treatment, ylab = "Count", xlab = "Treatment", data = Reveg)
 ```
-  
 
-### Other types of data
- 
-If you have continuous positive data with zeros, like biomass data, the `tweedie` distribution might be able to model this, although it does have some quite restrictive assumptions. You can use `family="tweedie"` with the `manyglm` function. Be sure to look at residual plots for violations of assumptions. 
+### Otros tipos de datos
 
-For strictly positive continuous data a `gamma` distribution can be used. This is available in the `glm` function using `family=gamma`. 
-  
+Si tienes datos continuos positivos con ceros, como datos de biomasa, es posible que la distribución `tweedie` pueda modelar esto, aunque tiene algunas suposiciones bastante restrictivas. Puedes usar `family="tweedie"` con la función `manyglm`. Asegúrate de examinar los gráficos de residuos para detectar violaciones de las suposiciones.
 
-### Further help
- 
-You can type `?glm` and `?manyglm` into R for help with these functions.
+Para datos continuos estrictamente positivos, se puede utilizar una distribución `gamma`. Esto está disponible en la función `glm` utilizando `family=gamma`.
 
-<p style="margin-left: .5in; text-indent: -.5in;">Faraway, JJ. 2005. *Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models*. CRC press.</p>
+### Más ayuda
 
-<p style="margin-left: .5in; text-indent: -.5in;">Zuur, A, EN Ieno and GM Smith. 20074. *Analysing ecological data*. Springer Science & Business Media, 2007.</p>
+Puedes escribir `?glm` y `?manyglm` en R para obtener ayuda con estas funciones.
 
-More advice on [interpreting coefficients in glms](/../statistics/glms/interpret-glm-coeffs/)
-  
+<p style="margin-left: .5in; text-indent: -.5in;">
 
-**Author**: Gordana Popovic
- 
-**Year:** 2016
+Faraway, JJ. 2005. *Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models*. CRC press.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+</p>
+
+<p style="margin-left: .5in; text-indent: -.5in;">
+
+Zuur, A, EN Ieno and GM Smith. 20074. *Analysing ecological data*. Springer Science & Business Media, 2007.
+
+</p>
+
+Más consejos sobre [la interpretación de coeficientes en GLMs](/../statistics/glms/interpret-glm-coeffs/)
+
+**Autor**: Gordana Popovic
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
+

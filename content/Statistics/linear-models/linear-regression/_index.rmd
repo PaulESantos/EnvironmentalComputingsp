@@ -1,89 +1,97 @@
 ---
 weight: 1
-title: "Linear Regression"
+title: "Regresión Lineal"
 output: html_document
 aliases: /linear-regression/
 ---
 
 
-Linear regression is the one of the most widely used statistical techniques in the life and earth sciences. It is used to model the relationship between a response (also called dependent) variable $y$ and one or more explanatory (also called independent or predictor) variables $x_{1}$,$x_{2}$...$x_{n}$. For example, we could use linear regression to test whether temperature (the explanatory variable) is a good predictor of plant height (the response variable).
+
+
+La regresión lineal es una de las técnicas estadísticas más ampliamente utilizadas en las ciencias de la vida y la tierra. Se utiliza para modelar la relación entre una variable de respuesta (también llamada variable dependiente) $y$ y una o más variables explicativas (también llamadas variables independientes o predictoras) $x_{1}$,$x_{2}$...$x_{n}$. Por ejemplo, podríamos usar la regresión lineal para probar si la temperatura (la variable explicativa) es un buen predictor de la altura de las plantas (la variable de respuesta).
+
 
 ![](Linear_regression_image.jpg)
 
-In simple linear regression, with a single explanatory variable, the model takes the form:
+En la regresión lineal simple, con una única variable explicativa, el modelo toma la siguiente forma:
 
 $$y = \alpha + \beta x + \varepsilon $$ 
 
-where $\alpha$ is the intercept (value of $y$ when $x$ = 0), $\beta$ is the slope (amount of change in $y$ for each unit of $x$), and $\varepsilon$ is the error term. It is inclusion of the error term, also called the stochastic part of the model, that makes the model statistical rather than mathematical. The error term is drawn from a statistical distribution that captures the random variability in the response. In standard linear regression this is assumed to be a normal (Gaussian) distribution. 
 
-Note that the *linear* in linear model does not imply a straight-line relationship but rather that the response is a linear (additive) combination of the effects of the explanatory variables. However, because we tend to start by fitting the simplest relationship, many linear models are represented by straight lines.
+donde $\alpha$ es la intersección (valor de $y$ cuando $x$ = 0), $\beta$ es la pendiente (cantidad de cambio en $y$ por cada unidad de $x$) y $\varepsilon$ es el término de error. La inclusión del término de error, también llamado parte estocástica del modelo, es lo que hace que el modelo sea estadístico en lugar de matemático. El término de error se extrae de una distribución estadística que captura la variabilidad aleatoria en la respuesta. En la regresión lineal estándar se asume que esto sigue una distribución normal (Gaussiana).
 
-Note that a linear regression is just a special case of a linear model, where both the response and predictor variables are continuous.
-  
+Es importante tener en cuenta que lo *lineal* en el modelo lineal no implica una relación lineal recta, sino más bien que la respuesta es una combinación lineal (aditiva) de los efectos de las variables explicativas. Sin embargo, debido a que tendemos a comenzar ajustando la relación más simple, muchos modelos lineales se representan mediante líneas rectas.
 
-### Running the analysis
+También es importante destacar que la regresión lineal es solo un caso especial de un modelo lineal, donde tanto las variables de respuesta como las predictoras son continuas.
+
+### Ejecutando el análisis
  
-The goal in linear regression is obtain the best estimates for the model coefficients ($\alpha$ and $\beta$). In R you can fit linear models using the function `lm`.
+El objetivo en la regresión lineal es obtener las mejores estimaciones para los coeficientes del modelo ($\alpha$ y $\beta$). En R, puedes ajustar modelos lineales utilizando la función `lm`.
 
-For this worked example, download a data set on plant heights around the world, [Plant_height.csv](/datasets/Plant_height.csv), and import into R.
+Para este ejemplo práctico, descarga un conjunto de datos sobre alturas de plantas alrededor del mundo, [Plant_height.csv](/datasets/Plant_height.csv), e impórtalo en R.
+
 
 ```{r}
 Plant_height <- read.csv(file = "Plant_height.csv", header = TRUE)
 ```
 
-The main argument to `lm` is the model formula `y ~ x`, where the response variable is on the left of the tilde (~) and the explanatory variable is on the right. `lm` also has an optional data argument that lets you specify a data frame from which the variables will be taken.
 
-To test whether plant height is associated with temperature, we would model height as the dependent variable (in this case we are using the log of plant height) and temperature as the predictor variable. 
+El argumento principal de `lm` es la fórmula del modelo `y ~ x`, donde la variable de respuesta se encuentra a la izquierda de la tilde (~) y la variable explicativa se encuentra a la derecha. `lm` también tiene un argumento opcional llamado data que te permite especificar un data frame del cual se tomarán las variables.
+
+Para probar si la altura de las plantas está asociada con la temperatura, modelaríamos la altura como la variable dependiente (en este caso estamos utilizando el logaritmo de la altura de las plantas) y la temperatura como la variable predictora.
+
 
 ```{r, eval = FALSE}
 lm(loght ~ temp, data = Plant_height)
 ```
   
-
-### Interpreting the results
+### Interpretación de los resultados
  
-To obtain detailed output (e.g., coefficient values, R^2^, test statistics, *p*-values, confidence intervals etc.), assign the output of the `lm` function to a new object in R and use the `summary` function to extract information from that model object.
+Para obtener una salida detallada (por ejemplo, valores de coeficientes, R^2^, estadísticas de prueba, valores de *p*, intervalos de confianza, etc.), asigna la salida de la función `lm` a un nuevo objeto en R y utiliza la función `summary` para extraer información de ese objeto de modelo.
+
+
 
 ```{r}
 model <- lm(loght ~ temp, data = Plant_height)
 summary(model)
 ```
 
-The estimates for the coefficients give you the slope and intercept. In this example, the regression equation for (log) plant height as a function of temperature is:
+Las estimaciones de los coeficientes te dan la pendiente e intersección. En este ejemplo, la ecuación de regresión para la altura (logarítmica) de las plantas en función de la temperatura es:
 
-$$log(plant height) = -0.22566 +0.0421.temperature + \varepsilon $$ 
-  
+$$log(altura de la planta) = -0.22566 +0.0421.temperatura + \varepsilon $$ 
 
-Calling `summary` on a model object produces a lot of useful information but one of the main things to look out for are the *t*-statistics and *p*-values for each coefficient. These test the null hypothesis that the true value for the coefficient is 0. 
+Llamar a `summary` en un objeto de modelo produce mucha información útil, pero una de las cosas principales a tener en cuenta son las estadísticas *t* y los valores de *p* para cada coeficiente. Estas pruebas la hipótesis nula de que el valor real del coeficiente es 0.
 
-For the intercept we usually don't care if it is zero or not, but for the other coefficient (the slope), a value significantly differing from zero indicates that there is an association between that explanatory variable and the response. In this example, an increase in temperature is associated with an increase in plant height.
+Por lo general, no nos importa si la intersección es cero o no, pero para el otro coeficiente (la pendiente), un valor significativamente diferente de cero indica que hay una asociación entre esa variable explicativa y la respuesta. En este ejemplo, un aumento en la temperatura se asocia con un aumento en la altura de las plantas.
 
-Whilst the *t*-statistics and *p*-values indicate a significant association, the strength of the association is captured by the R^2^ value, the proportion of variance in the response that is explained by the explanatory variable(s).
+Si bien las estadísticas *t* y los valores de *p* indican una asociación significativa, la fuerza de la asociación se captura mediante el valor de R^2^, que es la proporción de varianza en la respuesta que se explica por la(s) variable(s) explicativa(s).
 
-The *F*-statistic and associated *p*-value indicates whether the model as a whole is significant. The model will always be significant if any of the coefficients are significant. With only one predictor variable, the probability associated with the *t* test, that tests whether the slope differs from zero, is identical to the probability associated with the *F* statistic.
+La estadística *F* y su valor de *p* asociado indican si el modelo en su conjunto es significativo. El modelo siempre será significativo si alguno de los coeficientes es significativo. Con solo una variable predictora, la probabilidad asociada a la prueba *t*, que prueba si la pendiente difiere de cero, es idéntica a la probabilidad asociada a la estadística *F*.
 
-We can also obtain 95% confidence intervals for the two parameters. Showing that the intervals for the slope do not include zero is another way of showing that there is an association between the dependent and predictor variable.
+También podemos obtener intervalos de confianza del 95% para los dos parámetros. Mostrar que los intervalos para la pendiente no incluyen cero es otra forma de mostrar que hay una asociación entre la variable dependiente y la variable predictora.
+
 
 ```{r}
 confint(model)
 ```
   
+### Supuestos a verificar
 
-### Assumptions to check
- 
-**Linearity**. There is no point trying to fit a staight line to data that are curved! Curvilinear relationships produce U-shaped patterns in plots of the residuals vs the fitted values. Using the `plot` function on a model object provides a series of four graphical model diagnostics, the first of which is a plot of residuals versus fitted values.
+**Linealidad**. ¡No tiene sentido tratar de ajustar una línea recta a datos que están curvados! Las relaciones curvilíneas producen patrones en forma de U en los gráficos de los residuos versus los valores ajustados. El uso de la función `plot` en un objeto de modelo proporciona una serie de diagnósticos gráficos del modelo, el primero de los cuales es un gráfico de residuos versus valores ajustados.
+
 
 ```{r, fig.width = 5, fig.height = 4}
 plot(model, which = 1)
 ```
 
-The absence of strong patterning in the above plot indicates the assumption of linearity is valid. If there is strong patterning, one potential solution is to log-transform the response. Note in the above example plant height had already been log-transformed. An alternative solution is to fit a linear model of the response as a polynomial function (e.g. quadratic) of the response. The simplest way to do this in R is to use the `poly` function.
+La ausencia de patrones fuertes en el gráfico anterior indica que el supuesto de linealidad es válido. Si hay patrones fuertes, una solución potencial es transformar el logaritmo del valor de respuesta. Observa que en el ejemplo anterior la altura de las plantas ya se había transformado logarítmicamente. Otra solución alternativa es ajustar un modelo lineal del valor de respuesta como una función polinómica (por ejemplo, cuadrática) del valor de respuesta. La forma más sencilla de hacer esto en R es utilizando la función `poly`.
 
-Click [here](https://gallery.shinyapps.io/slr_diag/) to see a nice interactive app that shows you what patterns of residuals you would expect with curved relationships 
+Haz clic [aquí](https://gallery.shinyapps.io/slr_diag/) para ver una aplicación interactiva que muestra qué patrones de residuos se esperarían con relaciones curvadas.
 
-**Constant variance**. An even spread of data around the regression line is desirable. If the plot of residuals versus fitted values is fan-shaped the assumption of constant variance (aka homogeneity of variance) is violated. A log-transformation of the response variable may fix this problem, but if it doesn't the best solution is to use a different error distribution in a generalised linear model framework (GLM). See the [Generalised linear models 1](/statistics/glms/glm-1/) for more information.        
+**Varianza constante**. Una distribución uniforme de los datos alrededor de la línea de regresión es deseable. Si el gráfico de residuos versus valores ajustados tiene forma de abanico, se viola el supuesto de varianza constante (también conocido como homogeneidad de varianza). La transformación logarítmica de la variable de respuesta puede solucionar este problema, pero si no lo hace, la mejor solución es utilizar una distribución de errores diferente en un marco de modelo lineal generalizado (GLM). Consulta [Modelos lineales generalizados 1](/statistics/glms/glm-1/) para obtener más información.
 
-**Normality**. Checks of whether the data are normally distributed are usually performed by either plotting a histogram of the residuals or via a quantile plot where the residuals are plotted against the values expected from a normal distribution (the second of the figures obtained by `plot(model)`. If the points in the quantile plot lie mostly on the line, the residuals are normally distributed. Violations of normality can be fixed via transformations or by using a different error-distribution in a GLM. Note, however, that linear regression is reasonably robust against violations of normality.
+**Normalidad**. Las comprobaciones de si los datos siguen una distribución normal generalmente se realizan mediante la representación de un histograma de los residuos o mediante un gráfico de cuantiles donde los residuos se representan frente a los valores esperados de una distribución normal (el segundo de los gráficos obtenidos mediante `plot(model)`). Si los puntos en el gráfico de cuantiles se encuentran principalmente en la línea, los residuos siguen una distribución normal. Las violaciones de la normalidad se pueden solucionar mediante transformaciones o mediante el uso de una distribución de errores diferente en un GLM. Sin embargo, cabe destacar que la regresión lineal es razonablemente robusta frente a las violaciones de la normalidad.
+
 
 ```{r}
 par(mfrow = c(1, 2)) # This code put two plots in the same window
@@ -91,36 +99,35 @@ hist(model$residuals) # Histogram of residuals
 plot(model, which = 2) # Quantile plot
 ```
 
-**Independence**. The observations of the response should be independent of each other. Non-independent observations are those that are in some way associated with each other beyond that which is explained by the predictor variable(s). For instance, samples collected from the same site, or repeatedly from the same object, may be more alike due to some additional factor other than the measured explanatory variable. Ensuring independence is an issue of experimental and sampling design and we usually know if the data are independent or not in advance of our analysis.
+**Independencia**. Las observaciones de la variable respuesta deben ser independientes entre sí. Las observaciones no independientes son aquellas que están de alguna manera asociadas entre sí más allá de lo que se explica por la(s) variable(s) predictoras. Por ejemplo, las muestras recogidas en el mismo sitio, o repetidamente del mismo objeto, pueden ser más similares debido a algún factor adicional que no sea la variable explicativa medida. Garantizar la independencia es un problema de diseño experimental y de muestreo, y generalmente sabemos si los datos son independientes o no antes de nuestro análisis.
 
-There are a variety of measures for dealing with non-independence. These include ensuring all important predictors are in the model; averaging across nested observations; or using a mixed-model (see [Mixed models 1](/statistics/mixed-models/mixed-model-1/)). 
-  
+Existen varias medidas para tratar la falta de independencia. Estas incluyen asegurarse de que todas las variables predictoras importantes estén en el modelo; promediar las observaciones anidadas; o utilizar un modelo mixto (ver [Modelos mixtos 1](/statistics/mixed-models/mixed-model-1/)).
 
-### Communicating the results
- 
-**Written**  The results of linear regression may be presented in the text in a number of different ways, but a short sentence is often adequate, e.g., "plant height exhibited a significant (*F* = 57.5, *p* < 0.01) negative relationship with temperature". However, if you have run several analyses (or if  there is more than one predictor), it may be useful to present the results as a table with coefficient values, standard errors and *p*-values for each explanatory variable.  
+### Comunicación de los resultados
 
-**Visual** For a linear regression with a single explanatory variable, it is useful to present the results as a scatter plot. The line of best fit derived from the model can be added with the `abline` function.
+**Escrita.** Los resultados de la regresión lineal se pueden presentar en el texto de diversas formas, pero a menudo basta con una breve oración, por ejemplo: "la altura de las plantas mostró una relación significativa (*F* = 57.5, *p* < 0.01) negativa con la temperatura". Sin embargo, si has realizado varios análisis (o si hay más de una variable predictora), puede ser útil presentar los resultados en forma de tabla con los valores de los coeficientes, los errores estándar y los valores de *p* para cada variable explicativa.
+
+**Visual.** Para una regresión lineal con una sola variable explicativa, es útil presentar los resultados en forma de gráfico de dispersión. La línea de mejor ajuste derivada del modelo se puede agregar con la función `abline`.
+
 
 ```{r}
 plot(loght ~ temp, data = Plant_height, xlab = "Temperature (C)", ylab = "log(Plant height)", pch = 16)
 abline(model, col = "red")
 ```
   
+### Más ayuda
 
-### Further help
- 
-Type `?lm` to get the R help for this function. 
+Escribe `?lm` para obtener la ayuda de R para esta función.
 
-<p style="margin-left: .5in; text-indent: -.5in;">Quinn and Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Ch. 5 Correlation and regression.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">Quinn y Keough (2002) **Experimental design and data analysis for biologists.* Cambridge University Press. Capítulo 5: Correlación y regresión.</p>
 
-<p style="margin-left: .5in; text-indent: -.5in;">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Ch. 17 Regression.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Capítulo 17: Regresión.</p>
 
-More advice on [interpreting coefficients in linear models](/statistics/glms/interpret-glm-coeffs/)
+Más consejos sobre [la interpretación de coeficientes en modelos lineales](/statistics/glms/interpret-glm-coeffs/)
   
 
-**Author**: Andrew Letten
+**Autor**: Andrew Letten
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

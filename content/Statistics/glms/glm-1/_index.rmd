@@ -1,78 +1,81 @@
 ---
 weight: 1
-title: "Introduction and Binary Data"
+title: "Introducción y Datos Binarios"
 output: html_document
 aliases: /generalised-linear-models-1/
 ---
-**Introduction and binomial data**
- 
-[Linear models](/statistics/linear-models/
-) (e.g., linear regression) are used to model the relationship between a **continuous** response variable $y$ and one or more explanatory variables $x_1, x_2, \cdots$. When we have a **discrete** response we use generalised linear models (GLM's).
+**Introducción y datos binomiales**
+
+[Los modelos lineales](/statistics/linear-models/) (por ejemplo, regresión lineal) se utilizan para modelar la relación entre una variable de respuesta **continua** $y$ y una o más variables explicativas $x_1, x_2, \cdots$. Cuando tenemos una variable de respuesta **discreta**, utilizamos modelos lineales generalizados (GLM).
+
 
 ![](GLM1_binary_image.jpg)
 
-For example, if had surveyed a beach and wanted to analyse how the presence of a crab varied with time and distance from the water line, the response variable is discrete: the presence or absence of a crab in a given replicate. The first few rows of the data set would look like this:
+
+Por ejemplo, si hemos realizado un estudio en una playa y queremos analizar cómo varía la presencia de un cangrejo en función del tiempo y la distancia desde la línea de agua, la variable de respuesta es discreta: la presencia o ausencia de un cangrejo en una determinada réplica. Las primeras filas del conjunto de datos se verían así:
+
 
 ```{r,echo=F}
 CrabDat <- read.csv("Crabs.csv", header = T)
 head(CrabDat)
 ```
   
+**Propiedades de los GLM.** Los datos de respuesta discreta, como los conteos y los datos de presencia/ausencia, generalmente muestran una relación media-varianza. Por ejemplo, para los conteos que en promedio son 5, esperaríamos que la mayoría de las muestras estuvieran entre aproximadamente 1 y 9, pero para los conteos que en promedio son 500, la mayoría de las observaciones tenderán a estar entre 450 y 550, lo que nos dará una varianza mucho mayor cuando la media sea grande.
 
-**Properties of GLM's.** Discrete response data, like counts and presence/absence data, generally exhibit a mean-variance relationship. For example; for counts that are on average 5, we would expect most samples to be between about 1 and 9, but for counts that are on average 500, most of the observations will tend to be between 450 and 550, giving us a much larger variance when the mean is large. 
+Los modelos lineales asumen una varianza constante. Es posible que hayas aprendido a transformar datos de conteo y luego ajustar un modelo lineal. Esto puede reducir la relación media-varianza, pero no la eliminará por completo, especialmente si tienes muchos ceros en tus datos. Para analizar datos discretos de manera precisa, necesitamos utilizar GLM.
 
-Linear models assume constant variance. You might have learned to transform count data and then fit a linear model. This can reduce the mean variance relationship, but it won't get rid of it completely, especially if you have a lot of zeros in your data. To analyse discrete data accurately we need to use GLM's.
+Un GLM realiza algunas suposiciones importantes (las comprobaremos más adelante en nuestros ejemplos):
 
-A GLM makes some important assumptions (we'll check these later for our examples)
-
-1. The observed $y$ are independent, conditional on some predictors $x$  
-2. The response $y$ come from a known distribution with a known mean-variance relationship  
-3. There is a straight line relationship between a known function $g$ of the mean of $y$ and the predictors $x$  
+1. Los $y$ observados son independientes, condicionales a algunos predictores $x$
+2. La respuesta $y$ proviene de una distribución conocida con una relación media-varianza conocida
+3. Existe una relación lineal entre una función conocida $g$ de la media de $y$ y los predictores $x$
 
 $$ g(\mu_y) = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots $$
 
-Note: link functions `g()` are an important part of fitting GLM's, but beyond the scope of this introductory tutorial. All you need to know is that the default link for binomial data is the `logit()` and for count data it's `log()`. For more information see `?family`.
-  
 
-### Running the analysis
- 
+Nota: las funciones de enlace `g()` son una parte importante del ajuste de GLM, pero están fuera del alcance de este tutorial introductorio. Lo único que necesitas saber es que el enlace predeterminado para datos binomiales es `logit()` y para datos de conteo es `log()`. Para obtener más información, consulta `?family`.
 
-**Binomial data**  
- 
-First, we will show you how to fit a model to binomial data, i.e., presence/absence data or data as 0/1. Fitting GLM's uses very similar syntax to fitting linear models. We use the `glm` function instead of `lm`. We also need to add a `?family` argument to specify whether your data are counts, binomial etc.
+### Ejecutando el análisis
 
-For this worked example, download the sample data set on the presence and absence of crabs on the beach, [Crabs.csv](/datasets/Crabs.csv) and import into R.
+**Datos binomiales**
+
+Primero, te mostraremos cómo ajustar un modelo a datos binomiales, es decir, datos de presencia/ausencia o datos `0/1`. Ajustar GLM (modelos lineales generalizados) utiliza una sintaxis muy similar a la de los modelos lineales. Utilizamos la función `glm` en lugar de `lm`. También necesitamos agregar un argumento `family` para especificar si tus datos son de conteo, binomiales, etc.
+
+Para este ejemplo práctico, descarga el conjunto de datos de muestra sobre la presencia y ausencia de cangrejos en la playa, [Crabs.csv](/datasets/Crabs.csv), e impórtalo a R.
+
 
 ```{r}
 Crab_PA <- read.csv("Crabs.csv", header = T)
 ```
+Para probar si la probabilidad de presencia de cangrejos cambia con el tiempo (un factor) y la distancia (una variable continua), ajustamos el siguiente modelo. La variable de respuesta (presencia/ausencia de cangrejos) es binomial, por lo que usamos `family=binomial`.
 
-To test whether the probability of crab presence changes with time (a factor) and distance (a continuous variable), we fit the following model. The response variable (presence/absence of crabs) is binomial, so we use `family=binomial`.
 
 ```{r}
 ft.crab <- glm(CrabPres ~ Time * Dist, family = binomial, data = Crab_PA)
 ```
   
 
-### Assumptions to check
- 
-Before we look at the results of our analysis it's important to check that our data met the assumptions of the model we used. Let's look at all the assumptions in order.
+### Supuestos a verificar
 
-**Assumption 1 : The observed $y$ are independent, conditional on some predictors $x$**
+Antes de examinar los resultados de nuestro análisis, es importante verificar que nuestros datos cumplan con los supuestos del modelo que utilizamos. Veamos todos los supuestos en orden.
 
-We can't check this assumption from the results, but you can ensure it's true by taking a random sample for your experimental design. If your experimental design involves any pseudo-replication, this assumption will be violated. For certain types of pseudo-replication you can use mixed models instead.
+**Supuesto 1: Los valores observados $y$ son independientes, condicionales a algunos predictores $x$**
 
-**Assumption 2 : The response $y$ come from a known distribution with a known mean-variance relationship**
+No podemos verificar este supuesto a partir de los resultados, pero puedes asegurarte de que sea cierto tomando una muestra aleatoria para tu diseño experimental. Si tu diseño experimental involucra alguna pseudo-replicación, este supuesto se violará. Para ciertos tipos de pseudo-replicación, puedes utilizar modelos mixtos en su lugar.
 
-The mean variance relationship is the main reason we use GLM's instead of linear models. We need to check that the distribution models the mean-variance relationship of our data well. For binomial data this is not a big concern, but later on when we analyse count data it'll be very important. To check this assumption we look at a plot of residuals, and try to see if there is a fan shape. 
+**Supuesto 2: La respuesta $y$ proviene de una distribución conocida con una relación media-varianza conocida**
+
+La relación media-varianza es la principal razón por la que utilizamos GLM en lugar de modelos lineales. Necesitamos verificar si la distribución modela bien la relación media-varianza de nuestros datos. Para datos binomiales, esto no es una gran preocupación, pero más adelante, cuando analicemos datos de conteo, será muy importante. Para verificar este supuesto, observamos un gráfico de residuos e intentamos ver si hay una forma de abanico.
+
     
 ```{r,out.width = '500px'}
 plot(ft.crab, which = 1)
 ```
 
-Unfortunately the `glm` plot function gives us a very odd looking plot due to the discreteness of the data (i.e., many points on top of each other).
 
-For a more useful plot we can instead fit the model using the `manyglm` function in the [mvabund](https://cran.r-project.org/web/packages/mvabund/index.html) package. We need a slight change to the family argument, for `manyglm` we write `family = "binomial"`.
+Desafortunadamente, la función que permite la nacionalización delos resultados de `glm` nos muestra un gráfico muy extraño debido a la discreción de los datos (es decir, muchos puntos superpuestos).
+
+Para obtener un gráfico más útil, podemos ajustar el modelo utilizando la función `manyglm` del paquete [mvabund](https://cran.r-project.org/web/packages/mvabund/index.html). Necesitamos un ligero cambio en el argumento `family`; para `manyglm`, escribimos `family = "binomial"`.
 
 ```{r, echo = FALSE}
 set.seed(1)
@@ -84,18 +87,19 @@ ft.crab.many <- manyglm(CrabPres ~ Time * Dist, family = "binomial", data = Crab
 plot(ft.crab.many)
 ```
 
-Now we can look for a fan shape in the residual plot. For these data, there doesn't seem to be a fan shape, so we can conclude the mean-variance assumption the model made was reasonable for our data. The residuals in this plot have a random component. If you see a pattern it's best to repeat the plot a few times to see if the pattern is real.
 
-**Assumption 3 : There is a straight line relationship between a known function $g$ of the mean of $y$ and the predictors $x$**
+Ahora podemos buscar una forma de abanico en el gráfico residual. Para estos datos, no parece haber una forma de abanico, por lo que podemos concluir que la suposición de media-varianza que hizo el modelo fue razonable para nuestros datos. Los residuos en este gráfico tienen una componente aleatoria. Si ves un patrón, es mejor repetir el gráfico varias veces para ver si el patrón es real.
 
-To check this assumption, we check the residual plot above for non-linearity, or a U-shape.  In our case there is no evidence of non-linearity. If the residuals seem to go down then up, or up then down, we may need to add a polynomial function of the predictors using the `poly` function.
-  
+**Suposición 3: Existe una relación lineal entre una función conocida $g$ de la media de $y$ y los predictores $x$**.
 
-### Interpreting the results
- 
-If all the assumption checks are okay, we can have a look at the results the model gave us. The two main functions for inference are the same as for linear models: `summary` and `anova`. 
+Para verificar esta suposición, revisamos el gráfico residual anterior en busca de no linealidad o una forma de U. En nuestro caso, no hay evidencia de no linealidad. Si los residuos parecen descender y luego ascender, o ascender y luego descender, es posible que necesitemos agregar una función polinómica de los predictores utilizando la función `poly`.
 
-The p-values these give you if you use `glm` for fitting the model work well in large samples, although they are still approximate. For binomial models in particular the p-values from the `summary` function can be funny, and we prefer to use the `anova` function to see if predictors are significant. The `summary()` function is still useful to look at the model equation.
+### Interpretación de los resultados
+
+Si todas las verificaciones de suposiciones están bien, podemos analizar los resultados que nos proporcionó el modelo. Las dos funciones principales para la inferencia son las mismas que para los modelos lineales: `summary` y `anova`.
+
+Los valores p que te dan si usas `glm` para ajustar el modelo funcionan bien en muestras grandes, aunque aún son aproximados. Para modelos binomiales en particular, los valores p de la función `summary` pueden ser curiosos, y preferimos usar la función `anova` para ver si los predictores son significativos. La función `summary()` sigue siendo útil para ver la ecuación del modelo.
+
 
 ```{r}
 anova(ft.crab, test = "Chisq")
@@ -103,42 +107,44 @@ anova(ft.crab, test = "Chisq")
 
 The p-value for Time is small (P<0.01), so we conclude there is an effect of time on the presence of crabs, but no effect of distance or an interaction between time and distance. This sample is reasonably large, so these p-values should be a good approximation. For a small sample it is often better to use resampling to calculate p-values. When you use `manyglm` the `summary` and `anova` functions use resampling by default.
 
+El p-valor para tiempo es pequeño (p < 0.01), por lo tanto, concluimos que hay un efecto del tiempo en la presencia de cangrejos, pero no hay un efecto de la distancia ni una interacción entre el tiempo y la distancia. Esta muestra es bastante grande, por lo que estos p-valor deberían ser una buena aproximación. Para una muestra pequeña, a menudo es mejor utilizar remuestreo para calcular los p-valor. Cuando utilizas `manyglm`, las funciones `summary` y `anova` utilizan remuestreo de forma predeterminada.
+
 ```{r}
 anova(ft.crab.many)
 ```
 
-In this case the results are quite similar, but in small samples it can often make a big difference. 
+En este caso, los resultados son bastante similares, pero en muestras pequeñas a menudo puede marcar una gran diferencia.
 
-You can also use `summary` with either the `glm` or `manyglm` function. This is interpreted in a similar manner as for linear regression, but we need to include the link function, `g`.
+También puedes utilizar `summary` con las funciones `glm` o `manyglm`. Esto se interpreta de manera similar a la regresión lineal, pero necesitamos incluir la función de enlace `g`.
+
 
 ```{r}
 summary(ft.crab)
 ```
 
-If $p$ is the probability of crab presence, this output tells us
+Si $p$ es la probabilidad de presencia de cangrejos, esta salida nos dice
 
 $$ logit(p) = -3.01 + 0.26 \times \text{Time} -0.03 \times \text{Dist} +0.01 \times \text{Time} \times \text{Dist}$$
+
+### Comunicación de los resultados
+ 
+Los resultados de los GLM se comunican de la misma manera que los resultados de los modelos lineales. Para un predictor es suficiente con escribir una línea, por ejemplo: "Hay evidencia sólida de que la presencia de cangrejos varía con el tiempo (p = 0.01)". Para varios predictores, es mejor mostrar los resultados en una tabla. También debes indicar qué distribución se utilizó (por ejemplo, Binomial para presencia/ausencia, Poisson o binomial negativa para recuentos) y si se utilizó remuestreo para la inferencia. 
   
 
-### Communicating the results
+### Más ayuda
  
-Results of GLM's are communicated in the same way as results for linear models. For one predictor it suffices to write one line, e.g., "There is strong evidence that the presence of crabs varies with time (p = 0.01). For multiple predictors it's best to display the results in a table. You should also indicate which distribution was used (e.g. Binomial for presence/absence, Poisson or negative-binomial for counts) and if resampling was used for inference. 
-  
-
-### Further help
- 
-You can type `?glm` and `?manyglm` into R for help with these functions.
+Puedes escribir `?glm` y `?manyglm` en R para obtener ayuda con estas funciones.
 
 <p style="margin-left: .5in; text-indent: -.5in;">Faraway, JJ. 2005. *Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models*. CRC press.</p>
 
-<p style="margin-left: .5in; text-indent: -.5in;">Zuur, A, EN Ieno and GM Smith. 20074. *Analysing ecological data*. Springer Science & Business Media, 2007.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">Zuur, A, EN Ieno and GM Smith. 2007. *Analysing ecological data*. Springer Science & Business Media, 2007.</p>
 
-More advice on [interpreting coefficients in glms](/statistics/glms/interpret-glm-coeffs/)
+Más consejos sobre [la interpretación de coeficientes en GLMs](/statistics/glms/interpret-glm-coeffs/)
   
 
-**Author**: Gordana Popovic
+**Autor**: Gordana Popovic
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 

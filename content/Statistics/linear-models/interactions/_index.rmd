@@ -1,23 +1,34 @@
 ---
 weight: 4
-title: "Understanding Interactions"
+title: "Comprensión de las interacciones"
 output: html_document
 aliases: /understanding-interactions/
 ---
-Sampling or experimental designs with more than one factor give us the opportunity to test whether the factors interact. An interaction between factors is when the effect of one factor is dependent on the conditions in the other factor. If there is no interaction, then the two factors are acting independently. When learning statistics, interactions make our lives a bit more difficult because we aren't able to make simple statements about the main effects (each factor in isolation)  - the observed results are due to factors acting in combination. It is very important to understand these, however, as we are often interested in whether various environmental variables act together to independently. Consider any of the following questions:   
-Does the effect of removing predators vary between habitats?  
-Does the effect of contamination vary with water temperature?  
-Does the effect of temperature vary with food supply?  
-Does the effect of nutrient pollution vary across soil types?  
-Do the benefits of establishing a reserve vary with reserve size?  
 
-These are all questions that would be answered by a formal statistical test of the interaction between factors.
+Los diseños de muestreo o experimentales con más de un factor nos brindan la oportunidad de probar si los factores interactúan. Una interacción entre factores ocurre cuando el efecto de un factor depende de las condiciones en el otro factor. Si no hay interacción, entonces los dos factores actúan de manera independiente. Al aprender estadística, las interacciones complican un poco nuestras vidas porque no podemos hacer afirmaciones simples sobre los efectos principales (cada factor de manera aislada): los resultados observados son debido a la combinación de factores. Sin embargo, es muy importante comprender esto, ya que a menudo nos interesa saber si varias variables ambientales actúan conjuntamente de manera independiente. Considera alguna de las siguientes preguntas:
+
+¿Varía el efecto de eliminar depredadores entre hábitats?
+
+¿Varía el efecto de la contaminación con la temperatura del agua?
+
+¿Varía el efecto de la temperatura con el suministro de alimento?
+
+¿Varía el efecto de la contaminación de nutrientes en diferentes tipos de suelo?
+
+¿Varían los beneficios de establecer una reserva según el tamaño de la reserva?
+
+
+Todas estas son preguntas que se responderían mediante una prueba estadística formal de la interacción entre factores.
+
+
 
 ![](Interactions_image.jpg)
 
-Understanding interactions can be best understood visually. Let's consider how the growth of coral may be affected by two very important stressors currently affecting the world's oceans: increasing temperature and increasing acidification. An experimental design to test this could be one that grows corals in the laboratory in all combinations of several temperatures and several pH conditions. 
 
-For simplicity, let's consider just two levels of each treatment: a control and warmed treatment for temperature and a control and acidified treatment for pH. Corals would be grown in all four combinations. These three plots for coral growth illustrate scenarios where the two factors of temperature and pH do not interact. 
+La comprensión de las interacciones se puede entender mejor visualmente. Consideremos cómo el crecimiento de los corales puede verse afectado por dos factores de estrés muy importantes que actualmente afectan los océanos del mundo: el aumento de la temperatura y la acidificación. Un diseño experimental para probar esto podría ser aquel que cultiva corales en el laboratorio en todas las combinaciones posibles de varias temperaturas y varias condiciones de pH.
+
+Para simplificar, consideremos solo dos niveles de cada tratamiento: un tratamiento de control y un tratamiento de calentamiento para la temperatura, y un tratamiento de control y un tratamiento acidificado para el pH. Los corales se cultivarían en las cuatro combinaciones. Estas tres gráficas de crecimiento de corales ilustran escenarios en los que los dos factores de temperatura y pH no interactúan.
+
 
 
 ```{r,echo=F,warning=F,message=F}
@@ -43,8 +54,8 @@ int_theme <- theme(
 )
 
 
-# Plots with no interactions
-# A - Effect of temperature, no effect of pH
+# Gráficos sin interacciones
+# A - Efecto de la temperatura, sin efecto del pH
 
 IntPlots_figA <- filter(IntPlots, Figure == "NoIntA")
 
@@ -53,7 +64,7 @@ plotIA <- ggplot(IntPlots_figA, aes(pH, Growth, group = Temperature, col = Tempe
   geom_point() +
   scale_colour_manual(values = c("blue", "red"))
 
-# B - Effect of pH, no effect of temperature
+# B - Efecto del pH, sin efecto de la temperatura
 
 IntPlots_figB <- filter(IntPlots, Figure == "NoIntB")
 
@@ -62,7 +73,7 @@ plotIB <- ggplot(IntPlots_figB, aes(pH, Growth, group = Temperature, col = Tempe
   geom_point() +
   scale_colour_manual(values = c("blue", "red"))
 
-# C - Effect of pH and temperature
+# C - Efecto del pH y la temperatura
 
 IntPlots_figC <- filter(IntPlots, Figure == "NoIntC")
 
@@ -79,15 +90,17 @@ grid.arrange(plotIA + int_theme + ylim(0, 4),
 ```
 
  
-*  In the top left figure, there is an effect of warming (growth reduced in the warmer treatment) and no effect of pH.  
-*  In the top right figure, there is an effect of pH (growth reduced in the acid treatment) and no effect of warming.  
-*  In the bottom figure, there is an effect of both temperature (growth reduced in the warmer treatment) and pH (growth reduced in the acid treatment).  
+* En la figura superior izquierda, hay un efecto del calentamiento (disminución del crecimiento en el tratamiento más cálido) y ningún efecto del pH.
+* En la figura superior derecha, hay un efecto del pH (disminución del crecimiento en el tratamiento ácido) y ningún efecto del calentamiento.
+* En la figura inferior, hay un efecto tanto de la temperatura (disminución del crecimiento en el tratamiento más cálido) como del pH (disminución del crecimiento en el tratamiento ácido).
 
-The next three plots for coral growth illustrate scenarios where there is an interaction between the factors of temperature and pH.
+Los siguientes tres gráficos de crecimiento de coral ilustran escenarios en los que hay una interacción entre los factores de temperatura y pH.
+
+
 
 ```{r,echo=F}
-# Plots with interactions
-# D -  Effect of pH only at warm temperatures
+# Gráficos con interacciones
+# D - Efecto del pH solo a temperaturas cálidas
 
 IntPlots_figD <- filter(IntPlots, Figure == "IntD")
 
@@ -96,7 +109,7 @@ plotID <- ggplot(IntPlots_figD, aes(pH, Growth, group = Temperature, col = Tempe
   geom_point() +
   scale_colour_manual(values = c("blue", "red"))
 
-# E - Effect of pH worse at warm temperatures
+# E - Efecto del pH empeora a temperaturas cálidas
 
 IntPlots_figE <- filter(IntPlots, Figure == "IntE")
 
@@ -105,7 +118,8 @@ plotIE <- ggplot(IntPlots_figE, aes(pH, Growth, group = Temperature, col = Tempe
   geom_point() +
   scale_colour_manual(values = c("blue", "red"))
 
-# F - Effect of pH reversed for different temperatures
+# F - Efecto del pH se invierte para diferentes temperaturas
+
 
 IntPlots_figF <- filter(IntPlots, Figure == "IntF")
 
@@ -121,16 +135,16 @@ grid.arrange(plotID + int_theme + ylim(0, 4),
 )
 ```
 
-*  In the top left figure, there is an effect of pH (growth reduced in the acid treatment) only in the warm treatment. The effect of warming is only evident in the acid pH treatment.  
-*  In the top right figure, there is an effect of temperature (growth reduced in the warm treatment) and an effect of pH (growth reduced in the no effect of warming) but the effect of the acid treatment is greater in the warm treatment. The effect of warming is greater in the acid treatment.  
-*  In the bottom figure, the effect of the acid treatment temperature completely changes in the two temperature treatments. Growth is reduced in the acid treatment in the control temperature, but increased in the warm temperature.  
+* En la figura superior izquierda, hay un efecto del pH (disminución del crecimiento en el tratamiento ácido) solo en el tratamiento cálido. El efecto del calentamiento solo es evidente en el tratamiento de pH ácido.
+* En la figura superior derecha, hay un efecto de la temperatura (disminución del crecimiento en el tratamiento cálido) y un efecto del pH (disminución del crecimiento en el tratamiento sin efecto del calentamiento), pero el efecto del tratamiento ácido es mayor en el tratamiento cálido. El efecto del calentamiento es mayor en el tratamiento ácido.
+* En la figura inferior, el efecto del tratamiento ácido en la temperatura cambia por completo en los dos tratamientos de temperatura. El crecimiento se reduce en el tratamiento ácido en la temperatura de control, pero aumenta en la temperatura cálida.
 
-In all these cases with interactions, note that lines are not parallel (compare to the first three figures above).
+En todos estos casos con interacciones, debes tener en cuenta que las líneas no son paralelas (comparar con las primeras tres figuras anteriores).
 
-The same ideas extend to sampling or experimental designs with more that two levels for each factor, and for designs where the predictor variables are continuous rather than categorical.
+Las mismas ideas se aplican a diseños de muestreo o experimentales con más de dos niveles para cada factor, y para diseños en los que las variables predictoras son continuas en lugar de categóricas.
 
 ```{r,echo=F}
-# G - Effect of pH reversed in only one temperature treatment
+# G - El efecto del pH se invirtió en solo uno de los tratamientos de temperatura
 
 IntPlots_figG <- filter(IntPlots, Figure == "IntG")
 
@@ -139,19 +153,18 @@ plotIG <- ggplot(IntPlots_figG, aes(pH, Growth, group = Temperature, col = Tempe
   geom_point() +
   scale_colour_manual(values = c("blue", "orange", "red"))
 ```                                                                                                                                   
-In this figure, there is an effect of pH (reduced growth in the acid treatment) in the warm and hot temperature treatments, but not the control temperature. Coral growth was always reduced in the hot treatment, but in the warm treatment, growth was slowed relative to the control only in the acid treatment.
-  
 
-### Communicating results
- 
-**Written.** If you have significant interaction between two factors in your design, then communicating your results requires text that describes how the effects of one factor depend on the other. In the examples with interactions above, you could not simply say that "ocean acidification reduced the growth of corals" because this result varied across the temperature treatments.
+En esta figura, hay un efecto del pH (disminución del crecimiento en el tratamiento ácido) en los tratamientos de temperatura cálida y caliente, pero no en el tratamiento de temperatura de control. El crecimiento del coral siempre se redujo en el tratamiento caliente, pero en el tratamiento cálido, el crecimiento se desaceleró en comparación con el control solo en el tratamiento ácido.
 
-In designs with categorical factors, post-hoc tests are commonly used to test which means differ from which (i.e., compare all four combinations of temperature and pH in the design above). The results from these can be placed in the text or onto figures to show which means differ from which. You would then have statistical support for statements that contrast particular treatments. A sentence for the results section for the top left figure in the interactions plots above would be something like "Temperature interacted with pH to affect the growth of corals (Table 1), with reduced growth in the warm treatment only (Fig. 1)" where Table 1 would hold the statistical details of the given test (e.g., factorial ANOVA).
-  
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+### Comunicación de resultados
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Escrita.** Si tienes una interacción significativa entre dos factores en tu diseño, la comunicación de tus resultados requiere un texto que describa cómo los efectos de un factor dependen del otro. En los ejemplos con interacciones mencionados anteriormente, no puedes simplemente decir que "la acidificación del océano redujo el crecimiento de los corales" porque este resultado varió en función de los tratamientos de temperatura.
 
+En diseños con factores categóricos, los tests post hoc se utilizan comúnmente para probar cuáles medias difieren entre sí (es decir, comparar todas las cuatro combinaciones de temperatura y pH en el diseño mencionado anteriormente). Los resultados de estos tests se pueden incluir en el texto o en las figuras para mostrar cuáles medias difieren entre sí. Luego tendrías soporte estadístico para afirmaciones que contrasten tratamientos particulares. Una frase para la sección de resultados en la figura superior izquierda de los gráficos de interacciones mencionados anteriormente podría ser algo como "La temperatura interactuó con el pH para afectar el crecimiento de los corales (Tabla 1), con un crecimiento reducido solo en el tratamiento cálido (Fig. 1)", donde la Tabla 1 contendría los detalles estadísticos de la prueba realizada (por ejemplo, ANOVA factorial).
+
+**Autor**: Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

@@ -1,185 +1,205 @@
 ---
 weight: 2
-title: "Factorial ANOVA"
+title: "ANOVA Factorial"
 output: html_document
 aliases: /analysis-variance-factorial/
 ---
 
-Analysis of variance (ANOVA) is one of the most frequently used techniques in the biological and environmental sciences. ANOVA is used to contrast a continuous dependent variable *y* across levels of one or more categorical independent variables *x*. The independent variables are termed the factor or treatment, and the various categories within that treatment are termed the levels. Here, we will consider designs with two or more factors that are both applied to the experimental units (read the [single factor ANOVA](/statistics/linear-models/anova/anova-single/) page first if you are unfamiliar with ANOVA).
+El análisis de varianza (ANOVA) es una de las técnicas más utilizadas en las ciencias biológicas y ambientales. El ANOVA se utiliza para contrastar una variable dependiente continua *y* en diferentes niveles de una o más variables independientes categóricas *x*. Las variables independientes se denominan factor o tratamiento, y las diferentes categorías dentro de ese tratamiento se denominan niveles. Aquí consideraremos diseños con dos o más factores que se aplican a las unidades experimentales (lee primero la página sobre [ANOVA de un factor](/statistics/linear-models/anova/anova-single/) si no estás familiarizado/a con el ANOVA).
 
-Frequently, we want to test for differences in a response variable due to two or more factors. These experimental or sampling designs allow us to test for the effects of each of these factors separately (termed *main effects*), and to test whether the two factors interact. For these designs, we use more complex versions of ANOVA than the most simple design that tests the effects of only one factor. 
+Frecuentemente, queremos probar diferencias en una variable de respuesta debido a dos o más factores. Estos diseños experimentales o de muestreo nos permiten probar los efectos de cada uno de estos factores por separado (llamados *efectos principales*) y probar si los dos factores interactúan entre sí. Para estos diseños, utilizamos versiones más complejas del ANOVA que el diseño más simple que prueba los efectos de un solo factor.
 
 ![](ANOVA_factorial_image.jpg)
 
 
-Consider an example where a researcher is testing the effects of metal contamination on the number of species found in sessile marine invertebrates (sponges, bryozoans and sea squirts etc.). They would like to know whether copper reduces species richness, but also know that the richness of invertebrates can depend on whether the substrate is vertical or horizontal. Consequently, they ran an experiment where species richness was recorded in replicate samples in each of the six combinations of copper enrichment ("None","Low","High") and orientation ("Vertical","Horizontal"). The experimental design in termed factorial because all levels of one treatment are represented in all levels of the other treatment (also termed orthogonal).
+Consideremos un ejemplo en el que un investigador está probando los efectos de la contaminación por metales en el número de especies encontradas en invertebrados marinos sésiles (esponjas, briozoos y ascidias, entre otros). Les gustaría saber si el cobre reduce la riqueza de especies, pero también saben que la riqueza de invertebrados puede depender de si el sustrato es vertical u horizontal. En consecuencia, llevaron a cabo un experimento en el que se registró la riqueza de especies en muestras replicadas en cada una de las seis combinaciones de enriquecimiento de cobre ("Ninguno", "Bajo", "Alto") y orientación ("Vertical", "Horizontal"). El diseño experimental se denomina factorial porque todos los niveles de un tratamiento están representados en todos los niveles del otro tratamiento (también llamado ortogonal).
 
-The factorial ANOVA will test:  
-* whether there are any differences in richness among the three levels of copper enrichment  
-* whether there are any differences in richness among the two levels of substrate orientation  
-* whether there is any interaction between copper and orientation
+El ANOVA factorial probará:
+* si hay diferencias en la riqueza entre los tres niveles de enriquecimiento de cobre
+* si hay diferencias en la riqueza entre los dos niveles de orientación del sustrato
+* si hay alguna interacción entre el cobre y la orientación
 
-You have three null hypotheses:  
-* there is no difference between the means for each level of copper, H~o~: $\mu_{None} = \mu_{Low} = \mu_{High}$  
-* there is no difference between the means for each level of orientation, $H~o~: $\mu_{Vertical} = \mu_{Horizontal}$  
-* there is no interaction between the factors
+Tienes tres hipótesis nulas:
+* no hay diferencia entre las medias para cada nivel de cobre, 
+H~o~: $\mu_{Ninguno} = \mu_{Bajo} = \mu_{Alto}$
 
-This is far better than running two separate single factor ANOVAs that contrast copper effects for each level of orientation because you have more statistical power (higher degrees of freedom) for the tests of interest, and you get a formal test of the interaction between factors which is often scientifically interesting.
+* no hay diferencia entre las medias para cada nivel de orientación, 
+H~o~: $\mu_{Vertical} = \mu_{Horizontal}$
+* no hay interacción entre los factores
 
-Note that an ANOVA is a linear model, just like linear regression except that the predictor variables are categorical rather than continuous. With two predictor variables, the linear model is:
+
+Esto es mucho mejor que ejecutar dos ANOVAs separados de un solo factor que contrasten los efectos del cobre para cada nivel de orientación, porque se obtiene más potencia estadística (mayor número de grados de libertad) para las pruebas de interés y se obtiene una prueba formal de la interacción entre los factores, lo cual suele ser científicamente interesante.
+
+Ten en cuenta que un ANOVA es un modelo lineal, al igual que la regresión lineal, excepto que las variables predictoras son categóricas en lugar de continuas. Con dos variables predictoras, el modelo lineal es:
 
 $$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}$$
 
-where $\mu$ is the overall mean, $\alpha_i$ is the effect of the i^th^ group of the first factor, and $\beta_i$ is the effect of the j^th^ group of the second factor and $(\alpha\beta)$ is the interaction.
+donde $\mu$ es la media general, $\alpha_i$ es el efecto del i-ésimo grupo del primer factor, $\beta_i$ es el efecto del j-ésimo grupo del segundo factor y $(\alpha\beta)$ es la interacción.
 
-Athough we have two factors, and an interaction effect, this requires fitting more than 3 parameters in our model because we have 3 levels of Factor A (Copper) and 2 levels of Factor B (Orientation) (if you can figure out how many parameters must be fit in this model, you are officially a stats geek! This is tricky even for those 'in the know').
+Aunque tenemos dos factores y un efecto de interacción, esto requiere ajustar más de 3 parámetros en nuestro modelo debido a que tenemos 3 niveles del Factor A (Cobre) y 2 niveles del Factor B (Orientación) (¡si puedes determinar cuántos parámetros deben ajustarse en este modelo, oficialmente eres un aficionado a la estadística! Esto es complicado incluso para los que están "en el saber").
 
-With two factors, ANOVA partitions the total variance into a component that can be explained by the first predictor variable (among levels of the treatment A), a component that can be explained by the second predictor variable (among levels of the treatment B), a component that can be explained by the interaction, and a component that cannot be explained (within levels, the residual variance). The test statistic, *F*, is calculated three times to test each of the null hypotheses. For two fixed factors, the *F* ratios are:
+Con dos factores, el ANOVA divide la varianza total en un componente que puede explicarse mediante la primera variable predictora (entre los niveles del tratamiento A), un componente que puede explicarse mediante la segunda variable predictora (entre los niveles del tratamiento B), un componente que puede explicarse mediante la interacción y un componente que no puede explicarse (dentro de los niveles, la varianza residual). La estadística de prueba *F* se calcula tres veces para probar cada una de las hipótesis nulas. Para dos factores fijos, las razones *F* son:
 
-$$F = \frac{MS_{A}}{MS_{within}}$$
-$$F = \frac{MS_{B}}{MS_{within}}$$
-$$F = \frac{MS_{AB}}{MS_{within}}$$
+$$F = \frac{MS_{A}}{MS_{dentro}}$$
 
-where *MS* are the mean squares, a measure of variation. The probability of obtaining the observed value of *F* is calculated from the known probability distribution of *F*, with two degrees of freedom (one for the numerator = the number of levels -1) and one for the denominator. Note that these *F* ratios will change if any factors are random (see below for the distinction between fixed and random factors),
-  
+$$F = \frac{MS_{B}}{MS_{dentro}}$$
 
-### Running the analysis
- 
-Your data should be formatted with the measurements from each replicate as a row and each of the variables as columns, corresponding to the dependent variable *y*, Factor A and Factor B.
+$$F = \frac{MS_{AB}}{MS_{dentro}}$$
 
-Download the sample data set for the sessile invertebrates, [Sessile.csv](/datasets/Sessile.csv), and import into R to to see the desired format. Check that your predictor variables are factors with the function `str`
+donde *MS* son las medias cuadráticas, una medida de variación. La probabilidad de obtener el valor observado de *F* se calcula a partir de la distribución de probabilidad conocida de *F*, con dos grados de libertad (uno para el numerador = el número de niveles - 1) y uno para el denominador. Ten en cuenta que estas razones *F* cambiarán si alguno de los factores es aleatorio (ver más abajo la distinción entre factores fijos y aleatorios).
+
+### Ejecutando el análisis
+
+Tu conjunto de datos debe estar formateado de manera que las mediciones de cada réplica sean una fila y cada una de las variables sea una columna, correspondiendo a la variable dependiente *y*, el Factor A y el Factor B.
+
+Descarga el conjunto de datos de muestra [Sessile.csv](/datasets/Sessile.csv), e impórtalo a R. Verifica que tus variables predictoras sean factores utilizando la función `str`.
 
 ```{r, eval=FALSE}
 Sessile <- read.csv(file = "Sessile.csv", header = TRUE)
 str(Sessile)
 ```
 
-With our predictor variable correctly assigned as factors, we can now run the analysis. As with other forms of linear models we have a model formula with the dependent variable, *y*, to the left of the ~ and the predictor variables to the right. For this two factor design, we use:
+Con nuestras variables predictoras asignadas correctamente como factores, ahora podemos realizar el análisis. Al igual que con otros tipos de modelos lineales, tenemos una fórmula del modelo con la variable dependiente, *y*, a la izquierda del `~` y las variables predictoras a la derecha. Para este diseño de dos factores, utilizamos:
+
 
 ```{r, eval=FALSE}
 Sessile.aov <- aov(Richness ~ Copper * Orientation, data = Sessile)
 ```
 
-Note that when you specify a model with * between the two predictors, R automatically includes both variables and their interaction. This same model could also be written as:
+Ten en cuenta que al especificar un modelo con `*` entre los dos predictores, R automáticamente incluye tanto las variables como su interacción. Este mismo modelo también se puede escribir de la siguiente manera:
+
 
 ```{r, eval = FALSE}
 Sessile.aov <- aov(Richness ~ Copper + Orientation + Copper:Orientation, data = Sessile)
 ```
 
-The output from this analysis can be seen by using the `summary` function on the object created.
+El resultado de este análisis se puede ver utilizando la función `summary` en el objeto creado.
+
 
 ```{r, eval=FALSE}
 summary(Sessile.aov)
 ```
 
 
-Exactly the same model can also be run using the linear model function, `lm`.
+Exactamente el mismo modelo también se puede ejecutar utilizando la función de modelo lineal, `lm`.
 
 ```{r,eval=FALSE}
-Sessile.lm <- lm(Richness ~ Copper * Orientation, data = Sessile)
+Sessile.lm <- lm(Richness ~ Copper * Orientation, 
+                 data = Sessile)
 anova(Sessile.lm)
 ```
   
-
-### Interpreting the results
+### Interpretación de los resultados
  
 ```{r,echo=FALSE}
-Sessile <- read.csv(file = "Sessile.csv", header = TRUE)
-Sessile.aov <- aov(Richness ~ Copper * Orientation, data = Sessile)
+Sessile <- read.csv(file = "Sessile.csv", 
+                    header = TRUE)
+Sessile.aov <- aov(Richness ~ Copper * Orientation, 
+                   data = Sessile)
 summary(Sessile.aov)
 ```
-The summary output of an ANOVA object is a table with the degrees of freedom (Df), sums of squares (Sum Sq), mean squares (Mean Sq) for the each of predictor variable (i.e., variation among levels of your treatments), their interaction and for the Residuals (i.e., varation within the levels). The test statistic, *F* value and its associated *p*-value (Pr(>F)) are also presented.
+El resumen de un objeto ANOVA es una tabla con los grados de libertad (*Df*), sumas de cuadrados (*Sum Sq*), cuadrados medios (*Mean Sq*) para cada una de las variables predictoras (es decir, la variación entre los niveles de tus tratamientos), su interacción y para los residuos (es decir, la variación dentro de los niveles). También se presentan la estadística de prueba, el valor de *F* y su valor *p* asociado (*Pr(>F)*).
 
-Check that you have the correct degrees of freedom. For a two factor design with fixed factors they are:   
-* Factor A: *a* - 1 (where *a* = number of levels of Factor A)  
-* Factor B: *b* - 1 (where *b* = number of levels of Factor B)  
-* Interaction (AB): (*a*-1)(*b*-1)  
-* Residual: *ab*(*n* -1) (where *n* = sample size)
+Verifica que tengas los grados de libertad correctos. Para un diseño de dos factores con factores fijos, son los siguientes:
+* Factor A: *a* - 1 (donde *a* = número de niveles del Factor A)
+* Factor B: *b* - 1 (donde *b* = número de niveles del Factor B)
+* Interacción (AB): (*a*-1)(*b*-1)
+* Residual: *ab*(*n* - 1) (donde *n* = tamaño de la muestra)
 
-The sums of squares and mean squares are measures of variation. There are three *F* statistics, corresponding to a test of each of the main effects and one for the interaction. The *p*-values are the probabilities of the observed *F* values from the *F* distribution (with the given degrees of freedom). 
+Las sumas de cuadrados y cuadrados medios son medidas de variación. Hay tres estadísticas *F*, correspondientes a una prueba de cada uno de los efectos principales y una para la interacción. Los valores *p* son las probabilidades de los valores observados de *F* de la distribución *F* (con los grados de libertad dados).
 
-In this example, there is strong evidence to reject all three null hypotheses:  
-* that all levels of the copper treatment are equal (P < 0.001),  
-* that the vertical and horizontal orientations are equal (P < 0.001)  
-* that there is no interaction between copper and orientation (P < 0.001)
+En este ejemplo, hay evidencia sólida para rechazar las tres hipótesis nulas:
+* que todos los niveles del tratamiento de cobre son iguales (P < 0.001),
+* que las orientaciones vertical y horizontal son iguales (P < 0.001)
+* que no hay interacción entre el cobre y la orientación (P < 0.001)
 
-A significant interaction means that the effect of one factor depends upon the other. In this example, it would mean that the effect of copper was not consistent between the vertical and horizontal habitats. Consequently, the interpretation of the main effects becomes more complex. See [Understanding interactions](/statistics/linear-models/interactions/) for more help on interpreting interactions in linear models. A quick way to help you understand an interaction if you get one is to examine an interactions plot.
+
+Una interacción significativa significa que el efecto de un factor depende del otro. En este ejemplo, significaría que el efecto del cobre no fue consistente entre los hábitats verticales y horizontales. En consecuencia, la interpretación de los efectos principales se vuelve más compleja. Consulta [Entendiendo las interacciones](/statistics/linear-models/interactions/) para obtener más ayuda sobre la interpretación de las interacciones en modelos lineales. Una forma rápida de ayudarte a entender una interacción, si la tienes, es examinar un gráfico de interacciones.
+
 
 ```{r}
 interaction.plot(Sessile$Copper, Sessile$Orientation, Sessile$Richness)
 ```
 
-Here you can see that the effect of copper (a decline in species richness) is more pronounced in the habitats with a vertical orientation, and that the difference between the two habitats changes with exposure to copper.
- 
+Aquí puedes ver que el efecto del cobre (una disminución en la riqueza de especies) es más pronunciado en los hábitats con orientación vertical, y que la diferencia entre los dos hábitats cambia con la exposición al cobre.
 
-**Multiple comparisons.** If you detect any significant differences in the ANOVA, we are then interested in knowing exactly which levels differ from one another, and which do not. Remember that a significant *p* value in the test you just ran would reject the null hypothesis the means were the same across all groups, but not identify which were different from each other. If there is no interaction, you can run a *post-hoc* test on each of the main effects (only needed if there are more than two levels for an effect). If there is an interaction, you will need to consider *post-hoc* tests that contrast the means from all combinations of both factors.
-  
+**Comparaciones múltiples.** Si detectas diferencias significativas en el ANOVA, entonces nos interesa saber exactamente qué niveles difieren entre sí y cuáles no. Recuerda que un valor *p* significativo en la prueba que acabas de realizar rechazaría la hipótesis nula de que las medias son iguales en todos los grupos, pero no identificaría cuáles son diferentes entre sí. Si no hay interacción, puedes realizar una prueba *post-hoc* en cada uno de los efectos principales (solo necesario si hay más de dos niveles para un efecto). Si hay una interacción, deberás considerar pruebas *post-hoc* que contrasten las medias de todas las combinaciones de ambos factores.
 
-### Assumptions to check
- 
-The assumptions of factorial ANOVA's are the same as for all linear models including the simpler one-way ANOVA's (see [ANOVA: single factor](/statistics/linear-models/anova/anova-single/)), being independence, normality and homogeneity of variances. We also need to consider two new issues: 1) whether your factors are fixed or random, and 2) whether your sampling or experimental design is balanced (i.e., has the same number of replicates in each combination of treatments).
+### Supuestos a verificar
 
-**Fixed and random factors.** There is an important distinction between factors whose levels are the only ones of interest (termed fixed), and factors whose levels are a sampled from a larger collection of possible levels (termed random). For example, if we repeated the experiment above at three different sites in Sydney Harbour, chosen from many possible sites, we would consider site a random factor. We are not interested in those sites in particular, but would like to know if our experimental treatments were consistent across sites. On the other hand, if you were only interested in Darling Harbour and Circular Quay, then these two could be considered two levels of a fixed factor. Treating sites as a fixed factor in that case means that you conclusions should not be extrapolated to other possible sites, but restricted to those particular sites.
+Los supuestos del ANOVA factorial son los mismos que para todos los modelos lineales, incluidos los ANOVA de un solo factor más simples (consultar [ANOVA: un solo factor](/statistics/linear-models/anova/anova-single/)), que son independencia, normalidad y homogeneidad de varianzas. También debemos considerar dos aspectos nuevos: 
 
-Statistically, there is a big difference between a fixed factors were you have measured all possible levels of interest (e.g, control vs a single treatment) and random factors where the levels are sampled from all possible levels. In analysis of variance, all this matters because the *F* tests that are being used to test your hypotheses are constructed differently depending on which factors are fixed and random. In the example above, all factors were fixed and the denominator of all *F* tests was $MS_{within}$. In models with all factors random, and models with a mix of fixed and random factors (termed mixed effects models), other components of the variation are used as the denominators in the *F* tests.
+1) si tus factores son fijos o aleatorios, y 
 
-If you have random factors, you will need to read more than this help page to establish the correct *F* ratios for your design, and you may need to calculate them manually. Note that the code presented will give correct *F* tests only for designs with all factors fixed. You should also strongly consider analysing your data as a [mixed model](/statistics/mixed-models/)
+2) si tu diseño de muestreo o experimental está balanceado (es decir, tiene el mismo número de réplicas en cada combinación de tratamientos).
 
-**Balanced and unbalanced designs.** Ideally, factorial ANOVA should be conducted with a balanced design - one with  the same number of replicates in each combination of factors. Balanced designs are less likely to be affected by minor deviations from the assumptions of normality and homogeneity of variance. Unfortunately, unbalanced designs where you have unequal numbers of replicates for each level are common in practice (e.g. bad weather prevented sampling the second site as intensively, volunteer lost the data sheet etc!).
+**Factores fijos y aleatorios.** Existe una distinción importante entre factores cuyos niveles son los únicos de interés (llamados fijos) y factores cuyos niveles se muestrean de una colección más amplia de posibles niveles (llamados aleatorios). Por ejemplo, si repitiéramos el experimento anterior en tres sitios diferentes en el puerto de Sídney, elegidos entre muchos posibles sitios, consideraríamos el sitio como un factor aleatorio. No nos interesan esos sitios en particular, pero nos gustaría saber si nuestros tratamientos experimentales fueron consistentes en los sitios. Por otro lado, si solo estás interesado en Darling Harbour y Circular Quay, entonces estos dos podrían considerarse dos niveles de un factor fijo. Tratar los sitios como un factor fijo en ese caso significa que tus conclusiones no se deben extrapolar a otros posibles sitios, sino que se limitan a esos sitios en particular.
 
-Unbalanced designs are more susceptible to violating the assumptions of ANOVA and there is no single way to partitioning the $SS_{total}$ into the main effect and interaction components. The `aov` and `lm` functions in R use what are called Type I sums of squares where the terms in the model are fitted sequentially (i.e., how much variation is explained by factor A, then how much additional variation is explained by adding factor B). This means that the order of the terms in model matters: the model formulae `Y ~ A + B + A:B` and `Y ~ B + A + B:A` will give you different results.
+Estadísticamente, hay una gran diferencia entre factores fijos en los que has medido todos los niveles posibles de interés (por ejemplo, control vs. un solo tratamiento) y factores aleatorios en los que los niveles se muestrean de todos los posibles niveles. En el análisis de varianza, todo esto importa porque las pruebas *F* que se utilizan para probar tus hipótesis se construyen de manera diferente según los factores sean fijos o aleatorios. En el ejemplo anterior, todos los factores eran fijos y el denominador de todas las pruebas *F* fue $MS_{within}$. En modelos con todos los factores aleatorios y modelos con una combinación de factores fijos y aleatorios (llamados modelos de efectos mixtos), se utilizan otros componentes de la variación como denominadores en las pruebas *F*.
 
-There is a fair bit of debate on this in the statistical literature, but many advise using what are called Type II or Type III sums of squares for unbalanced designs. Other software packages like SPSS, SYSTAT and Minitab will automatically use Type III sums of squares where the order of terms in the model doesn't matter. To access these in R, we can use the `Anova` function in the [car](https://cran.r-project.org/web/packages/car/index.html) package.
+Si tienes factores aleatorios, necesitarás leer más que esta página de ayuda para establecer las razones *F* correctas para tu diseño, y es posible que necesites calcularlas manualmente. Ten en cuenta que el código presentado solo dará pruebas *F* correctas para diseños con todos los factores fijos. También debes considerar seriamente analizar tus datos como un [modelo mixto](/statistics/mixed-models/).
 
-**Normality.** The assumption of normality can be checked by a frequency histogram of the residuals or by using a quantile plot where the residuals are plotted against the values expected from a normal distribution. The histogram of residuals should follow a normal distribution. If the points in the quantile plot lie mostly on the line, the residuals are normally distributed. Both of these plots can be obtained from the model object created by the `aov` function.
+**Diseños balanceados y desbalanceados.** Idealmente, el ANOVA factorial se debería realizar con un diseño balanceado, es decir, con el mismo número de réplicas en cada combinación de factores. Los diseños balanceados tienen menos probabilidades de verse afectados por pequeñas desviaciones de las suposiciones de normalidad y homogeneidad de varianza. Desafortunadamente, en la práctica es común encontrarse con diseños desbalanceados, donde se tienen números desiguales de réplicas para cada nivel (por ejemplo, mal tiempo impidió muestrear el segundo sitio de manera intensiva, un voluntario perdió la hoja de datos, etc.).
+
+Los diseños desbalanceados son más susceptibles a violar las suposiciones del ANOVA y no hay una única forma de particionar el $SS_{total}$ en los componentes de efecto principal e interacción. Las funciones `aov` y `lm` en R utilizan lo que se conocen como sumas de cuadrados de Tipo I, donde los términos del modelo se ajustan secuencialmente (es decir, cuánta variación se explica por el factor A, luego cuánta variación adicional se explica al agregar el factor B). Esto significa que el orden de los términos en el modelo importa: las fórmulas del modelo `Y ~ A + B + A:B` y `Y ~ B + A + B:A` darán resultados diferentes.
+
+Hay bastante debate al respecto en la literatura estadística, pero muchos recomiendan utilizar lo que se conocen como sumas de cuadrados de Tipo II o Tipo III para diseños desbalanceados. Otros paquetes de software como SPSS, SYSTAT y Minitab utilizarán automáticamente sumas de cuadrados de Tipo III, donde el orden de los términos en el modelo no importa. Para acceder a estas sumas de cuadrados en R, podemos utilizar la función `Anova` del paquete [car](https://cran.r-project.org/web/packages/car/index.html).
+
+**Normalidad.** La suposición de normalidad se puede verificar mediante un histograma de frecuencia de los residuos o mediante un gráfico de cuantiles donde los residuos se representan en función de los valores esperados de una distribución normal. El histograma de los residuos debería seguir una distribución normal. Si los puntos en el gráfico de cuantiles se encuentran principalmente en la línea, los residuos están distribuidos de manera normal. Ambos gráficos se pueden obtener a partir del objeto de modelo creado por la función `aov`.
+
 
 ```{r}
-par(mfrow = c(1, 2)) # This code put two plots in the same window
+par(mfrow = c(1, 2))
 hist(Sessile.aov$residuals)
 plot(Sessile.aov, which = 2)
 ```
 
-Violations of normality can be fixed via transformations or by using a different error-distribution in a [generalised linear model (GLM)](/statistics/glms/).
+Violaciones de la normalidad se pueden solucionar mediante transformaciones o mediante el uso de una distribución de errores diferente en un [modelo lineal generalizado (GLM)](/statistics/glms/).
 
-**Homogeneity of variance.** The assumption of homgeneity of variance, namely that the variation in the residuals is approximately equal across the range of the predictor variable, can be checked by plotting the residuals against the fitted values from the `aov` model object.
+**Homogeneidad de varianza.** La suposición de homogeneidad de varianza, es decir, que la variación en los residuos es aproximadamente igual en todo el rango de la variable predictora, se puede verificar trazando los residuos en función de los valores ajustados del objeto de modelo `aov`.
+
 
 ```{r}
 plot(Sessile.aov, which = 1)
 ```
 
-Heterogeneous variances are indicated by non-random pattern in the residuals vs. fitted plot. Look for an even spread of the residuals on the y axis for each of the levels on the x axis. A fan-shaped distribution with more variance at higher values on the x axis is a common problem when data are skewed. See the testing assumptions of linear models module for more information. If there are strong patterns, one potential solution is to transform the response variable *y*. If this doesn't fix the problem the best solution is to use a different error distribution in a  [generalised linear model (GLM)](/statistics/glms/).
+Varianzas heterogéneas se indican por un patrón no aleatorio en la gráfica de residuos frente a los valores ajustados. Busca una distribución uniforme de los residuos en el eje y para cada uno de los niveles en el eje x. Una distribución en forma de abanico con mayor varianza en valores más altos en el eje x es un problema común cuando los datos están sesgados. Consulta el módulo de pruebas de suposiciones de los modelos lineales para obtener más información. Si hay patrones fuertes, una solución potencial es transformar la variable de respuesta *y*. Si esto no soluciona el problema, la mejor solución es utilizar una distribución de errores diferente en un [modelo lineal generalizado (GLM)](/statistics/glms/).
 
-**Independence.** ANOVA assumes that all replicate measures are independent of each other (i.e., equally likely to be sampled from the population of possible values for each level). This issue needs to be considered at the design stage. If data are grouped in any way (e.g., half the invertebrate samples measured at one time, then the other half measured later), then more complex designs are needed to account for additional factors (e.g., a design with an additional factor of sampling time).
+**Independencia.** ANOVA asume que todas las medidas replicadas son independientes entre sí (es decir, igualmente probables de ser muestreadas de la población de valores posibles para cada nivel). Este problema debe tenerse en cuenta en la etapa de diseño. Si los datos están agrupados de alguna manera (por ejemplo, la mitad de las muestras de invertebrados medidas en un momento, y luego la otra mitad medida más tarde), se necesitan diseños más complejos para tener en cuenta factores adicionales (por ejemplo, un diseño con un factor adicional de tiempo de muestreo).
 
-There are a variety of measures for dealing with non-independence. These include ensuring all important predictors are in the model; averaging across nested observations; or using a [mixed model](/statistics/mixed-models/)
-  
+Existen diversas medidas para tratar la falta de independencia. Estas incluyen asegurarse de que todos los predictores importantes estén en el modelo, promediar las observaciones anidadas o utilizar un [modelo mixto](/statistics/mixed-models/).
 
-### Communicating the results
- 
-**Written.**  The results of the main effects and any interaction should be described in the text of a results section. Each *F* test can be described in the text, e.g., "The copper treatment and substrate orientation interacted to affect the species of sessile invertebrates (*F* = 19.33, df = 2,54, *p* < 0.001)". Alternatively, all tests could be put into a Table like the one given in the output following `summary(Sessile.aov)` above. Description of the main tests would be followed by a description of the *post-hoc* results if used.
+### Comunicación de los resultados
 
-Remember that the interpretation of the main effects is complicated when there is a significant interaction (see above). In this example, while copper reduced species richness, that effect was not consistent between the two habitats. In other scenarios with an interaction, you might have copper affecting richness in one habitat but not another, preventing you making a simple statement like "copper reduced species richness" because it wouldn't always be true. 
+**Escrita.** Los resultados de los efectos principales y cualquier interacción deben describirse en el texto de una sección de resultados. Cada prueba *F* se puede describir en el texto, por ejemplo: "El tratamiento de cobre y la orientación del sustrato interactuaron para afectar a la especie de invertebrados sésiles (*F* = 19.33, df = 2,54, *p* < 0.001)". Alternativamente, todas las pruebas se pueden incluir en una tabla similar a la que se muestra en la salida después de `summary(Sessile.aov)`. La descripción de las pruebas principales se seguiría de una descripción de los resultados *post hoc* si se utilizan.
 
-**Visual.** A boxplot or column graph with error bars are suitable for contrasting a continuous variable across levels of categorical variable. See the graphing modules for making publication ready versions of these figures.
+Recuerda que la interpretación de los efectos principales se complica cuando hay una interacción significativa (ver arriba). En este ejemplo, aunque el cobre redujo la riqueza de especies, ese efecto no fue consistente entre los dos hábitats. En otros escenarios con una interacción, es posible que el cobre afecte la riqueza en un hábitat pero no en otro, lo que impide hacer una afirmación simple como "el cobre redujo la riqueza de especies" porque no siempre sería cierto.
+
+**Visual.** Un diagrama de caja o un gráfico de columnas con barras de error son adecuados para contrastar una variable continua en diferentes niveles de una variable categórica. Consulta los módulos de gráficos para obtener versiones listas para su publicación de estas figuras.
+
 
 ```{r}
-boxplot(Richness ~ Copper * Orientation, data = Sessile, names = c("High.H", "Low.H", "None.H", "High.V", "Low.V", "None.V"), ylab = "Species richness", xlab = "Copper/Orientation", ylim = c(0, 80))
+boxplot(Richness ~ Copper * Orientation, 
+        data = Sessile, 
+        names = c("High.H", "Low.H", "None.H", "High.V", "Low.V", "None.V"),
+        ylab = "Species richness", 
+        xlab = "Copper/Orientation",
+        ylim = c(0, 80))
 ```
   
 
-### Further help
- 
-Type `?aov` or `?lm` to get the R help for these functions.
+### Más ayuda
 
-<p style="margin-left: .5in; text-indent: -.5in;">Quinn and Keough (2002) *Experimental design and data analysis for biologist.* Cambridge University Press. Ch. 9 Multifactor analysis of variance.</p>
+Escribe `?aov` o `?lm` para obtener la ayuda de R sobre estas funciones.
 
-<p style="margin-left: .5in; text-indent: -.5in;">McKillup (2012) *Statistics explained. An introductory guide for life scientists* Cambridge University Press. Ch. 13 two-factor analysis of variance.</p>
+<p style="margin-left: .5in; text-indent: -.5in;">Quinn y Keough (2002) *Experimental design and data analysis for biologist.* Cambridge University Press. Capítulo 9: Análisis de varianza multifactorial.</p>
 
-<p style="margin-left: .5in; text-indent: -.5in;">Underwood (1997) *Experiments in ecology: Their logical design and interpretation using analysis of variance.*> Cambridge University Press.</p>
-  
+<p style="margin-left: .5in; text-indent: -.5in;">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Capítulo 13: Análisis de varianza de dos factores.</p>
 
-**Authors:** James Lavender & Alistair Poore
- 
-**Year:** 2016
+<p style="margin-left: .5in; text-indent: -.5in;">Underwood (1997) *Experiments in ecology: Their logical design and interpretation using analysis of variance.* Cambridge University Press.</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autores:** James Lavender & Alistair Poore
+
+**Año:** 2016
+
+**Última actualización:** `r format(Sys.time(), "%b %Y")`

@@ -1,15 +1,16 @@
 ---
 weight: 1
-title: "Interpreting Linear Regressions"
+title: "Interpretación de Regresiones Lineales"
 output: html_document
 aliases: /how-to-interpret-linear-models/
 ---
-The interpretation of coefficients in (generalized) linear models is more subtle than you many realise, and has consequences for how we test hypotheses and report findings. We will start by talking about **marginal vs. conditional interpretations** of model parameters. 
+
+La interpretación de los coeficientes en modelos lineales (generalizados) es más sutil de lo que puedes darte cuenta, y tiene consecuencias en cómo probamos hipótesis y reportamos hallazgos. Comenzaremos hablando de las interpretaciones **marginales vs. condicionales** de los parámetros del modelo.
+
 
 ![](Linear_regression_image.jpg)
  
-
-In this example, we model plant height as a function of altitude and temperature. These variables are negatively correlated: it is colder the higher you go. We start by simulating some data to reflect this.
+En este ejemplo, modelamos la altura de las plantas en función de la altitud y la temperatura. Estas variables están correlacionadas de manera negativa: hace más frío a mayor altitud. Comenzamos simulando algunos datos para reflejar esto.
 
 
 ```{r, warning=F}
@@ -30,7 +31,8 @@ alt <- X[, 2]
 plot(temp, alt)
 ```
 
-Now we can simulate some data for height of plants. Here we say that the mean height of plants is 2 (when all the other variables are 0), as temperature increases by one unit (holding altitude constant), the mean of height will increase by 1 unit (`beta[2] = 1`), and similarly as you increase altitude by 1 unit (holding temperature constant) then mean height decreases by 1 (`beta[3] = -1`). Height is then normally distributed with this mean and standard deviation of 2.
+Ahora podemos simular algunos datos de altura de las plantas. Aquí decimos que la altura media de las plantas es 2 (cuando todas las demás variables son 0). A medida que la temperatura aumenta en una unidad (manteniendo la altitud constante), la media de la altura aumentará en 1 unidad (`beta[2] = 1`), y de manera similar, a medida que aumentas la altitud en 1 unidad (manteniendo la temperatura constante), la media de la altura disminuirá en 1 (`beta[3] = -1`). La altura sigue una distribución normal con esta media y una desviación estándar de 2.
+
 
 ```{r}
 beta <- c(2, 1, -1)
@@ -38,33 +40,35 @@ mu <- beta[1] + beta[2] * temp + beta[3] * alt
 height <- rnorm(N, mu, sd = 2)
 ```
 
-If we use a linear model to find the coefficients we get what we expect, estimates very close to the true values. 
+Si utilizamos un modelo lineal para encontrar los coeficientes, obtenemos lo que esperamos, estimaciones muy cercanas a los valores reales.
+
 
 ```{r}
 lm_both <- lm(height ~ temp + alt)
 data.frame(estimated = round(lm_both$coefficients, 2), true = beta)
 ```
 
-The interpretation of these coefficients is that if you hold everything else in the model constant (i.e., temperature) and add 1 to altitude, then the estimated mean height will decrease by 1.09. Note that the coefficient depends on the units in which altitude is measured. If altitude is in meters then the coefficient tells you what happens when you go up 1 meter.
+La interpretación de estos coeficientes es que si mantienes todo lo demás en el modelo constante (es decir, la temperatura) y agregas 1 a la altitud, entonces la altura media estimada disminuirá en 1.09. Ten en cuenta que el coeficiente depende de las unidades en las que se mide la altitud. Si la altitud se mide en metros, entonces el coeficiente te dice qué sucede cuando subes 1 metro.
 
-The intercept is the predicted value when all the other variables are set to 0, which sometimes makes sense (here it would be the height of plants at sea level and 0 temperature). Other times 0 is not a meaningful value, and if you would like to interpret the intercept it might make sense to rescale your other variables so that their mean is 0. If you do this, then the intercept is the predicted value when all other variables are at their mean level.
+La intersección es el valor predicho cuando todas las demás variables se establecen en 0, lo cual a veces tiene sentido (aquí sería la altura de las plantas a nivel del mar y a 0 grados de temperatura). Otras veces, 0 no es un valor significativo, y si deseas interpretar la intersección, podría tener sentido reescalar tus otras variables para que su media sea 0. Si haces esto, entonces la intersección es el valor predicho cuando todas las demás variables están en su nivel medio.
 
-What if now we had a model with just temperature? 
+¿Y si ahora tuviéramos un modelo solo con la temperatura?
+
 
 ```{r}
 lm1 <- lm(height ~ temp)
 lm1$coefficients
 ```
 
-The coefficient of temperature is now 1.38, what's going on? Altitude is an important predictor of plant height, and some of the information about altitude is contained in temperature (remember they are correlated, so as altitude increases temperature decreases). The model accounts for this by changing the effect of temperature to take account of the information it contains about altitude. Notice the coefficient of temperature is wrong by approximately 0.4, the amount of correlation between the variables. 
+El coeficiente de temperatura ahora es `1.38`, ¿qué está pasando? La altitud es un predictor importante de la altura de las plantas, y parte de la información sobre la altitud está contenida en la temperatura (recuerda que están correlacionadas, por lo que a medida que la altitud aumenta, la temperatura disminuye). El modelo tiene en cuenta esto cambiando el efecto de la temperatura para tener en cuenta la información que contiene sobre la altitud. Observa que el coeficiente de temperatura está incorrecto en aproximadamente 0.4, que es la cantidad de correlación entre las variables.
 
-Note: When statisticians talk about this, they use the words **conditional** and **marginal**. Conditional is the effect of a variable when others are held constant (as in lm_both), while marginal is the overall effect (as in lm1).
-Note: If you use the code above to simulate your own data sets, you will get slightly different values for the coefficients.
-  
+Nota: Cuando los estadísticos hablan de esto, usan las palabras **condicional** y **marginal**. Condicional es el efecto de una variable cuando las demás se mantienen constantes (como en lm_both), mientras que marginal es el efecto global (como en lm1).
+Nota: Si utilizas el código anterior para simular tus propios conjuntos de datos, obtendrás valores ligeramente diferentes para los coeficientes.
 
-### Testing hypotheses
- 
-This distinction has a lot of consequences for modelling as well as testing hypothesis. Let's generate some data where altitude predicts height, and temperature has no (additional) information, and then test for temperature.
+### Pruebas de hipótesis
+
+Esta distinción tiene muchas consecuencias tanto para el modelado como para las pruebas de hipótesis. Generemos algunos datos en los que la altitud predice la altura, y la temperatura no tiene (información adicional), y luego probemos la temperatura.
+
 
 ```{r}
 mu <- 2 - 1 * alt
@@ -75,9 +79,10 @@ summary(mod_temp)
 anova(mod_temp)
 ```
 
-The output of this model is telling us there is an effect of temperature, even though technically there isn't. It is not giving us false information if you understand how to interpret model outputs. Because temperature is correlated with altitude, and there is an effect of altitude, when altitude is not in the model, the model tells us overall there is an effect of temperature of increasing height by 0.45 (remember the correlation was 0.4). If our hypothesis is 'Does plant height change with temperature?', the answer is yes, the higher the temperature, the taller the plants.
+La salida de este modelo nos está indicando que hay un efecto de la temperatura, aunque técnicamente no lo haya. No nos está dando información falsa si entendemos cómo interpretar los resultados del modelo. Debido a que la temperatura está correlacionada con la altitud, y hay un efecto de la altitud, cuando la altitud no está en el modelo, el modelo nos dice en general que hay un efecto de la temperatura que aumenta la altura en `0.45` (recuerda que la correlación fue `0.4`). Si nuestra hipótesis es "¿La altura de las plantas cambia con la temperatura?", la respuesta es sí, a mayor temperatura, más altas son las plantas.
 
-But what about altitude? We know the temperature effect we observe is because it is correlated with altitude, temperature does not directly predict height. If we want to know if there is an effect of temperature after controlling for altitude (holding altitude constant, so conditional), then we fit the model with altitude and then test for temperature.
+Pero, ¿qué pasa con la altitud? Sabemos que el efecto de la temperatura que observamos se debe a que está correlacionado con la altitud, la temperatura no predice directamente la altura. Si queremos saber si hay un efecto de la temperatura después de controlar la altitud (manteniendo la altitud constante, es decir, condicional), entonces ajustamos el modelo con la altitud y luego probamos la temperatura.
+
 
 ```{r}
 mod_temp_alt <- lm(height ~ alt + temp)
@@ -85,14 +90,14 @@ summary(mod_temp_alt)
 anova(mod_temp_alt)
 ```
 
-The p-value is about 0.95, so we have no evidence of an effect of temperature after controlling for altitude.
+El p-valor es aproximadamente `0.95`, por lo que no tenemos evidencia de un efecto de la temperatura después de controlar la altitud.
 
-Note: The distinction between conditional and marginal interpretations is also true for generalised linear models and mixed models.
-  
+Nota: La distinción entre interpretaciones condicionales y marginales también es válida para modelos lineales generalizados y modelos mixtos.
 
-### Categorical covariates
- 
-When we have categorical covariates (for example treatment), there are a number of ways to code the model, which will give different interpretations for the coefficients. Let's simulate 120 data points with 40 in each of three levels of a categorical treatment.
+### Covariables categóricas
+
+Cuando tenemos covariables categóricas (por ejemplo, tratamiento), hay varias formas de codificar el modelo, lo que dará diferentes interpretaciones para los coeficientes. Simulemos `120` puntos de datos con 40 en cada uno de los tres niveles de un tratamiento categórico.
+
 
 ```{r}
 N <- 120
@@ -108,14 +113,16 @@ Y <- rnorm(N, mu, sd = 2)
 boxplot(Y ~ treatment)
 ```
 
-If we put treatment in as a covariate the normal way, the model will choose a reference treatment (here it will be high as the levels get sorted alphabetically), so that the intercept will be the mean of this reference group. The other coefficients will be the differences between the other groups and the reference group.
+Si introducimos el tratamiento como una covariable de la forma habitual, el modelo elegirá un tratamiento de referencia (aquí será "high" ya que los niveles se ordenan alfabéticamente), de modo que la intersección será la media de este grupo de referencia. Los demás coeficientes serán las diferencias entre los otros grupos y el grupo de referencia.
+
 
 ```{r}
 cat_lm <- lm(Y ~ treatment)
 summary(cat_lm)
 ```
 
-So here group "high" has a mean of 2.65, and the difference between the means of group "low" and group "high" is -0.66, and the difference between group "med" and group "high" is -1.48. If you would like to have another group as the reference group, you can use `relevel` to recode your treatment factor.
+Entonces, el grupo "high" tiene una media de `2.65`, y la diferencia entre las medias del grupo "low" y el grupo "high" es de `-0.66`, y la diferencia entre el grupo "med" y el grupo "high" es de `-1.48`. Si deseas tener otro grupo como grupo de referencia, puedes usar `relevel` para recodificar tu factor de tratamiento.
+
 
 
 ```{r}
@@ -125,17 +132,17 @@ summary(cat_lm)
 boxplot(Y ~ treatment)
 ```
 
-Now the intercept is the mean of group "low", and all the other coefficients are the differences between group "low" and the others. Another thing you can do is to put `-1` in the model to get rid of the intercept, and just have the means of each group as coefficients.
-
+Ahora la intersección es la media del grupo "low", y todos los demás coeficientes son las diferencias entre el grupo "low" y los demás. Otra cosa que puedes hacer es poner `-1` en el modelo para eliminar la intersección y tener solo las medias de cada grupo como coeficientes.
 
 ```{r}
 cat_lm <- lm(Y ~ treatment - 1)
 summary(cat_lm)
 ```
 
-Now, the three coefficients are the mean of the groups. 
+Ahora, los tres coeficientes son las medias de los grupos.
 
-**Contrasting the coefficients** We can also look at contrasts; these are the difference between all pairs of groups. Load the package [multcomp](https://cran.r-project.org/web/packages/multcomp/index.html) and use `glht` (general linear hypotheses) to examine all pair-wise differences.
+**Contraste de los coeficientes** También podemos ver los contrastes; estos son las diferencias entre todos los pares de grupos. Carga el paquete [multcomp](https://cran.r-project.org/web/packages/multcomp/index.html) y utiliza `glht` (hipótesis lineales generales) para examinar todas las diferencias de pares.
+
 
 ```{r, message = FALSE, warning=F}
 library(multcomp)
@@ -145,21 +152,17 @@ cont <- glht(cat_lm, linfct = mcp(treatment = "Tukey"))
 summary(cont)
 ```
 
-Each line of this output compares two groups against one another. The first line, for example, compares the "high" group to the "low" group. So the difference between the means of the "high" and "low" groups is 1.84. The p-values and the confidence intervals given by` glht` control for multiple testing, which is handy. If you want to see the confidence intervals for the differences between the groups. 
+Cada línea de esta salida compara dos grupos entre sí. La primera línea, por ejemplo, compara el grupo "high" con el grupo "low". Por lo tanto, la diferencia entre las medias de los grupos "high" y "low" es de 1.84. Los valores de p y los intervalos de confianza proporcionados por `glht` controlan las pruebas múltiples, lo cual es útil. Si deseas ver los intervalos de confianza para las diferencias entre los grupos.
+
 
 ```{r}
 confint(cont)
 ```
 
-Note: In a model with multiple covariates, the same rules still apply in terms of conditional and marginal interpretations of coefficients.
-  
+Nota: En un modelo con múltiples covariables, las mismas reglas siguen aplicándose en cuanto a las interpretaciones condicionales y marginales de los coeficientes.
 
-**Interpreting coefficients in generalised linear models** In linear models, the interpretation of model parameters is linear, as discussed above. For generalised linear models, now read the tutorial page on [interpreting coefficients in those models](/statistics/glms/interpret-glm-coeffs/).
-  
+**Interpretación de los coeficientes en modelos lineales generalizados** En los modelos lineales, la interpretación de los parámetros del modelo es lineal, como se discutió anteriormente. Para los modelos lineales generalizados, ahora lee la página de tutoriales sobre [la interpretación de los coeficientes en esos modelos](/statistics/glms/interpret-glm-coeffs/).
 
-**Author**: Gordana Popovic
- 
-**Year:** 2016
-
-**Last updated:** `r format(Sys.time(), "%b %Y")`
-
+**Autor**: Gordana Popovic
+**Año**: 2016
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

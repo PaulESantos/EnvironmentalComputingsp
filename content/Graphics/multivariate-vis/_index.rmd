@@ -13,7 +13,7 @@ Herbivores <- read.csv(file = "data/Herbivore_specialisation.csv", header = TRUE
 
 par(mfrow = c(1, 2))
 
-# MDS ordination
+# MDS
 
 Habitat <- Herbivores$Habitat
 Herb_community <- Herbivores[, 4:10]
@@ -21,7 +21,7 @@ library(vegan)
 Herb_community.mds <- metaMDS(comm = Herb_community, distance = "bray", trace = FALSE)
 plot(Herb_community.mds$points, col = as.factor(Habitat), pch = 16, xlab = "", ylab = "", xaxt = "n", yaxt = "n")
 
-# Cluster diagram
+# Cluster
 
 library(dendextend)
 Harbour_metals <- read.csv(file = "data/Harbour_metals.csv", header = TRUE)

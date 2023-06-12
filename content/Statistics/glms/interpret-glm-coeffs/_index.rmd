@@ -1,34 +1,39 @@
 ---
 weight: 3
-title: "Interpreting GLMs"
+title: "Interpretación de los GLMs"
 output: html_document
 aliases: /interpreting-coefficients-in-glms/
 ---
-In linear models, the interpretation of model parameters is linear. For example, if a you were modelling plant height against altitude and your coefficient for altitude was -0.9, then plant height will decrease by 1.09 for every increase in altitude of 1 unit.
 
-For generalised linear models, the interpretation is not this straightforward. Here, I will explain how to interpret the co-efficients in generalised linear models (glms). First you will want to read our pages on glms for [binary](/statistics/glms/glm-1/) and [count](/statistics/glms/glm-2/) data page on [interpreting coefficients in linear models](/statistics/glms/interpret-glm-coeffs/).
+En los modelos lineales, la interpretación de los parámetros del modelo es lineal. Por ejemplo, si estás modelando la altura de las plantas en función de la altitud y el coeficiente para la altitud es -0.9, entonces la altura de las plantas disminuirá en 1.09 unidades por cada aumento de 1 unidad en la altitud.
+
+Para los modelos lineales generalizados, la interpretación no es tan directa. Aquí explicaremos cómo interpretar los coeficientes en los modelos lineales generalizados (GLMs). Primero, deberás leer nuestras páginas sobre GLMs para datos [binarios](/statistics/glms/glm-1/) y [de conteo](/statistics/glms/glm-2/), así como nuestra página sobre [la interpretación de coeficientes en modelos lineales](/statistics/glms/interpret-glm-coeffs/).
   
 
-### Poisson and negative binomial GLMs
+### GLMs de Poisson y binomial negativo
  
-In Poisson and negative binomial glms, we use a log link. The actual model we fit with one covariate $x$ looks like this
+En los GLMs de Poisson y binomial negativo, utilizamos una función de enlace logarítmico. El modelo real que ajustamos con una covariable $x$ se ve así:
 
 $$ Y \sim \text{Poisson} (\lambda) $$
+
+
 $$  log(\lambda) = \beta_0 + \beta_1 x $$
 
-here $\lambda$ is the mean of Y. So if we have an initial value of the covariate $x_0$, then the predicted value of the mean $\lambda_0$ is given by 
+aquí $\lambda$ es la media de Y. Entonces, si tenemos un valor inicial de la covariable $x_0$, el valor predicho de la media $\lambda_0$ se calcula de la siguiente manera:
 
 $$  log(\lambda_0) = \beta_0 + \beta_1 x_0 $$
 
-If we now increase the covariate by 1, we get a new mean $\lambda_1$,
+Si ahora aumentamos la covariable en 1, obtenemos una nueva media $\lambda_1$,
 
 $$  log(\lambda_1) = \beta_0 + \beta_1 (x_0 +1) = \beta_0 + \beta_1 x_0 +\beta_1 = log(\lambda_0) + \beta_1$$
 
-So the log of the mean of Y increases by $\beta_1$ when we increase x by 1. But we are not really interested in how the log mean changes, we would like to know on average how Y changes. If we take the exponential of both sides 
+Por lo tanto, el logaritmo de la media de Y aumenta en $\beta_1$ cuando aumentamos x en 1. Pero en realidad no nos interesa cómo cambia el logaritmo de la media, nos gustaría saber cómo cambia Y en promedio. Si tomamos el exponencial de ambos lados,
 
 $$  \lambda_1 = \lambda_0 exp(\beta_1)$$
 
-So the mean of Y is multiplied by $exp( \beta_1 )$ when we increase $x$ by 1 unit.
+
+Entonces, la media de Y se multiplica por $exp(\beta_1)$ cuando aumentamos $x$ en 1 unidad.
+
 
 ```{r}
 N <- 120
@@ -40,40 +45,40 @@ glm1$coefficients
 exp(glm1$coefficients[2])
 ```
 
-So here increasing $x$ by 1 unit multiplies the mean value of Y by $exp( \beta_1 ) = 1.25$. The same thing is true for negative binomial glms as they have the same link function.
-  
+### GLMs binomiales
 
-### Binomial GLMs
- 
-#### Logistic regression
- 
-Things become much more complicated in binomial glms. The model here is actually a model of log odds, so we need to start with an explanation of those. The odds of an event are the probability success divided by the probability of failure. So if the probability of success is $p$ then the odds are:
+#### Regresión logística
 
-$$\text{Odds} = \frac{p}{1-p} $$
+Las cosas se vuelven mucho más complicadas en los GLMs binomiales. El modelo aquí es en realidad un modelo de log-odds (probabilidades), por lo que necesitamos comenzar con una explicación de eso. Las probabilidades de un evento son la probabilidad de éxito dividida por la probabilidad de fracaso. Entonces, si la probabilidad de éxito es $p$, las probabilidades son:
 
-As p increases, so do the odds. The equation for a logistic regression looks like this:
+$$\text{Odds} = \frac{p}{1-p}$$
 
-$$ Y \sim \text{binomial} (p) $$
-$$  log\left(\frac{p}{1-p}\right)  =  \beta_0 + \beta_1 x $$
+A medida que $p$ aumenta, también lo hacen las probabilidades. La ecuación para una regresión logística se ve así:
 
-Skipping some maths that is very similar to the above, we can obtain an interpretation for the coefficient of $x$ in the model in terms of the odds. When we increase $x$ by one unit the odds are multiplied by $exp( \beta_1 )$. Odds are not the most intuitive thing to interpret, but they do increase when p increases, so that if your coefficient $\beta_1$ is positive, increasing $x$ will increase your probability. 
+$$ Y \sim \text{binomial}(p) $$
+
+$$ \log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x $$
+
+
+Omitiendo algunos cálculos que son muy similares a los anteriores, podemos obtener una interpretación para el coeficiente de $x$ en el modelo en términos de las odds. Cuando aumentamos $x$ en una unidad, las odds se multiplican por $exp(\beta_1)$. Las odds no son la cosa más intuitiva de interpretar, pero aumentan cuando $p$ aumenta, por lo que si tu coeficiente $\beta_1$ es positivo, aumentar $x$ aumentará tu probabilidad.
+
 
 ```{r}
-bY <- Y > 0 # turning counts into presence absence
+bY <- Y > 0 
 bin1 <- glm(bY ~ x, family = binomial)
 summary(bin1)
 ```
-So when we increase $x$ by one unit, the odds of Y are multiplied by $exp( \beta_1 ) = 2.11$
-  
 
-#### Complementary log-log
- 
-Possibly a more intuitive model is a binomial regression with a complementary log-log link function. This link function is based on the assumption that you have some counts, which are Poisson distributed, but you've decided to turn them into presence/absence. 
+Cuando incrementamos $x$ en una unidad, las probabilidades de Y se multiplican por $exp(\beta_1) = 2.11$.
+
+#### Logaritmos complementarios (log-log)
+
+Posiblemente un modelo más intuitivo sea una regresión binomial con una función de enlace log-log. Esta función de enlace se basa en la suposición de que tienes algunos recuentos, que siguen una distribución de Poisson, pero hemos decidido convertirlos en presencia/ausencia.
 
 $$ Y \sim \text{binomial} (p) $$
 $$  log(-log(1-p)) = \beta_0 + \beta_1 x $$
 
-In that case you can interpret your coefficients in a similar way as the Poisson regression. When you increase $x$ by 1, the mean of your underlying count (which you have turned into presence/absence) is multiplied by $exp( \beta_1 )$.  
+En ese caso, puedes interpretar tus coeficientes de manera similar a la regresión de Poisson. Cuando aumentas $x$ en 1 unidad, la media de tu recuento subyacente (que has convertido en presencia/ausencia) se multiplica por $exp( \beta_1 )$.  
 
 ```{r, warning=F}
 library(mvabund)
@@ -81,21 +86,23 @@ bin2 <- manyglm(bY ~ x, family = binomial(link = "cloglog"))
 coef(bin2)
 ```
 
-The interpretation is now the same as in the Poisson case, when we increase $x$ by 1, the mean of the underlying count is multiplied by $exp( \beta_1 )$.
+La interpretación es ahora la misma que en el caso de Poisson, cuando aumentamos $x$ en 1 unidad, la media del recuento subyacente se multiplica por $exp( \beta_1 )$.
   
 
-#### Log binomial model
- 
-It is possible to use a log link function with the binomial distribution `family = binomial(link = log)`. In this case you can interpret the coefficients as multiplying the probabilities by $exp( \beta_1 )$, however these models can give you predicted probabilities greater than 1, and often don't converge (don't give an answer).
+#### Modelo binomial logarítmico
+
+Es posible utilizar una función de enlace logarítmico con la distribución binomial `family = binomial(link = log)`. En este caso, puedes interpretar los coeficientes como multiplicadores de las probabilidades por $exp( \beta_1 )$, sin embargo, estos modelos pueden darte probabilidades predichas mayores que 1 y a menudo no convergen (no dan una respuesta).
   
 
-### Offsets
- 
-Sometimes we know the effect of a particular variable (call it $z$) on the response is proportional, so that when we double $z$ we expect the response to double on average. The most common time you see this is with sampling intensity. 
+### Desplazamientos
+
+A veces sabemos que el efecto de una variable en la respuesta es proporcional, de modo que cuando duplicamos dicha variable, esperamos que la respuesta se duplique en promedio. El caso más común en el que se ve esto es con la intensidad de muestreo.
+
 
 ![](glm_coefficients_image.jpg)
 
-If you sample soil and count critters, all other things being equal, you would expect twice the critters in twice the amount of soil. If you have a variable like this it is tempting to divide your response (count) by the amount of soil to standardise the data. Unfortunately this will take counts, which we know how to model with glms, and turn them into something we do not know how to model. Fortunately this situation is easily dealt with using offsets. First, let's simulate some data for amount of soil, depth (our predictor variable) and count data (with a poisson distribution) where the couunts depend on how much soil was sampled.
+Si muestreamos suelo y contamos criaturas, suponiendo que todas las demás cosas son iguales, esperarías el doble de criaturas en el doble de cantidad de suelo. Si tienes una variable como esta, es tentador dividir tu respuesta (conteo) por la cantidad de suelo para estandarizar los datos. Desafortunadamente, esto tomará los conteos, que sabemos cómo modelar con glms, y los convertirá en algo que no sabemos cómo modelar. Afortunadamente, esta situación se resuelve fácilmente utilizando desplazamientos (offsets). Primero, vamos a simular algunos datos para la cantidad de suelo, la profundidad (nuestra variable predictora) y los datos de conteo (con una distribución de Poisson) donde los conteos dependen de cuánto suelo se muestreó.
+
 
 ```{r}
 soil <- exp(rbeta(N, shape1 = 8, shape2 = 1))
@@ -104,26 +111,29 @@ mu <- soil * exp(0.5 + 0.5 * depth)
 count <- rpois(N, lambda = mu)
 ```
 
-Now, we can model counts with depth as our predictor and soil quantity as an offset.
+Ahora, podemos modelar los conteos con la profundidad como nuestra variable predictora y la cantidad de suelo como un desplazamiento (offset).
+
 
 ```{r}
 off_mod <- glm(Y ~ depth + offset(log(soil)), family = poisson)
 summary(off_mod)
 ```
 
-If we ignored the soil amount, we could have misleading conclusions. If the soil amount is correlated with another variable in your model, then leaving out the offset will affect the coefficient of that variable, as in the discussion of conditional/marginal interpretations [here](/statistics/linear-models/linear-regression/interpret-lm-coeffs/). The offset will also often account for a lot of the variation in the response, so including it will give you a better model overall. What if you're not sure if the relationship is exactly proportional? In that case just include the variable in your model as a coefficient, and the model will decide the best relationship between it and your response. 
+
+Si ignoráramos la cantidad de suelo, podríamos llegar a conclusiones erróneas. Si la cantidad de suelo está correlacionada con otra variable en tu modelo, omitir el desplazamiento afectará el coeficiente de esa variable, como se discute en la interpretación condicional/marginal [aquí](/statistics/linear-models/linear-regression/interpret-lm-coeffs/). El desplazamiento también a menudo explicará gran parte de la variación en la respuesta, por lo que incluirlo te dará un mejor modelo en general. ¿Qué pasa si no estás seguro si la relación es exactamente proporcional? En ese caso, simplemente incluye la variable en tu modelo como un coeficiente y el modelo decidirá la mejor relación entre ella y tu respuesta.
+
 
 ```{r}
 coef_mod <- glm(Y ~ depth + log(soil), family = poisson)
 summary(coef_mod)
 ```
 
-The coefficient the model estimated is close to 1, which would be equivalent to an offset.
-  
 
-**Author**: Gordana Popovic
- 
-**Year:** 2016
+El coeficiente estimado por el modelo es cercano a 1, lo cual sería equivalente a un desplazamiento.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autor**: Gordana Popovic
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 

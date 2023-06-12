@@ -1,11 +1,13 @@
 ---
 weight: 3
-title: "Generalised Linear Models (GLMs)"
+title: "Modelos Lineales Generalizados (GLM) "
 output: html_document
 aliases: /generalised-linear-models/
 ---
-Generalised linear models (GLMs) are used when the distribution of data do not conform to the assumptions of linear models, specifically the assumptions of normally distributed residuals and no relationship between the variance and the mean (e.g., presence/absence, count or highly skewed data).
 
-* [Generalised linear models 1](glm-1): Introduction and binomial data  
-* [Generalised linear models 2](glm-2): Count data
-* [Interpreting coefficients in glms](interpret-glm-coeffs)
+
+Los modelos lineales generalizados (GLM) se utilizan cuando la distribución de los datos no se ajusta a las suposiciones de los modelos lineales, específicamente las suposiciones de residuos distribuidos normalmente y ausencia de relación entre la varianza y la media (por ejemplo, datos de presencia/ausencia, recuento o altamente sesgados).
+
+* [Modelos lineales generalizados 1](glm-1): Introducción y datos binomiales
+* [Modelos lineales generalizados 2](glm-2): Datos de recuento
+* [Interpretación de coeficientes en glms](interpret-glm-coeffs)
