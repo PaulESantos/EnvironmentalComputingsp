@@ -6,11 +6,11 @@ aliases: /meta-analysis-3/
 editor_options: 
   chunk_output_type: console
 ---
-First read our [introduction to meta analysis](/statistics/meta-analysis/meta-analysis-1) and become familiar with [commonly used statistical models for meta-analysis](/statistics/meta-analysis/meta-analysis-2). Now, we consider more complex models.
+Primero lee nuestra [introducción al metaanálisis](/statistics/meta-analysis/meta-analysis-1) y familiarízate con los [modelos estadísticos comúnmente utilizados para el metaanálisis](/statistics/meta-analysis/meta-analysis-2). Ahora, consideremos modelos más complejos.
 
-### More complex models
+### Modelos más complejos
 
-Up to now, we have completely ignored non-independence among effect sizes. We assumed that we have one effect size from one study (or paper). But in reality, a paper usually contains multiple effect sizes. These effect sizes from the same studies are not independent of each other. Let's consider a model where we have several effect sizes from single studies like our data set. First, I give you a math representation:
+Hasta ahora, hemos ignorado por completo la no independencia entre los tamaños de efecto. Hemos asumido que tenemos un tamaño de efecto de un estudio (o artículo). Pero en realidad, un artículo generalmente contiene múltiples tamaños de efecto. Estos tamaños de efecto de los mismos estudios no son independientes entre sí. Consideremos un modelo en el que tenemos varios tamaños de efecto de estudios individuales, como nuestro conjunto de datos. Primero, te presento una representación matemática:
 
 \begin{equation}
 y_{ij}=b_0+s_i+u_{ij}+e_{ij}
@@ -22,9 +22,9 @@ u_{ij}\sim \mathcal{N}(0,\sigma^2)\
 e_{ij}\sim \mathcal{N}(0,v_{ij})\
 \end{equation}
 
-where $u_{ij}$ is a deviation from $s_i$ (the within-study effect; the $j$th effect size from the $i$th study),it is normally distributed with $\sigma^2$ (other notations are comparable as above).
+donde $u_{ij}$ es una desviación de $s_i$ (el efecto dentro del estudio; el $j$-ésimo tamaño de efecto del $i$-ésimo estudio), se distribuye normalmente con $\sigma^2$ (otras notaciones son comparables como se indicó anteriormente).
 
-We can visualize this (again Figure 4 from Nakagawa *et al.* 2017). And we can see why this model is called, a 'multilevel' meta-analytic model, an extension of the random-effects model. 
+Podemos visualizar esto (nuevamente Figura 4 de Nakagawa *et al.* 2017). Y podemos ver por qué a este modelo se le llama modelo metaanalítico 'multinivel', una extensión del modelo de efectos aleatorios.
 
 ```{r fig2, echo = FALSE }
 knitr::include_graphics(c("Legend.png", "Multi.png"))
@@ -42,32 +42,33 @@ lnRR <- escalc(
 dat <- bind_cols(dat, lnRR)
 ```
 
-We can fit an equivalent model using the function `rma.mv`. We need to add `paper` (the between-study effect) and `id` (different effect sizes; the within-study effect) in our data set to the multilevel model as random factors.
+Podemos ajustar un modelo equivalente utilizando la función `rma.mv`. Necesitamos agregar `paper` (el efecto entre estudios) y `id` (diferentes tamaños de efecto; el efecto dentro del estudio) en nuestro conjunto de datos al modelo multinivel como factores aleatorios.
+
 
 ```{r multilevel, tidy=TRUE}
 multilevel_m <- rma.mv(yi = yi, V = vi, random = list(~ 1 | paper, ~ 1 | id), method = "REML", data = dat)
 summary(multilevel_m)
 ```
-
-OK, this does not have $I^2$. We have actually proposed a multilevel-model version of $I^2$ (Nakagawa & Santos 2012), which, in this case, can be written as:
+OK, esto no tiene $I^2$. En realidad, hemos propuesto una versión de modelo multinivel de $I^2$ (Nakagawa & Santos 2012), que, en este caso, se puede escribir como:
 
 \begin{equation}
 I^2=\frac{\tau^2+\sigma^2}{(\tau^2+\sigma^2+\bar{v})},
 \end{equation}
 
-Note that we do have $\tau^2$ and $\sigma^2$, which are `sigma^2.1` and `sigma^2.2` in the output above, respectively. Using this formula, we have the total heterogeneity $I^2$ of 88.93% (the $\bar{v} = 0.0033$ for our data set; see Nakagawa & Santos 2012 for how to get this). As you might expect, this value is nearly identical to what we got from the random-effect model (88.9%). But this model is better as we are explicitly dealing with non-independence arising from effect sizes from the same studies (although it turns out the problem is not completely solved...). 
+Ten en cuenta que tenemos $\tau^2$ y $\sigma^2$, que son `sigma^2.1` y `sigma^2.2` en la salida anterior, respectivamente. Utilizando esta fórmula, tenemos una heterogeneidad total $I^2$ del 88.93% (el $\bar{v} = 0.0033$ para nuestro conjunto de datos; consulta Nakagawa & Santos 2012 para saber cómo obtener esto). Como podrías imaginar, este valor es casi idéntico al que obtuvimos del modelo de efectos aleatorios (88.9%). Pero este modelo es mejor ya que estamos tratando explícitamente la falta de independencia debido a los tamaños de efecto de los mismos estudios (aunque resulta que el problema no está completamente resuelto...).
 
-As you could probably imagine, we can add more levels to this multilevel models. For example, we could add `genus` in the data set, as related species are probably more similar to each other. But it is better to model this taxonomic non-independence using phylogeny (which is the topic of the next section). Note that we can also run meta-regression using `rma.mv`; more complex models (different versions of a multilevel model) are explained in Nakagawa & Santos (2012).
+Como podrías imaginar, podemos agregar más niveles a estos modelos multinivel. Por ejemplo, podríamos agregar `genus` en el conjunto de datos, ya que las especies relacionadas probablemente sean más similares entre sí. Pero es mejor modelar esta falta de independencia taxonómica utilizando la filogenia (que es el tema de la siguiente sección). Ten en cuenta que también podemos realizar una meta-regresión utilizando `rma.mv`; modelos más complejos (diferentes versiones de un modelo multinivel) se explican en Nakagawa & Santos (2012).
 
-### Phylogenetic meta-analysis
+### Metaanálisis filogenético
 
-As I just mentioned, we have, so far, also ignored another type of non-independence, i.e. phylogenetic relatedness. Chuck Darwin unfortunately (or fortunately) found out all species on earth are related so we need to deal with this issue. 
+Como mencioné anteriormente, hasta ahora también hemos ignorado otro tipo de falta de independencia, es decir, la relación filogenética. Chuck Darwin desafortunadamente (o afortunadamente) descubrió que todas las especies en la Tierra están relacionadas, por lo que debemos abordar este problema.
 
-Actually, we just need to model phylogenetic non-independence by adding the degree of relatedness among species as a correlation matrix. The term, phylogeny or `phylo`, which we will create below, can be added as a random factor to a multilevel model.
+En realidad, solo necesitamos modelar la falta de independencia filogenética agregando el grado de relación entre las especies como una matriz de correlación. El término "filogenia" o `phylo`, que crearemos a continuación, se puede agregar como un factor aleatorio a un modelo multinivel.
 
-This means that we need a phylogenetic tree for our data set. For this data set, we have prepared a tree for you to download [here](https://www.dropbox.com/s/d5pzkb9ezgx6798/tree_curtis1998.tre?dl=0). But it is not that difficult to get a tree together by using the package called `rotl`.
+Esto significa que necesitamos un árbol filogenético para nuestro conjunto de datos. Para este conjunto de datos, hemos preparado un árbol para que lo descargues [aquí](https://www.dropbox.com/s/d5pzkb9ezgx6798/tree_curtis1998.tre?dl=0). Pero no es tan difícil obtener un árbol utilizando el paquete llamado `rotl`.
 
-First install and load the package [ape](http://ape-package.ird.fr/) that we will use to import the tree file and visualise the phylogeny.
+Primero, instala y carga el paquete [ape](http://ape-package.ird.fr/), que utilizaremos para importar el archivo de árbol y visualizar la filogenia.
+
 
 ```{r prep1, tidy=TRUE, warning=FALSE}
 library(ape)
@@ -75,14 +76,16 @@ tree <- read.tree(file = "tree_curtis1998.tre")
 plot(tree, cex = 0.7)
 ```
 
-We can then make a correlation matrix (a relatedness matrix among species). I've skipped explantions of these operations - other than saying we have a correlation matrix to fit to the model
+Podemos crear una matriz de correlación (una matriz de relación entre especies). He omitido las explicaciones de estas operaciones, excepto por decir que tenemos una matriz de correlación para ajustar al modelo.
+
 
 ```{r prep2, tidy=TRUE}
 tree <- compute.brlen(tree)
 cor <- vcv(tree, cor = T)
 ```
 
-We need a bit more preparation as we do have not a column which has the whole species names (we call it `phylo`). Also, it turns out that we need to correct some typos in `genus` and `species` columns in our data.
+Necesitamos un poco más de preparación, ya que no tenemos una columna que contenga los nombres completos de las especies (la llamamos `phylo`). Además, resulta que necesitamos corregir algunos errores tipográficos en las columnas `genus` y `species` de nuestros datos.
+
 
 ```{r prep3, tidy=TRUE, message = FALSE, warning=FALSE}
 library(Hmisc)
@@ -95,22 +98,24 @@ phylo <- capitalize(phylo)
 dat[, "phylo"] <- phylo
 ```
 
-We now have our phylogenetic correlation `cor` and a column with species names `phylo`, and can run our meta-analysis again with a phylogenetic effect. 
+Ahora tenemos nuestra correlación filogenética `cor` y una columna con los nombres de las especies `phylo`, y podemos ejecutar nuestro meta-análisis nuevamente con un efecto filogenético.
+
 
 ```{r phylo, tidy=TRUE}
 phylo_m <- rma.mv(yi = yi, V = vi, random = list(~ 1 | phylo, ~ 1 | paper, ~ 1 | id), R = list(phylo = cor), method = "REML", data = dat)
 summary(phylo_m)
 ```
 
-All this effort, there is no variation due to phylogeny! So we do not need this phylogeny term (i.e. `phylo`). 
+¡Todo este esfuerzo y no hay variación debida a la filogenia! Por lo tanto, no necesitamos este término de filogenia (es decir, `phylo`).
 
-Also, this multilevel model can be considered as a comparative phylogenetic method. There are quite a few things you need to know and to be careful of, which I cannot cover (e.g. we assumed that the Brownian-motion model of evolution in the model above - what does this even mean?). But Will and I have written a nice 'primer' so please read that primer -- Cornwell & Nakagawa (2017) 
+Además, este modelo multinivel se puede considerar como un método filogenético comparativo. Hay varias cosas que debes saber y tener cuidado (por ejemplo, asumimos el modelo de evolución de movimiento browniano en el modelo anterior, ¿qué significa esto incluso?). Pero Will y yo hemos escrito un buen "prontuario", así que por favor lee ese prontuario: Cornwell & Nakagawa (2017).
 
-Unfortunately, there are other types of non-independence from what covered here. We summaries all types in our recent paper -- Noble et al. (2017). So read this as well if you are interested. 
+Desafortunadamente, hay otros tipos de no independencia que no se han abordado aquí. Resumimos todos los tipos en nuestro artículo reciente: Noble et al. (2017). Así que también lee esto si te interesa.
 
-### Complex robust models (the last section!)
+### Modelos robustos complejos (¡la última sección!)
 
-We have a multilevel version of the robust model too. It is easy to fit using the function `rma.mv` (we do not include `phylo` as it did not explain any variance).
+También tenemos una versión multinivel del modelo robusto. Es fácil de ajustar usando la función `rma.mv` (no incluimos `phylo` ya que no explicó ninguna varianza).
+
 
 ```{r weight, tidy=TRUE, echo=FALSE}
 # We make weights, which is 1/vi and stick that into the argument, weights
@@ -123,26 +128,26 @@ robustml_m <- rma.mv(yi = yi, V = vi, W = wi, random = list(~ 1 | paper, ~ 1 | i
 summary(robustml_m)
 ```
 
-I think this is the model we have been looking for, i.e. our final model. At least for this data set. 
+Creo que este es el modelo que hemos estado buscando, es decir, nuestro modelo final. Al menos para este conjunto de datos.
 
-## Further help (references)
+## Más ayuda (referencias)
 
-Any questions? Or email me (s(-dot-)nakagawa(-at-)unsw(-dot-)edu(-dot-)au). Also visit our [website](http://www.i-deel.org/)
+¿Tienes alguna pregunta? O envíame un correo electrónico a s(-dot-)nakagawa(-at-)unsw(-dot-)edu(-dot-)au. También visita nuestro [sitio web](http://www.i-deel.org/).
 
-Go to the metafor package's [website](http://www.metafor-project.org/doku.php). There you find many worked examples.
+Visita el [sitio web](http://www.metafor-project.org/doku.php) del paquete metafor. Allí encontrarás muchos ejemplos prácticos.
 
-<p style="margin-left:.5in;text-indent:-.5in">Cornwell, W., and S. Nakagawa. 2017. Phylogenetic comparative methods. *Current Biology* 27:R333-R336.</p>
+<p style="margin-left:.5in;text-indent:-.5in">Cornwell, W., and S. Nakagawa. 2017. Métodos comparativos filogenéticos. *Current Biology* 27:R333-R336.</p>
 
-<p style="margin-left:.5in;text-indent:-.5in">Nakagawa, S., D. W. A. Noble, A. M. Senior, and M. Lagisz. 2017. Meta-evaluation of meta-analysis: ten appraisal questions for biologists. *BMC Biology* 15:18.</p>
+<p style="margin-left:.5in;text-indent:-.5in">Nakagawa, S., D. W. A. Noble, A. M. Senior, and M. Lagisz. 2017. Meta-evaluación de meta-análisis: diez preguntas de evaluación para biólogos. *BMC Biology* 15:18.</p>
 
-<p style="margin-left:.5in;text-indent:-.5in">Nakagawa, S., and E. S. A. Santos. 2012. Methodological issues and advances in biological meta-analysis. *Evolutionary Ecology* 26:1253-1274.</p>
+<p style="margin-left:.5in;text-indent:-.5in">Nakagawa, S., and E. S. A. Santos. 2012. Aspectos metodológicos y avances en meta-análisis biológico. *Evolutionary Ecology* 26:1253-1274.</p>
 
-<p style="margin-left:.5in;text-indent:-.5in">Noble, D. W. A., M. Lagisz, R. E. O'Dea, and S. Nakagawa. 2017. Nonindependence and sensitivity analyses in ecological and evolutionary meta-analyses. *Molecular Ecology* 26:2410-2425.</p>
+<p style="margin-left:.5in;text-indent:-.5in">Noble, D. W. A., M. Lagisz, R. E. O'Dea, and S. Nakagawa. 2017. Análisis de no independencia y sensibilidad en meta-análisis ecológicos y evolutivos. *Molecular Ecology* 26:2410-2425.</p>
 
-**Authors**: Shinichi Nakagawa and Malgorzata (Losia) Lagisz
+**Autores**: Shinichi Nakagawa y Malgorzata (Losia) Lagisz
  
-**Year:** 2016
+**Año**: 2016
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
 
 

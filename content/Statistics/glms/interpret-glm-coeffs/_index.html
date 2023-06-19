@@ -28,10 +28,10 @@ Y &lt;- rpois(N, lambda = mu)
 glm1 &lt;- glm(Y ~ x, family = poisson)
 glm1$coefficients</code></pre>
 <pre><code>## (Intercept)           x 
-##   0.9642718   0.2268448</code></pre>
+##   1.0695098   0.1419646</code></pre>
 <pre class="r"><code>exp(glm1$coefficients[2])</code></pre>
 <pre><code>##        x 
-## 1.254635</code></pre>
+## 1.152536</code></pre>
 </div>
 <div id="glms-binomiales" class="section level3">
 <h3>GLMs binomiales</h3>
@@ -52,18 +52,18 @@ summary(bin1)</code></pre>
 ## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)   2.5403     0.3788   6.707 1.99e-11 ***
-## x             0.7357     0.3331   2.209   0.0272 *  
+## (Intercept)   2.6011     0.3756   6.925 4.35e-12 ***
+## x             0.4050     0.3782   1.071    0.284    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 68.841  on 119  degrees of freedom
-## Residual deviance: 63.485  on 118  degrees of freedom
-## AIC: 67.485
+##     Null deviance: 63.932  on 119  degrees of freedom
+## Residual deviance: 62.727  on 118  degrees of freedom
+## AIC: 66.727
 ## 
-## Number of Fisher Scoring iterations: 6</code></pre>
+## Number of Fisher Scoring iterations: 5</code></pre>
 <p>Cuando incrementamos <span class="math inline">\(x\)</span> en una unidad, las probabilidades de Y se multiplican por <span class="math inline">\(exp(\beta_1) = 2.11\)</span>.</p>
 </div>
 <div id="logaritmos-complementarios-log-log" class="section level4">
@@ -76,8 +76,8 @@ summary(bin1)</code></pre>
 bin2 &lt;- manyglm(bY ~ x, family = binomial(link = &quot;cloglog&quot;))
 coef(bin2)</code></pre>
 <pre><code>##                    bY
-## (Intercept) 0.9311872
-## x           0.2624974</code></pre>
+## (Intercept) 0.9763886
+## x           0.1451914</code></pre>
 <p>La interpretación es ahora la misma que en el caso de Poisson, cuando aumentamos <span class="math inline">\(x\)</span> en 1 unidad, la media del recuento subyacente se multiplica por <span class="math inline">\(exp( \beta_1 )\)</span>.</p>
 </div>
 <div id="modelo-binomial-logarítmico" class="section level4">
@@ -102,17 +102,17 @@ summary(off_mod)</code></pre>
 ## glm(formula = Y ~ depth + offset(log(soil)), family = poisson)
 ## 
 ## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)  0.11678    0.05553   2.103   0.0355 *
-## depth        0.11472    0.05071   2.262   0.0237 *
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  0.180826   0.053488   3.381 0.000723 ***
+## depth       -0.005646   0.051753  -0.109 0.913124    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for poisson family taken to be 1)
 ## 
-##     Null deviance: 170.45  on 119  degrees of freedom
-## Residual deviance: 165.35  on 118  degrees of freedom
-## AIC: 483.46
+##     Null deviance: 141.26  on 119  degrees of freedom
+## Residual deviance: 141.24  on 118  degrees of freedom
+## AIC: 469.63
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>Si ignoráramos la cantidad de suelo, podríamos llegar a conclusiones erróneas. Si la cantidad de suelo está correlacionada con otra variable en tu modelo, omitir el desplazamiento afectará el coeficiente de esa variable, como se discute en la interpretación condicional/marginal <a href="/statistics/linear-models/linear-regression/interpret-lm-coeffs/">aquí</a>. El desplazamiento también a menudo explicará gran parte de la variación en la respuesta, por lo que incluirlo te dará un mejor modelo en general. ¿Qué pasa si no estás seguro si la relación es exactamente proporcional? En ese caso, simplemente incluye la variable en tu modelo como un coeficiente y el modelo decidirá la mejor relación entre ella y tu respuesta.</p>
@@ -123,18 +123,18 @@ summary(coef_mod)</code></pre>
 ## glm(formula = Y ~ depth + log(soil), family = poisson)
 ## 
 ## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)  0.85471    0.52953   1.614   0.1065  
-## depth        0.11805    0.05091   2.319   0.0204 *
-## log(soil)    0.17769    0.58900   0.302   0.7629  
+##              Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)  1.067443   0.435489   2.451   0.0142 *
+## depth       -0.005389   0.051759  -0.104   0.9171  
+## log(soil)    0.003638   0.488744   0.007   0.9941  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for poisson family taken to be 1)
 ## 
-##     Null deviance: 169.00  on 119  degrees of freedom
-## Residual deviance: 163.48  on 117  degrees of freedom
-## AIC: 483.59
+##     Null deviance: 137.34  on 119  degrees of freedom
+## Residual deviance: 137.33  on 117  degrees of freedom
+## AIC: 467.72
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>El coeficiente estimado por el modelo es cercano a 1, lo cual sería equivalente a un desplazamiento.</p>

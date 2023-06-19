@@ -1,14 +1,16 @@
 ---
 weight: 4
-title: "Mixed Models"
+title: "Mmodelos mixtos"
 output: html_document
 aliases: /mixed-models/
 ---
-Mixed models are those with a mixture of fixed and random effects. Random effects are categorical factors where the levels have been selected from many possible levels and the investigator would like to make inferences beyond just the levels chosen. Tricky concept, but imagine contrasting two habitat types (forest and grassland) by sampling five sites within each, and five replicate measures within each site. Habitat type is a fixed factor with the researcher only interested in those two levels of habitat type. If the five sites were chosen from a larger collection of possible sites, then site is considered a random effect with 10 levels.
 
-* [Mixed models 1](mixed-model-1): Linear mixed models with one random effect  
-* [Mixed models 2](mixed-model-2): Linear mixed models with several random effects  
-* [Mixed models 3](mixed-model-3): Generalised linear mixed models
+Los modelos mixtos son aquellos que tienen una mezcla de efectos fijos y aleatorios. Los *efectos aleatorios* son factores categóricos cuyos niveles han sido seleccionados entre muchos posibles niveles, y el investigador desea hacer inferencias más allá de los niveles elegidos. Es un concepto complicado, pero imagina que contrastas dos tipos de hábitat (bosque y pradera) muestreando cinco sitios dentro de cada uno, y cinco medidas replicadas dentro de cada sitio. El tipo de hábitat es un *factor fijo* en el que el investigador solo está interesado en esos dos niveles de tipo de hábitat. Si los cinco sitios se seleccionaron de una colección más grande de sitios posibles, entonces el sitio se considera un efecto aleatorio con 10 niveles.
+
+* [Modelos mixtos 1](mixed-model-1): Modelos mixtos lineales con un efecto aleatorio.
+* [Modelos mixtos 2](mixed-model-2): Modelos mixtos lineales con varios efectos aleatorios.
+* [Modelos mixtos 3](mixed-model-3): Modelos mixtos lineales generalizados.
+
 
 ![](Mixed_models_intro_image.jpg)
 Photo: N. Murray

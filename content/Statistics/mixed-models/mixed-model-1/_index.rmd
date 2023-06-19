@@ -1,67 +1,69 @@
 ---
 weight: 1
-title: "Introduction"
+title: "Introducción"
 output: html_document
 editor_options: 
   chunk_output_type: console
 aliases: /mixed-models-1/
 ---
-**Linear mixed models with one random effect**
+**Modelos lineales mixtos con un efecto aleatorio**
 
-You will need to use mixed effect models if you have a random factor in your experimental design. A random factor 
+Necesitarás utilizar modelos de efectos mixtos si tienes un factor aleatorio en tu diseño experimental. Un factor aleatorio:
 
- * is categorical  
- * has a large number of levels  
- * only a random subsample of levels is included in your design  
- * you want to make inference in general, and not only for the levels you observed.
- 
-This is a tough concept to get your head around, and is best explained with an example. The data we will analyse here are counts of invertebrates at 3-4 sites in each of 7 (randomly chosen) estuaries. Here the estuaries are the random effect, as there are a large number of possible estuaries, and we only sample from a random few of them, but we would like to make inference about estuaries in general.
+* es categórico
+* tiene un gran número de niveles
+* solo se incluye una submuestra aleatoria de niveles en tu diseño
+* deseas hacer inferencia en general, no solo para los niveles que has observado.
+
+Este es un concepto difícil de comprender y se explica mejor con un ejemplo. Los datos que analizaremos aquí son recuentos de invertebrados en 3-4 sitios de cada uno de los 7 estuarios (elegidos al azar). Aquí, los estuarios son el efecto aleatorio, ya que hay un gran número de estuarios posibles y solo tomamos una muestra aleatoria de algunos de ellos, pero nos gustaría hacer inferencias sobre los estuarios en general.
+
 
 ![](Mixed_models_1_image.jpg)
 
-We will introduce mixed models in three parts
+Introduciremos los modelos mixtos en tres partes:
 
-1. Mixed models 1 (this page) is an introduction to mixed models for a **continuous** response with **one random effect**. You will learn how to check assumptions and do inference, including the parametric bootstrap.
+1. Modelos mixtos 1 (esta página) es una introducción a los modelos mixtos para una variable respuesta **continua** con **un efecto aleatorio**. Aprenderás cómo verificar suposiciones y realizar inferencias, incluyendo el remuestreo paramétrico.
 
-2. [Mixed models 2](/statistics/mixed-models/mixed-model-2/) extends this to **multiple random effects** with a continuous response. We look into how to model nested and crossed random effects.
+2. [Modelos mixtos 2](/statistics/mixed-models/mixed-model-2/) amplía esto a **múltiples efectos aleatorios** con una respuesta continua. Exploraremos cómo modelar efectos aleatorios anidados y cruzados.
 
-3. [Mixed models 3](/statistics/mixed-models/mixed-model-3/) teaches you how to model **discrete data**, including counts and binary data, with random effects.  
+3. [Modelos mixtos 3](/statistics/mixed-models/mixed-model-3/) te enseña cómo modelar **datos discretos**, incluyendo conteos y datos binarios, con efectos aleatorios.
 
-All three pages will use the same data for illustration. 
+Las tres páginas utilizarán los mismos datos para ilustración.
 
-  
+## Propiedades de los modelos mixtos
 
-**Properties of mixed models**
- 
-**Assumptions**. Mixed models make some important assumptions (we'll check these later for our examples)
+**Suposiciones**. Los modelos mixtos tienen algunas suposiciones importantes (las revisaremos más adelante para nuestros ejemplos):
 
-1. The observed $y$ are independent, conditional on some predictors $x$  
-2. The response $y$ are normally distributed conditional on some predictors $x$  
-3. The response $y$ has constant variance, conditional on some predictors $x$  
-4. There is a straight line relationship between $y$ and the predictors $x$ and random effects $z$  
-5. Random effects $z$ are independent of $y$.  
-6. Random effects $z$ are normally distributed
-  
+1. Las observaciones $y$ son independientes, condicionales a algunos predictores $x$.
+2. La respuesta $y$ sigue una distribución normal condicional a algunos predictores $x$.
+3. La respuesta $y$ tiene una varianza constante, condicional a algunos predictores $x$.
+4. Existe una relación lineal entre $y$ y los predictores $x$ y los efectos aleatorios $z$.
+5. Los efectos aleatorios $z$ son independientes de $y$.
+6. Los efectos aleatorios $z$ siguen una distribución normal.
 
-### Running the analysis
- 
-We will use the package [lme4](https://cran.r-project.org/web/packages/lme4/index.html) for all our mixed effect modelling. It will allow us to model both continuous and discrete data with one or more random effects. First, install and load this package:
+### Ejecutando el análisis
+
+Utilizaremos el paquete [lme4](https://cran.r-project.org/web/packages/lme4/index.html) para todos nuestros modelos de efectos mixtos. Nos permitirá modelar tanto datos continuos como discretos con uno o más efectos aleatorios. Primero, instala y carga este paquete:
+
 
 ```{r,warning=FALSE,message=FALSE}
 library(lme4)
 ```
 
-We will analyse a data set that aimed to test the effect of water pollution on the abundance of some subtidal marine invertebrates by comparing samples from modified and pristine estuaries. As the total counts are large, we will assume the data is continuous. Later on in [Mixed models 3](/statistics/mixed-models/mixed-model-3/), we'll model counts as discrete using Generalised linear mixed models (GLMMs). 
+Analizaremos un conjunto de datos que tuvo como objetivo probar el efecto de la contaminación del agua en la abundancia de algunos invertebrados marinos submareales, comparando muestras de estuarios modificados y prístinos. Como los recuentos totales son grandes, asumiremos que los datos son continuos. Más adelante, en [Modelos mixtos 3](/statistics/mixed-models/mixed-model-3/), modelaremos los recuentos como discretos utilizando modelos lineales mixtos generalizados (GLMM).
 
-Download the sample data set, [Estuaries.csv](/datasets/Estuaries.csv), and load into R.
+Descarga el conjunto de datos de muestra, [Estuaries.csv](/datasets/Estuaries.csv), y cárgalo en R.
+
 
 ```{r}
 Estuaries <- read.csv("Estuaries.csv", header = T)
 ```
 
-**Fitting a model with a fixed and random effect**
 
-In this data set, we have a fixed effect (Modification; modified vs pristine) and a random effect (Estuary). We can use the `lmer` function to fit a model for any dependent variables with a continuous distribution. To fit a model for total abundance, we would use:
+**Ajuste de un modelo con un efecto fijo y aleatorio**
+
+En este conjunto de datos, tenemos un efecto fijo (Modificación; modificado vs prístino) y un efecto aleatorio (Estuario). Podemos usar la función `lmer` para ajustar un modelo para cualquier variable dependiente con una distribución continua. Para ajustar un modelo para la abundancia total, usaríamos:
+
 
 ```{r, echo = FALSE}
 set.seed(1)
@@ -71,139 +73,143 @@ set.seed(1)
 ft.estu <- lmer(Total ~ Modification + (1 | Estuary), data = Estuaries, REML = T)
 ```
 
-where Total is the dependent variable (left of the ~), Modification is the fixed effect, and Estuary is the random effect.
+donde Total es la variable dependiente (a la izquierda de ~), Modificación es el efecto fijo, y Estuario es el efecto aleatorio.
 
-Note the syntax for one random effect is `(1|Estuary)` - this is fitting a different intercept (hence `1`) for each Estuary.
+Observa que la sintaxis para un efecto aleatorio es `(1|Estuario)` - esto ajusta una intercepción diferente (por lo tanto, `1`) para cada Estuario.
 
-This model can be fit by maximum likelihood (`REML=F`) or restricted maximum likelihood (`>REML=T`). For fitting models it's best to use REML, as it is less biased (unbiased for balanced samples), particularly in small samples. However to use the `anova` function below we need to refit with maximum likelihood. 
+Este modelo se puede ajustar mediante máxima verosimilitud (`REML=F`) o máxima verosimilitud restringida (`>REML=T`). Para ajustar modelos, es mejor usar REML, ya que es menos sesgado (imparcial para muestras equilibradas), especialmente en muestras pequeñas. Sin embargo, para usar la función `anova` a continuación, necesitamos volver a ajustar con máxima verosimilitud.
   
 
-### Assumptions to check
+### Supuestos a verificar
  
-Before we look at the results of our analysis, it's important to check that our data met the assumptions of the model we used. Let's look at all the assumptions in order.
+Antes de examinar los resultados de nuestro análisis, es importante verificar que nuestros datos cumplan con los supuestos del modelo que utilizamos. Veamos todos los supuestos en orden.
 
-**Assumption 1**: The observed $y$ are independent, conditional on some fixed effects $x$ and random effects $z$
+**Supuesto 1**: Las observaciones $y$ son independientes, condicionales a algunos efectos fijos $x$ y efectos aleatorios $z$
 
-We can't check this assumption, but you can ensure it's true by taking a random sample within each level of the random effect in your experimental design. 
+No podemos verificar este supuesto, pero puedes asegurarte de que sea cierto tomando una muestra aleatoria dentro de cada nivel del efecto aleatorio en tu diseño experimental. 
 
-**Assumption 2**: The response $y$ are normally distributed conditional on some predictors $x$ and random effects $z$
+**Supuesto 2**: La respuesta $y$ se distribuye normalmente, condicional a algunos predictores $x$ y efectos aleatorios $z$
 
-This assumption is only critical when we have a small sample size or very skewed data. We can check it with a normal quantile plot of residuals.
+Este supuesto solo es crítico cuando tenemos un tamaño de muestra pequeño o datos muy sesgados. Podemos verificarlo con un gráfico cuantil-normal de los residuos.
+
 
 ```{r,out.width = '500px'}
 qqnorm(residuals(ft.estu))
 ```
 
-We are looking for a straight line relationship. Here, the assumption of normality seems reasonable.
+Estamos buscando una relación lineal. Aquí, la suposición de normalidad parece razonable.
 
-**Assumption 3**: The response $y$ has constant variance, conditional on some fixed effects $x$ and random effects $z$
+**Suposición 3**: La respuesta $y$ tiene varianza constante, condicional a algunos efectos fijos $x$ y efectos aleatorios $z$.
 
-Like a linear model, a mixed model assumes constant variance. We can check this by looking for a fan shape in the residual plot (residuals vs fitted values).
+Al igual que en un modelo lineal, un modelo mixto asume una varianza constante. Podemos verificar esto buscando una forma de abanico en el gráfico de residuos (residuos vs valores ajustados).
+
     
 ```{r,out.width = '500px'}
 scatter.smooth(residuals(ft.estu) ~ fitted(ft.estu))
 ```
 
-This residual plot seems reasonable, there are differences in variability between estuaries, but variability does not increase with the mean. Note, that the function `scatter.smooth` is just a scatter plot with a fitted, smoothed curve.
+Este gráfico de residuos parece razonable, hay diferencias en la variabilidad entre estuarios, pero la variabilidad no aumenta con la media. Ten en cuenta que la función `scatter.smooth` es simplemente un gráfico de dispersión con una curva ajustada y suavizada.
 
-**Assumption 4**: There is a straight line relationship between $y$ and the predictors $x$ and random effects $z$
+**Suposición 4**: Existe una relación lineal entre $y$ y los predictores $x$ y los efectos aleatorios $z$.
 
-To check this assumption, we check the residual plot again for non-linearity, or a U-shape.  In our case there is no evidence of non-linearity. If the residuals seem to go down then up, or up then down, we may need to add a polynomial function of the predictors using the `poly` function.
+Para verificar esta suposición, revisamos nuevamente el gráfico de residuos en busca de no linealidad o forma de U. En nuestro caso, no hay evidencia de no linealidad. Si los residuos parecen ir hacia abajo y luego hacia arriba, o hacia arriba y luego hacia abajo, es posible que necesitemos agregar una función polinómica de los predictores utilizando la función `poly`.
 
-**Assumption 5**: Random effects $z$ are independent of $y$.
+**Suposición 5**: Los efectos aleatorios $z$ son independientes de $y$.
 
-We can't check this assumption, but you can ensure it's true by taking a random sample of estuaries.
+No podemos verificar esta suposición, pero puedes asegurarte de que sea verdadera tomando una muestra aleatoria de estuarios.
 
-**Assumption 6**: Random effects $z$ are normally distributed.
+**Suposición 6**: Los efectos aleatorios $z$ siguen una distribución normal.
 
-This assumption is not crucial (and difficult) to check.
+Esta suposición no es crucial (y difícil) de verificar.
   
 
-### Interpreting the results
- 
+### Interpretación de los resultados
 
-**Hypothesis test for the fixed effect**
+**Prueba de hipótesis para el efecto fijo**
 
-The package `lme4` won't give you p-values for fixed effects as part of the output in `summary`. This is because the p-values from Wald tests (using `summary`) and likelihood ratio tests (using `anova`) are only approximate in mixed models.
+El paquete `lme4` no proporcionará valores p para los efectos fijos como parte de la salida en `summary`. Esto se debe a que los valores p de las pruebas de Wald (usando `summary`) y las pruebas de razón de verosimilitud (usando `anova`) son solo aproximados en modelos mixtos.
 
-Nevertheless, we will use the `anova` function to test for an effect of modification on the total abundance of invertebrates, taking into account the random effect of estuary. 
+No obstante, utilizaremos la función `anova` para probar un efecto de modificación en la abundancia total de invertebrados, teniendo en cuenta el efecto aleatorio del estuario.
 
-First, we fit the full model by maximum likelihood, and a second model that lacks the fixed effect of Modification
+Primero, ajustamos el modelo completo por máxima verosimilitud y un segundo modelo que carece del efecto fijo de la modificación.
 
 ```{r}
 ft.estu <- lmer(Total ~ Modification + (1 | Estuary), data = Estuaries, REML = F)
 ft.estu.0 <- lmer(Total ~ (1 | Estuary), data = Estuaries, REML = F)
 ```
-
-Then, we compare these two models with a likelihood ratio test, using the `anova` function.
+Entonces, comparamos estos dos modelos con una prueba de razón de verosimilitud utilizando la función `anova`.
 
 ```{r}
 anova(ft.estu.0, ft.estu)
 ```
 
-We find that there is evidence of an effect of Modification (p = 0.02385). 
+Encontramos evidencia de un efecto de Modificación (p = 0.02385).
 
-We can also calculate confidence intervals for each model parameter using the `confint` function.
+También podemos calcular intervalos de confianza para cada parámetro del modelo utilizando la función `confint`.
+
 
 ```{r}
 confint(ft.estu)
 ```
 
-This also provides evidence for an effect of Modification as this parameter (i.e., the difference between the modified and pristine estuaries) has 95% confidence intervals that do not overlap zero.
+Esto también proporciona evidencia de un efecto de Modificación, ya que este parámetro (es decir, la diferencia entre los estuarios modificados y prístinos) tiene intervalos de confianza del 95% que no se superponen con cero.
 
-**Hypothesis test for random effects**
+**Prueba de hipótesis para efectos aleatorios**
 
-You can use the `anova` function to test for random effects, but the p-values are very approximate and we do not recommend this procedure. Instead we will use a parametric bootstrap. This is a simulation based method which involves a fair chunk of code, but there's not much about the code you have to change for different models, it's mostly just a matter of copy-paste. 
+Puedes utilizar la función `anova` para probar efectos aleatorios, pero los valores p son muy aproximados y no recomendamos este procedimiento. En su lugar, utilizaremos un bootstrap paramétrico. Este es un método basado en simulación que implica una buena cantidad de código, pero no hay mucho sobre el código que debas cambiar para diferentes modelos, principalmente es solo cuestión de copiar y pegar.
 
-Parametric bootstrap
+Bootstrap paramétrico
+
+
+
 ```{r, error=FALSE, message=FALSE, warning=FALSE}
 nBoot <- 1000
 lrStat <- rep(NA, nBoot)
-ft.null <- lm(Total ~ Modification, data = Estuaries) # null model
-ft.alt <- lmer(Total ~ Modification + (1 | Estuary), data = Estuaries, REML = F) # alternate model
-lrObs <- 2 * logLik(ft.alt) - 2 * logLik(ft.null) # observed test stat
+ft.null <- lm(Total ~ Modification, data = Estuaries) # modelo nulo
+ft.alt <- lmer(Total ~ Modification + (1 | Estuary), data = Estuaries, REML = F) # modelo alternativo
+lrObs <- 2 * logLik(ft.alt) - 2 * logLik(ft.null) # estadístico de prueba observado
 for (iBoot in 1:nBoot)
 {
-  Estuaries$TotalSim <- unlist(simulate(ft.null)) # resampled data
-  bNull <- lm(TotalSim ~ Modification, data = Estuaries) # null model
-  bAlt <- lmer(TotalSim ~ Modification + (1 | Estuary), data = Estuaries, REML = F) # alternate model
-  lrStat[iBoot] <- 2 * logLik(bAlt) - 2 * logLik(bNull) # resampled test stat
+  Estuaries$TotalSim <- unlist(simulate(ft.null)) # datos remuestreados
+  bNull <- lm(TotalSim ~ Modification, data = Estuaries) # modelo nulo
+  bAlt <- lmer(TotalSim ~ Modification + (1 | Estuary), data = Estuaries, REML = F) # modelo alternativo
+  lrStat[iBoot] <- 2 * logLik(bAlt) - 2 * logLik(bNull) # estadístico de prueba remuestreado
 }
-mean(lrStat > lrObs) # P-value for test of Estuary effect
+mean(lrStat > lrObs) # Valor p para la prueba del efecto de Estuario
 ```
 
-There is strong evidence for including estuary in your model (p = 0.001). You could use similar code to test for the effect of Modification with a parametric bootstrap. 
+### Preguntas frecuentes sobre modelos mixtos
+ 
+**1.** ¿Necesito muestras balanceadas para ajustar un modelo mixto?
+
+No, los diseños no balanceados están bien. Sin embargo, los diseños balanceados generalmente te darán mejor poder estadístico, por lo que es bueno apuntar a ellos.
+
+**2.** ¿Debo muestrear muchos niveles del efecto aleatorio o muchas observaciones dentro de cada nivel?
+
+Esto depende de lo que te interese. En nuestro ejemplo, nos interesa el efecto de la modificación. En el diseño del estudio, las desembocaduras de los ríos se encuentran directamente debajo de la modificación, por lo que necesitamos muchas desembocaduras de ríos dentro de cada nivel de modificación para obtener una buena inferencia sobre los efectos de la modificación. Esto es cierto en general, necesitas muchas muestras en el nivel inferior al nivel que te interesa principalmente.
+
+**3.** ¿Mi factor aleatorio debe ser un efecto aleatorio?
+
+No necesariamente. Si tienes un factor aleatorio (es decir, tienes una muestra aleatoria de categorías de una variable categórica) y quieres hacer inferencias sobre esa variable en general, no solo en las categorías que observaste, entonces inclúyelo como un efecto aleatorio. Si estás satisfecho haciendo inferencias solo sobre los niveles que observaste, entonces puedes incluirlo como un efecto fijo. En nuestro ejemplo, queríamos hacer inferencias sobre la modificación en general, es decir, en cada desembocadura de río modificada y no modificada, por lo que incluimos la desembocadura de río como un efecto aleatorio. Si hubiéramos tratado la desembocadura de río como un factor fijo, nos habríamos limitado a hacer conclusiones solo sobre las desembocaduras de ríos que muestreamos.
+
+**4.** ¿Qué pasa si los niveles de mi factor no son realmente aleatorios?
+
+Esto podría ser un problema ya que la suposición 4 podría no cumplirse. Siempre debes muestrear el efecto aleatorio de manera aleatoria para evitar sesgos y conclusiones incorrectas.
   
 
-###FAQ for mixed models
+### Comunicación de los resultados
  
-**1.** Do I need balanced samples to fit a mixed model?
+**Escrita.** Los resultados de los modelos mixtos lineales se comunican de manera similar a los resultados de los modelos lineales. En la sección de resultados, debes mencionar que estás utilizando modelos mixtos con el paquete R lme4, y listar tus efectos aleatorios y fijos. También debes mencionar cómo llevaste a cabo la inferencia, es decir, pruebas de razón de verosimilitud (usando la función `anova`) o bootstrap paramétrico. En la sección de resultados para un predictor, basta con escribir una línea, por ejemplo: "Hay evidencia sólida (p<0.001) de un efecto negativo de la modificación en la abundancia total". Para múltiples predictores, es mejor mostrar los resultados en una tabla.
 
-No, unbalanced designs are fine. Balanced designs will generally give you better power though, so they are good to aim for.
 
-**2**. Should I sample many levels of the random effect, or lots of observations within each level?
+**Visual.** La mejor manera de comunicar visualmente los resultados dependerá de tu pregunta. Para un modelo mixto simple con un efecto aleatorio, una opción es un gráfico de los datos en bruto con las medias del modelo superpuestas. Se requiere un poco de código para este tipo de gráfico, y será un poco diferente para tus datos y modelo.
 
-This depends on what you are interested in. In our example, we are interested in the effect of modification. In the study design, estuaries fall directly below modification, so we need a lot of estuaries within each level of Modification to make good inference about the effects of modification. This is true in general, you need lots of samples in the level below the level you are primarily interested in. 
-
-**3.** Does my random factor have to be a random effect?
-
-Not necessarily. If you have a random factor (i.e., you have a random sample of categories from a categorical variable) and you want to make inferences about that variable in general, not just at the categories you observed, then include it as a random effect. If you are happy making inference about just the levels you observed, then you can include it as a fixed effect.  In our example we wanted to make inference about modification in general, i.e. in every modified and unmodified estuary, so we included estuary as a random effect. If we had treated Estuary as a fixed factor, we would have been restricted to making conclusions about only the estuaries we sample.
-
-**4.** What if the levels of my factor aren't really random?
-
-This might be a problem as assumption 4 may not hold. You should always sample the random effect randomly to avoid bias and incorrect conclusions.
-  
-
-### Communicating the results
- 
-**Written.** Results of linear mixed models are communicated in a similar way to results for linear models. In your results section you should mention that you are using mixed models with R package lme4, and list your random and fixed effects. You should also mention how you carried out inference, i.e. likelihood ratio tests (using the `anova` function) or parametric bootstrap. In the results section for one predictor, it suffices to write one line, e.g. "There is strong evidence (p<0.001) of negative effect of modification on total abundance. For multiple predictors it's best to display the results in a table. 
-
-**Visual.** The best way to visually communicate results will depend on your question, for a simple mixed model with one random effect, a plot of the raw data with the model means superimposed is one possibility. There is a little bit of code that is required for such a plot, and it will be a little different for your data and model. 
 
 ```{r}
-ModEst <- unique(Estuaries[c("Estuary", "Modification")]) # find which Estuaries are modified
+ModEst <- unique(Estuaries[c("Estuary", "Modification")]) # encontrar qué Estuarios están modificados
 
-# Prepare a vector of colors with specific color by modification levels
+# Preparar un vector de colores con colores específicos para los niveles de modificación
+
 myColors <- ifelse(unique(ModEst$Modification) == "Modified", rgb(0.1, 0.1, 0.7, 0.5),
   ifelse(unique(ModEst$Modification) == "Pristine", rgb(0.8, 0.1, 0.3, 0.6),
     "grey90"
@@ -216,29 +222,29 @@ legend("bottomleft",
   c(" Modified ", " Pristine "), fill = unique(myColors), horiz = TRUE, cex = 0.8
 )
 
-# 0 if Modified, 1 if Pristine
+# 0 si está Modificado, 1 si está Prístino
 is.mod <- ifelse(unique(ModEst$Modification) == "Modified", 0,
   ifelse(unique(ModEst$Modification) == "Pristine", 1, NA)
 )
 
-Est.means <- coef(ft.estu)$Estuary[, 1] + coef(ft.estu)$Estuary[, 2] * is.mod # Model means
+Est.means <- coef(ft.estu)$Estuary[, 1] + coef(ft.estu)$Estuary[, 2] * is.mod # Medias del modelo
 stripchart(Est.means ~ sort(unique(Estuary)), data = Estuaries, pch = 18, col = "red", vertical = TRUE, add = TRUE)
 ```
   
 
-### Further help
- 
-You can type `?lmer` into R for help with these functions.
+### Más ayuda
 
-[Draft book chapter](http://lme4.r-forge.r-project.org/book/Ch2.pdf) from the authors of lme4.
+Puedes escribir `?lmer` en R para obtener ayuda con estas funciones.
+
+[Borrador de capítulo del libro](http://lme4.r-forge.r-project.org/book/Ch2.pdf) de los autores de lme4.
 
 <p style="margin-left: .5in; text-indent: -.5in;">Faraway, JJ. *Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models*. CRC press, 2005.</p>
 
 <p style="margin-left: .5in; text-indent: -.5in;">Zuur, A, EN Ieno and GM Smith. *Analysing ecological data*. Springer Science & Business Media, 2007.</p>
-  
 
-**Author**: Gordana Popovic
- 
-**Year:** 2016
+**Autor**: Gordana Popovic
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
+

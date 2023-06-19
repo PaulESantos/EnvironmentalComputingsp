@@ -22,15 +22,16 @@ knitr::opts_chunk$set(
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7ebc3505-9fc4-4bed-b0d4-fd75daa3bd7f/deploy-status)](https://app.netlify.com/sites/environmentalcomputing/deploys)
 <!-- badges: end -->
 
-The goal of **Environmental Computing** is to provide accessible coding and statistical tutorials to R users. If you would like to learn more about this site, click [here](https://environmentalcomputing.net/about-this-site/)
+El objetivo de **Environmental Computing** es proporcionar tutoriales accesibles de codificación y estadística para usuarios de R. Si deseas obtener más información sobre este sitio, haz clic [aquí](https://environmentalcomputing.net/about-this-site/).
 
-This repository contains the [blogdown](https://bookdown.org/yihui/blogdown/) and [Hugo](https://gohugo.io/) backbone to build and maintain the website. Below are important details to quickly orientate you to the behind-the-scenes of this website
+Este repositorio contiene el armazón de [blogdown](https://bookdown.org/yihui/blogdown/) y [Hugo](https://gohugo.io/) para construir y mantener el sitio web. A continuación se presentan detalles importantes para orientarte rápidamente en los entresijos de este sitio web.
 
-### Installation of `blogdown` and Hugo
+### Instalación de `blogdown` y Hugo
 
-`blogdown` is a R interface to Hugo  and is super handy for our purposes as most tutorials are written as R Markdown files which is rendered into a Hugo-friendly format. 
+`blogdown` es una interfaz de R para Hugo y es muy útil para nuestros propósitos, ya que la mayoría de los tutoriales están escritos en archivos R Markdown que se renderizan en un formato compatible con Hugo.
 
-Blogdown can be installed from either CRAN or directly from the RStudio `blogdown` Github repository using the `remotes` package:
+Blogdown se puede instalar desde CRAN o directamente desde el repositorio de GitHub de RStudio `blogdown` utilizando el paquete `remotes`:
+
 
 ```{r, blogdown}
 # Install from CRAN

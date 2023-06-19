@@ -5,105 +5,106 @@ output: html_document
 aliases: /independent-samples-t-test/
 ---
 
-An independent samples *t*-test aka a two sample *t*-test is one of the most commonly used statistical tests. It is used for comparing whether the means of two samples are statistically different from each other (e.g., control vs. treatment, site A vs site B etc). For example, consider the simple case of whether a sample of pH measurements from one river differs from a sample of pH measurements from a second river.
+*t-test* de muestras independientes, también conocido como un *t-test* de dos muestras, es una de las pruebas estadísticas más comúnmente utilizadas. Se utiliza para comparar si las medias de dos muestras son estadísticamente diferentes entre sí (por ejemplo, control vs. tratamiento, sitio A vs. sitio B, etc.). Por ejemplo, consideremos el caso simple de si una muestra de mediciones de pH de un río difiere de una muestra de mediciones de pH de un segundo río.
 
 ![](Independent_samples_t_test_image.jpg)
 
-The null hypothesis is that the population means from which the two samples are taken are equal $$H_o: \mu_1=\mu_2$$.
+La hipótesis nula es que las medias de la población de las cuales se toman las dos muestras son iguales $$H_o: \mu_1=\mu_2$$.
 
-The test statistic, *t*, is:
+La estadística de prueba, *t*, es:
 
 $$t = \frac{\bar{x_{1}}-\bar{x_{2}}}{s_{\bar{y_{1}}-\bar{y_{2}}}}$$
 
-where the denominator is the standard error of the difference between the two means.
+donde el denominador es el error estándar de la diferencia entre las dos medias.
 
 $$\sqrt{\frac{(n_{1}-1)s_{1}^{2}+(n_{2}-1)s_{2}^{2}}{n_{1}+n_{2}-2}{(\frac{1}{n_{1}}}+\frac{1}{n_{2}})}$$
 
-Note that the size of test statistic depends on two things: 1) how different the two means are (the numerator) and 2) how much variation is present within each sample (the denominator). 
+Ten en cuenta que el tamaño de la estadística de prueba depende de dos cosas: 1) qué tan diferentes son las dos medias (el numerador) y 2) cuánta variación hay presente dentro de cada muestra (el denominador).
 
-This equation is for the pooled variance *t*-test. For a separate variances *t*-test (also known as Welch's *t* test), which does not assume equal variances, the denominator is:
+Esta ecuación es para el *t*-test de varianza combinada. Para un *t*-test de varianzas separadas (también conocido como *t*-test de Welch), que no asume varianzas iguales, el denominador es:
 
-$$\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}$$
+$$\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}$$ 
 
 
-Note that a *t* test is a special case of a linear model with a single continuous response variable and a single categorical predictor variable that has two levels.
+Ten en cuenta que un *t*-test es un caso especial de un modelo lineal con una variable de respuesta continua única y un predictor categórico único que tiene dos niveles.
   
 
-### Running the analysis
+### Ejecución del análisis
  
-An independent samples *t*-test can be run with the same `t.test` function as used for [one sample](/statistics/t-tests/one-sample-t-test/) or [paired *t*-tests](/statistics/t-tests/paired-t-test/). For an independent samples *t*-test assuming equal variances, we would use: 
+Un *t*-test de muestras independientes se puede ejecutar con la misma función `t.test` utilizada para [una muestra](/statistics/t-tests/one-sample-t-test/) o [t*-tests pareados](/statistics/t-tests/paired-t-test/). Para un *t*-test de muestras independientes que asume varianzas iguales, usaríamos:
+
 
 
 ```{r,eval = FALSE}
 t.test(x <- my_sample1, y = my_sample2, var.equal = TRUE)
 ```
 
-where *my_sample1* and *my_sample2* are vectors containing the measurements from each sample.
+Donde *my_sample1* y *my_sample2* son vectores que contienen las mediciones de cada muestra.
 
-More commonly, we would use a data frame with the response and predictor variables as separate columns. You can then use a formula statement, `y ~ x`, to specify the response and predictor variables rather than the code above. Consider the simple example where you wanted to compare the pH of two rivers. Ten replicate pH measures were taken from each river.
+Más comúnmente, usaríamos un data frame con las variables de respuesta y predictor como columnas separadas. Luego puedes usar una declaración de fórmula, `y ~ x`, para especificar las variables de respuesta y predictor en lugar del código anterior. Considera el ejemplo simple en el que deseas comparar el pH de dos ríos. Se tomaron diez medidas replicadas de pH de cada río.
 
-Download the sample data set, [River_pH.csv](/datasets/River_pH.csv), and import into R.
+Descarga el conjunto de datos de muestra, [River_pH.csv](/datasets/River_pH.csv), e impórtalo en R.
 
 ```{r,eval=FALSE}
 River_pH <- read.csv(file = "River_pH.csv", header = TRUE)
 ```
 
-The *t*-test is run with the `t.test` function, with the arguments specifying the response variable (pH) to the left of the ~, the predictor variable (River_name) to the right of the ~, and the data frame to be used.
+
+El test *t* se realiza con la función `t.test`, donde los argumentos especifican la variable de respuesta (pH) a la izquierda de ~, la variable predictora (River_name) a la derecha de ~, y el marco de datos a utilizar.
+
 
 ```{r, eval=F}
 t.test(pH ~ River_name, data = River_pH, var.equal = TRUE)
 ```
 
-The argument `var.equal = TRUE` specifies that we are assuming equal variances. Note the default `t-test` argument for the alternative hypothesis is a two-tailed test. If you want to conduct a one-tailed test you must add an argument to the function specifying `alternative = "greater"` or `alternative = "less"`.  
-  
+El argumento `var.equal = TRUE` especifica que asumimos varianzas iguales. Ten en cuenta que el argumento predeterminado del test `t` para la hipótesis alternativa es una prueba bilateral. Si deseas realizar una prueba unilateral, debes agregar un argumento a la función que especifique `alternative = "greater"` o `alternative = "less"`.
 
-### Interpreting the results
+### Interpretación de los resultados
+
  
 ```{r,echo=FALSE}
 River_pH <- read.csv(file = "River_pH.csv", header = TRUE)
 t.test(River_pH$pH ~ River_pH$River_name, alternative = "two.sided", var.equal = TRUE)
 ```
 
-The output of a *t*-test is straight-forward to interpret. In the above output, the test statistic *t* = 6.9788 with 18 degrees of freedom, and a very low *p* value (*p* < 0.001). We can therefore reject the null hypothesis that the two rivers have the same pH.
+La salida de un test *t* es fácil de interpretar. En la salida anterior, el estadístico de prueba *t* = 6.9788 con 18 grados de libertad, y un valor de *p* muy bajo (*p* < 0.001). Por lo tanto, podemos rechazar la hipótesis nula de que los dos ríos tienen el mismo pH.
 
-You also get the means from the two samples (needed to know which one is larger if the test is significant), and the 95% confidence interval for the difference between the two means (this will not overlap zero when the test is signficant).
-  
+También se obtienen las medias de las dos muestras (necesario para saber cuál es mayor si el test es significativo) y el intervalo de confianza del 95% para la diferencia entre las dos medias (este no se superpondrá con cero cuando el test sea significativo).
 
-### Assumptions to check       
- 
-*t*-tests are parametric tests, which implies we can specify a probability distribution for the population of the variable from which samples were taken. Parametric (and non-parametric) tests have a number of assumptions. If these assumptions are violated we can no longer be sure that the test statistic follows a *t* distribution, in which case *p*-values may be inaccurate.   
+### Supuestos a verificar
 
-**Normality**. The data are normally distributed. Note however that *t tests* are reasonably robust to violations of normality (although watch out for the influence of outliers).  
+Los tests *t* son tests paramétricos, lo que implica que podemos especificar una distribución de probabilidad para la población de la variable de la cual se tomaron las muestras. Los tests paramétricos (y no paramétricos) tienen varios supuestos. Si se violan estos supuestos, ya no podemos estar seguros de que el estadístico de prueba siga una distribución *t*, y en ese caso, los valores de *p* pueden ser inexactos.
 
-**Equal variance**. The variances of each sample are assumed to be approximately equal. *t tests* are also reasonably robust to violations of equal variance if sample sizes are the same but can be problematic when sample sizes are very different.
+**Normalidad**. Los datos siguen una distribución normal. Sin embargo, los tests *t* son razonablemente robustos frente a violaciones de la normalidad (aunque hay que tener cuidado con la influencia de los valores atípicos).
 
-In the event of unequal variances, it may be better to perform a Welch's *t* test which does not assume equal variances. To conduct a Welch test in R, the `var.equal` argument in `t.test` function should be changed to `var.equal=FALSE`. This is in fact the default argument for `t.test` if not specified. 
+**Varianza igual**. Se asume que las varianzas de cada muestra son aproximadamente iguales. Los tests *t* también son razonablemente robustos frente a violaciones de la igualdad de varianzas si los tamaños de las muestras son iguales, pero pueden ser problemáticos cuando los tamaños de las muestras son muy diferentes.
 
-**Independence**. The observations should have been sampled randomly from the population so that the two sample means are unbiased estimates of the population means. If individual replicates are linked in any way, then the assumption of independence will be violated.
-  
+En caso de varianzas desiguales, puede ser mejor realizar un test *t* de Welch, que no asume igualdad de varianzas. Para realizar un test de Welch en R, el argumento `var.equal` en la función `t.test` debe cambiarse a `var.equal=FALSE`. De hecho, este es el argumento predeterminado para `t.test` si no se especifica.
 
-### Communicating the results
- 
-**Written.** As a minimum, the observed *t* statistic, the P-value and the number of degrees of freedom should be reported. For example, you could write "the pH was significantly higher in River A than River B (independent samples *t*-test: *t* = 6.98, df = 18, P < 0.001)". 
+**Independencia**. Las observaciones deben haber sido muestreadas aleatoriamente de la población, de manera que las medias de las dos muestras sean estimaciones no sesgadas de las medias de la población. Si los individuos replicados están vinculados de alguna manera, se violará el supuesto de independencia.
 
-**Visual.** Box plots or column graphs with error bars are effective ways of communicating the variation in a single continuous response variable versus a single categorical predictor variable.
+### Comunicación de los resultados
+
+**Escrita**. Como mínimo, se debe informar el estadístico de prueba *t* observado, el valor de *p* y el número de grados de libertad. Por ejemplo, podrías escribir "el pH fue significativamente más alto en el Río A que en el Río B (test de muestras independientes *t*: *t* = 6.98, df = 18, P < 0.001)".
+
+**Visual**. Los diagramas de caja o los gráficos de columnas con barras de error son formas efectivas de comunicar la variación en una única variable de respuesta continua en comparación con una única variable predictora categórica.
+
 
 ```{r}
 boxplot(pH ~ River_name, data = River_pH, xlab = "River name", ylab = "pH")
 ```
   
 
-### Further help
- 
-Type `?t.test` to get the R help for this function. 
+### Más ayuda
 
-<p style="margin-left:.5in;text-indent:-.5in">Quinn and Keough (2002) *Experimental design and data analysis for biologists*. Cambridge University Press. Chapter 3: Hypothesis testing.</p> 
+Escribe `?t.test` para obtener la ayuda de R sobre esta función.
 
-<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Chapter 9: Comparing the means of one and two samples of normally distributed data.</p>
-  
+<p style="margin-left:.5in;text-indent:-.5in">Quinn y Keough (2002) *Experimental design and data analysis for biologists.* Cambridge University Press. Capítulo 3: Prueba de hipótesis.</p>
 
-**Author**: Alistair Poore
- 
-**Year:** 2016
+<p style="margin-left:.5in;text-indent:-.5in">McKillup (2012) *Statistics explained. An introductory guide for life scientists.* Cambridge University Press. Capítulo 9: Comparación de las medias de una y dos muestras de datos distribuidos normalmente.</p>
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Autor**: Alistair Poore
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

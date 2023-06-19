@@ -1,31 +1,33 @@
 ---
 weight: 2
-title: "Crossed and Nested Factors"
+title: "Factores Cruzados y Anidados"
 output: html_document
 editor_options: 
   chunk_output_type: console
 aliases: /mixed-models-2/
 ---
-[Mixed models 1](/statistics/mixed-models/mixed-model-1/) is an introduction to mixed models with one random factor. After reading that, if you think you have more than one random factor, then read on. For example, you might have crossed or nested factors.
+[Mixed models 1](/statistics/mixed-models/mixed-model-1/) es una introducción a los modelos mixtos con un factor aleatorio. Después de leer eso, si crees que tienes más de un factor aleatorio, continúa leyendo. Por ejemplo, es posible que tengas factores cruzados o anidados.
 
-Many experimental designs in ecology and environmental sciences require mixed models with several random effects (factors). You might have heard of nested and crossed factors. We often define these as quite distinct designs (e.g., from [www.theanalysisfactor.com](http://www.theanalysisfactor.com))
+Muchos diseños experimentales en ecología y ciencias ambientales requieren modelos mixtos con varios efectos aleatorios (factores). Es posible que hayas oído hablar de factores anidados y cruzados. A menudo definimos estos como diseños bastante distintos (por ejemplo, de [www.theanalysisfactor.com](http://www.theanalysisfactor.com))
 
-Two factors are **crossed** when every category (level) of one factor co-occurs in the design with every category of the other factor. In other words, there is at least one observation in every combination of categories for the two factors.
+Dos factores están **cruzados** cuando cada categoría (nivel) de un factor coocurre en el diseño con cada categoría del otro factor. En otras palabras, hay al menos una observación en cada combinación de categorías para los dos factores.
 
-A factor is **nested** within another factor when each category of the first factor co-occurs with only one category of the other. In other words, an observation has to be within one category of Factor 2 in order to have a specific category of Factor 1. All combinations of categories are not represented.
+Un factor está **anidado** dentro de otro factor cuando cada categoría del primer factor coocurre con solo una categoría del otro. En otras palabras, una observación debe estar dentro de una categoría del Factor 2 para tener una categoría específica del Factor 1. No se representan todas las combinaciones de categorías.
 
-There are also intermediate designs that are partially crossed, where some levels of one factor occur in several (but not all) levels of the second factor. These designs have often been taught as separate problems with different ways to carry out analyses of variance (ANOVAs) depending on if you have crossed or nested factors. Using mixed models with the package lme4, we can think if all of these in one framework, where nested and crossed designs are modelled in the same way. Thinking about factors as crossed or nested is simplified to careful labelling of factor levels - more on this later.
+También existen diseños intermedios que están parcialmente cruzados, donde algunos niveles de un factor ocurren en varios (pero no todos) los niveles del segundo factor. Estos diseños a menudo se han enseñado como problemas separados con diferentes formas de llevar a cabo análisis de varianza (ANOVA) dependiendo de si tienes factores cruzados o anidados. Usando modelos mixtos con el paquete lme4, podemos pensar en todos estos en un marco de trabajo, donde los diseños anidados y cruzados se modelan de la misma manera. Pensar en los factores como cruzados o anidados se simplifica mediante una identificación cuidadosa de los niveles del factor, pero hablaremos más sobre esto más adelante.
   
 
-### Running the analysis
+### Ejecutando el análisis
  
-We will use the package [lme4](https://cran.r-project.org/web/packages/lme4/index.html) for all our mixed effect modelling. It will allow us to model both continuous and discrete data with one or more random effects. First, load the package:
+Utilizaremos el paquete [lme4](https://cran.r-project.org/web/packages/lme4/index.html) para todos nuestros modelos de efectos mixtos. Nos permitirá modelar datos continuos y discretos con uno o más efectos aleatorios. Primero, carga el paquete:
+
 
 ```{r,warning=FALSE,message=FALSE}
 library(lme4)
 ```
 
-We will analyse a data set that aimed to test the effect of water pollution on the abundance of some subtidal marine invertebrates by comparing samples from modified and pristine estuaries. As the total counts are large, we will assume the data are continuous. Later on, in [Mixed models 3](/statistics/mixed-models/mixed-model-3/), we'll model counts as discrete using Generalised linear mixed models (GLMMs). 
+Analizaremos un conjunto de datos que tiene como objetivo probar el efecto de la contaminación del agua en la abundancia de algunos invertebrados marinos submareales mediante la comparación de muestras de estuarios modificados y prístinos. Dado que los recuentos totales son grandes, asumiremos que los datos son continuos. Más adelante, en [Modelos mixtos 3](/statistics/mixed-models/mixed-model-3/), modelaremos los recuentos como discretos utilizando modelos lineales mixtos generalizados (GLMMs).
+
 
 ![](Mixed_models_2_image.jpg)
 
@@ -33,29 +35,30 @@ We will analyse a data set that aimed to test the effect of water pollution on t
 set.seed(1)
 ```
 
-Download the sample data set, [Estuaries.csv](/datasets/Estuaries.csv), and load into R.
+Descarga el conjunto de datos de muestra, [Estuaries.csv](/datasets/Estuaries.csv), y cárgalo en R.
 
 ```{r}
 Estuaries <- read.csv("Estuaries.csv", header = T)
 ```
 
+**Ajuste de un modelo con un efecto fijo y varios efectos aleatorios**
 
-**Fitting a model with a fixed effect and  several random effects**
+En este conjunto de datos, tenemos un efecto fijo (Modificación; modificado vs. prístino) y dos efectos aleatorios (Estuario y Sitio). El Sitio está anidado dentro del Estuario, ya que cada sitio solo puede pertenecer a un estuario. Sin embargo, al ingresar los datos, hemos sido descuidados y numerado los sitios dentro de cada estuario como 1, 2, 3, etc.
 
-In this data set, we have a fixed effect (Modification; modified vs pristine) and two random effects (Estuary and Site). Site is nested within Estuary as each site can only belong in one estuary. When entering the data, however, we've been careless and numbered sites within each estuary as 1, 2, 3 etc.
-
-We can see this by looking at the data, and a cross tabulation.
+Podemos ver esto al observar los datos y una tabla cruzada.
 
 ```{r}
 Estuaries[1:10, ]
 xtabs(~ Estuary + Site, Estuaries, sparse = TRUE)
 ```
 
-Estuary JAK and estuary JER each have sites numbered  1, even though these sites are not connected in any way. We can also see this in the cross tabulation `xtabs`. This site labelling looks crossed, where each site occurs in each estuary, rather than nested.
 
-We can fix this by simply telling R that Site is nested in Estuary. It is best practice, however, to do this at the data entry stage. If things are the same, then they should be labelled the same, and if they are not they should be labelled differently.
+Los estuarios JAK y JER tienen sitios numerados como 1, aunque estos sitios no están conectados de ninguna manera. También podemos ver esto en la tabla cruzada `xtabs`. Esta etiqueta de sitios parece estar cruzada, donde cada sitio ocurre en cada estuario, en lugar de estar anidado.
 
-To create a unique label for each site in this data set, we convert Site to a factor (it was an integer), and create a new variable (SiteWithin) that is the combination of Estuary and Site
+Podemos solucionar esto simplemente indicando a R que el Sitio está anidado en el Estuario. Sin embargo, es mejor práctica hacer esto en la etapa de entrada de datos. Si las cosas son iguales, deben etiquetarse de la misma manera, y si no lo son, deben etiquetarse de manera diferente.
+
+Para crear una etiqueta única para cada sitio en este conjunto de datos, convertimos el Sitio en un factor (era un número entero) y creamos una nueva variable (SiteWithin) que es la combinación de Estuario y Sitio.
+
 
 ```{r, message=FALSE}
 Estuaries$Site <- as.factor(Estuaries$Site)
@@ -63,46 +66,50 @@ Estuaries$Site <- as.factor(Estuaries$Site)
 Estuaries$SiteWithin <- paste0(Estuaries$Estuary, "_", Estuaries$Site)
 ```
 
-Now, check the structure to see that each site is nested in only one Estuary, consistent with the experimental design.
+
+Ahora, verifica la estructura para asegurarte de que cada sitio esté anidado en un solo estuario, de acuerdo con el diseño experimental.
+
 
 ```{r}
 xtabs(~ Estuary + SiteWithin, Estuaries, sparse = TRUE)
 ```
 
-To fit a model for total abundance, we would use:
+Para ajustar un modelo para la abundancia total, utilizaríamos:
 
 ```{r}
 fit.mod <- lmer(Total ~ Modification + (1 | Estuary) + (1 | SiteWithin), data = Estuaries)
 summary(fit.mod)
 ```
 
-where Total is the dependent variable (left of the ~), Modification is the fixed effect, and Estuary and SiteWithin are the random effects.
 
-We'll also fit the wrong model, to see the difference if we had used the old labels for each site.
+donde `Total` es la variable dependiente (a la izquierda de ~), `Modification` es el efecto fijo, `Estuary` y `SiteWithin` son los efectos aleatorios.
+
+También ajustaremos el modelo incorrecto para ver la diferencia si hubiéramos utilizado las etiquetas antiguas para cada sitio.
+
 
 ```{r, message=FALSE}
 fit.wrong <- lmer(Total ~ Modification + (1 | Estuary) + (1 | Site), data = Estuaries)
 summary(fit.wrong)
 ```
 
-The only place we can see an obvious difference is under the Random effects table. For the correct model we have <font face="monospace">Number of obs: 52, groups:  SiteWithin, 26; Estuary, 7</font> while the wrong model tells us we have only 4 sites, which we know is incorrect. 
+El único lugar donde podemos ver una diferencia obvia es en la tabla de efectos aleatorios. Para el modelo correcto tenemos <font face="monospace">Número de obs: 52, grupos: `SiteWithin`, 26; `Estuary`, 7</font>, mientras que el modelo incorrecto nos indica que solo tenemos 4 sitios, lo cual sabemos que es incorrecto.
 
-Note: fit.wrong would be correct if we had crossed factors
+Nota: `fit.wrong` sería correcto si tuviéramos factores cruzados.
   
 
-### Checking assumptions
+### Verificación de supuestos
  
-The assumptions are the same as for one random factor, but it doesn't hurt to list them again
+Los supuestos son los mismos que para un factor aleatorio, pero no está de más listarlos nuevamente:
 
-1. The observed $y$ are independent, conditional on some predictors $x$  
-2. The response $y$ are normally distributed conditional on some predictors $x$  
-3. The response $y$ has constant variance, conditional on some predictors $x$  
-4. There is a straight line relationship between $y$ and the predictors $x$ and random effects $z$  
-5. Random effects $z$ are independent of $y$.  
-6. Random effects $z$ are normally distributed  
-  
+1. Las observaciones $y$ son independientes, condicionales a algunos predictores $x$.
+2. La respuesta $y$ sigue una distribución normal condicional a algunos predictores $x$.
+3. La respuesta $y$ tiene una varianza constante, condicional a algunos predictores $x$.
+4. Existe una relación lineal entre $y$ y los predictores $x$ y los efectos aleatorios $z$.
+5. Los efectos aleatorios $z$ son independientes de $y$.
+6. Los efectos aleatorios $z$ siguen una distribución normal.
 
-See [Mixed models 1](/statistics/mixed-models/mixed-model-1/) for detailed guidance about assumptions in linear mixed models. Briefly, assumptions 1 and 5 cannot be checked, but can be ensured by taking random samples, and assumption 6 is not crucial and difficult to check. To check assumption 2 we look for a straight line relationship on the normal quantile plot. To check assumptions 3, and 4 we look for a fan shape and U shape on the residual vs. fitted plot.  
+Consulta [Modelos mixtos 1](/statistics/mixed-models/mixed-model-1/) para obtener orientación detallada sobre los supuestos en modelos mixtos lineales. En resumen, no se pueden verificar los supuestos 1 y 5, pero se pueden garantizar mediante la toma de muestras aleatorias, y el supuesto 6 no es crucial y es difícil de verificar. Para verificar el supuesto 2, buscamos una relación lineal en el gráfico cuantil-normal. Para verificar los supuestos 3 y 4, buscamos una forma de abanico y una forma de U en el gráfico de residuos vs valores ajustados.
+
 
 ```{r}
 par(mfrow = c(1, 2))
@@ -110,7 +117,8 @@ qqnorm(residuals(fit.mod))
 scatter.smooth(residuals(fit.mod) ~ fitted(fit.mod)) # residual plot
 ```
 
-The normal quantile plot looks reasonable, however we see here a definite fan shape in the residual vs. fit plot. Let's try transforming the response and see if we do better.
+El gráfico de cuantiles normales parece razonable, sin embargo, aquí podemos observar claramente una forma de abanico en el gráfico de residuos vs. valores ajuste. Intentemos transformar la variable de respuesta y veamos si obtenemos mejores resultados.
+
 
 ```{r}
 fit.mod <- lmer(log(Total) ~ Modification + (1 | Estuary) + (1 | SiteWithin), data = Estuaries)
@@ -119,51 +127,54 @@ qqnorm(residuals(fit.mod))
 scatter.smooth(residuals(fit.mod) ~ fitted(fit.mod)) # residual plot
 ```
 
-This scatterplot is much better, the fan shape is all but gone. The smooth line is below zero on the left, but there are relatively few points there, so it's not of great concern. 
-  
 
-### Interpreting the results
+Este diagrama de dispersión es mucho mejor, la forma de abanico prácticamente ha desaparecido. La línea suave está por debajo de cero en la parte izquierda, pero hay relativamente pocos puntos allí, por lo que no es de gran preocupación.
+
+### Interpretación de los resultados
  
-**Hypothesis test for the fixed effect**
+**Prueba de hipótesis para el efecto fijo**
 
-We can use the `anova` as before to obtain approximate p-values for fixed effects.
+Podemos utilizar `anova` como antes para obtener p-valores aproximados para los efectos fijos.
+
 
 ```{r}
 ft.mod <- lmer(log(Total) ~ Modification + (1 | Estuary) + (1 | SiteWithin), data = Estuaries, REML = F)
 ft.mod.0 <- lmer(log(Total) ~ (1 | Estuary) + (1 | SiteWithin), data = Estuaries, REML = F)
 anova(ft.mod.0, ft.mod)
 ```
-We find weak evidence of an effect of Modification (p=0.05047). 
 
-**Hypothesis test for random effects**
+Encontramos una evidencia débil de un efecto de Modificación (p=0.05047).
 
-As in  [Mixed models 1](/statistics/mixed-models/mixed-model-1/) we will use a parametric bootstrap. We will test if we need to have a random effect for Site given we have a random effect for Estuary in the model. I've taken the code from [Mixed models 1](/statistics/mixed-models/mixed-model-1/) and changed the relevant parts, you can compare the two to get an idea of how to write your own parametric bootstrap code.
+**Prueba de hipótesis para los efectos aleatorios**
+
+Como en [Modelos mixtos 1](/statistics/mixed-models/mixed-model-1/), utilizaremos un bootstrap paramétrico. Probaremos si necesitamos tener un efecto aleatorio para el Sitio, dado que ya tenemos un efecto aleatorio para el Estuario en el modelo. Tomamos el código de [Modelos mixtos 1](/statistics/mixed-models/mixed-model-1/) y cambiado las partes relevantes, puedes comparar los dos para tener una idea de cómo escribir tu propio código de bootstrap paramétrico.
 
 ```{r, error=FALSE, message=FALSE, warning=FALSE}
 nBoot <- 1000
 lrStat <- rep(NA, nBoot)
-ft.null <- lmer(log(Total) ~ Modification + (1 | Estuary), Estuaries, REML = F) # null model
-ft.alt <- lmer(log(Total) ~ Modification + (1 | Estuary) + (1 | SiteWithin), Estuaries, REML = F) # alternate model
-lrObs <- 2 * logLik(ft.alt) - 2 * logLik(ft.null) # observed test stat
+ft.null <- lmer(log(Total) ~ Modification + (1 | Estuary), Estuaries, REML = F) # modelo nulo
+ft.alt <- lmer(log(Total) ~ Modification + (1 | Estuary) + (1 | SiteWithin), Estuaries, REML = F) # modelo alterno
+lrObs <- 2 * logLik(ft.alt) - 2 * logLik(ft.null) #
 for (iBoot in 1:nBoot)
 {
-  Estuaries$logTotalSim <- unlist(simulate(ft.null)) # resampled data
-  bNull <- lmer(logTotalSim ~ Modification + (1 | Estuary), Estuaries, REML = F) # null model
-  bAlt <- lmer(logTotalSim ~ Modification + (1 | Estuary) + (1 | SiteWithin), Estuaries, REML = F) # alternate model
-  lrStat[iBoot] <- 2 * logLik(bAlt) - 2 * logLik(bNull) # resampled test stat
+  Estuaries$logTotalSim <- unlist(simulate(ft.null)) # 
+  bNull <- lmer(logTotalSim ~ Modification + (1 | Estuary), Estuaries, REML = F) # modelo nulo
+  bAlt <- lmer(logTotalSim ~ Modification + (1 | Estuary) + (1 | SiteWithin), Estuaries, REML = F) # modelo alterno
+  lrStat[iBoot] <- 2 * logLik(bAlt) - 2 * logLik(bNull) #
 }
-mean(lrStat > lrObs) # P-value for test of Estuary effect
+mean(lrStat > lrObs) # p-value
 ```
-The p-value is 0, so very small. We have strong evidence of an effect of Site and should keep it in the model.
-  
 
-## Communicating results
- 
-**Written.** Results of linear mixed models are communicated in a similar way to results for linear models. In your results section you should mention that you are using mixed models with R package lme4, and list your random and fixed effects. You should also mention how you carried out inference, i.e. likelihood ratio tests (using the `anova` function) or parametric bootstrap. In the results section for one predictor, it suffices to write one line, e.g., "There is strong evidence (p<0.001) of negative effect of modification on total abundance". For multiple predictors it's best to display the results in a table. 
+El p-valor es 0, muy pequeño. Tenemos una fuerte evidencia de un efecto del Sitio y debemos mantenerlo en el modelo.
 
-**Visual.** The best way to visually communicate results will depend on your question, for a simple mixed model with one random effect, a plot of the raw data with the model means superimposed is one possibility. There is a little bit of code that is required for such a plot, and it will be a little different for your data and model. 
+## Comunicación de los resultados
 
-You can plot within each site, but this is a bit odd for a boxplot as there are only two observations per site, you might want to do this for your data if you have more observations within each Site.
+**Escrito.** Los resultados de los modelos mixtos lineales se comunican de manera similar a los resultados de los modelos lineales. En la sección de resultados, debes mencionar que estás utilizando modelos mixtos con el paquete R `lme4`, y listar tus efectos aleatorios y fijos. También debes mencionar cómo realizaste la inferencia, es decir, pruebas de razón de verosimilitud (utilizando la función `anova`) o bootstrap paramétrico. En la sección de resultados para un predictor, basta con escribir una línea, por ejemplo: "Hay una fuerte evidencia (p < 0.001) de un efecto negativo de la modificación en la abundancia total". Para múltiples predictores, es mejor mostrar los resultados en una tabla.
+
+**Visual.** La mejor manera de comunicar visualmente los resultados dependerá de tu pregunta. Para un modelo mixto simple con un efecto aleatorio, una gráfica de los datos crudos con las medias del modelo superpuestas es una posibilidad. Se requiere un poco de código para esta gráfica, y será un poco diferente para tus datos y modelo.
+
+Puedes hacer gráficas dentro de cada sitio, pero esto es un poco extraño para un diagrama de caja, ya que solo hay dos observaciones por sitio. Puedes hacer esto para tus datos si tienes más observaciones dentro de cada Sitio.
+
 
 ```{r, fig.height=8,warning=FALSE}
 library(Hmisc)
@@ -180,22 +191,20 @@ Est.means <- summarize(means, Estuaries$SiteWithin, mean)$means # extract means 
 stripchart(Est.means ~ sort(unique(SiteWithin)), data = Estuaries, pch = 18, col = "red", vertical = TRUE, add = TRUE) # plot means by site
 ```
 
-Alternatively, you can plot by Estuary as before (see [Mixed models 1](/statistics/mixed-models/mixed-model-1/)).
-  
+Alternativamente, puedes hacer gráficas por Estuario (ver [Modelos mixtos 1](/statistics/mixed-models/mixed-model-1/)).
 
-### Further help
- 
-You can type `?lmer` into R for help with these functions.
+### Más ayuda
 
-[Draft book chapter](http://lme4.r-forge.r-project.org/book/Ch2.pdf) from the authors of lme4.
+Puedes escribir `?lmer` en R para obtener ayuda con estas funciones.
+
+[Borrador de capítulo de libro](http://lme4.r-forge.r-project.org/book/Ch2.pdf) de los autores de lme4.
 
 <p style="margin-left:.5in;text-indent:-.5in">Faraway, JJ (2005) *Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models*. CRC Press.</p>
 
 <p style="margin-left:.5in;text-indent:-.5in">Zuur, A, EN Ieno and GM Smith (2007) *Analysing ecological data*. Springer Science & Business Media.</p>
-  
 
-**Author**: Gordana Popovic
- 
-**Year:** 2016
+**Autor**: Gordana Popovic
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`

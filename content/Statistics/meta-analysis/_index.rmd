@@ -1,16 +1,18 @@
 ---
 weight: 10
-title: "Meta-Analyses"
+title: "Meta-Análisis"
 output: html_document
 aliases: /meta-analysis/
 editor_options: 
   chunk_output_type: console
 ---
 
-Meta-analyses are increasingly used in ecology, evolution and the environmental sciences to find general patterns among many studies, settle controversies among conflicting studies and to generate new hypotheses. These tutorials provide an introduction to running meta-analyses with the R package [metafor](http://www.metafor-project.org/doku.php).
+EL meta-análisis se utilizan cada vez más en ecología, evolución y ciencias ambientales para encontrar patrones generales entre muchos estudios, resolver controversias entre estudios conflictivos y generar nuevas hipótesis. Estos tutoriales ofrecen una introducción para realizar meta-análisis con el paquete R [metafor](http://www.metafor-project.org/doku.php).
 
-* [Meta-analyses 1](meta-analysis-1): Introduction and calculating effect sizes  
-* [Meta-analyses 2](meta-analysis-2): Fixed effect and random effect models  
-* [Meta-analyses 3](meta-analysis-3): More complex models 
+* [Meta-análisis 1](meta-analysis-1): Introducción y cálculo de tamaños de efecto
+* [Meta-análisis 2](meta-analysis-2): Modelos de efecto fijo y efecto aleatorio
+* [Meta-análisis 3](meta-analysis-3): Modelos más complejos
+
+
 
 ![](images/4666102_orig.jpg)

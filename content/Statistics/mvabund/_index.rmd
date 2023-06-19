@@ -1,164 +1,179 @@
 ---
 weight: 8
-title: "Multivariate Analysis with mvabund"
+title: "Análisis multivariado con mvabund"
 output: html_document
 aliases: /introduction-to-mvabund/
 editor_options: 
   chunk_output_type: console
 ---
 
-Multivariate data are common in the environmental sciences, occurring when ever we measure several response variables from each replicate sample. Questions like how does the species composition of a community vary across sites, or how does the shape of trees (as measured by several morphological traits) vary with altitude are multivariate questions.
+Los datos multivariados son comunes en las ciencias ambientales, ocurren cuando medimos varias variables de respuesta en cada muestra replicada. Preguntas como cómo varía la composición de especies de una comunidad entre sitios, o cómo varía la forma de los árboles (medida por varias características morfológicas) con la altitud, son preguntas multivariadas.
 
-We will use the package [mvabund](https://cran.r-project.org/web/packages/mvabund/index.html) to specify and fit multivariate statistical models to these sorts of data.
+Utilizaremos el paquete [mvabund](https://cran.r-project.org/web/packages/mvabund/index.html) para especificar y ajustar modelos estadísticos multivariados a este tipo de datos.
 
-**How does this method differ from other multivariate analyses?**
-Many commonly used analyses for multivariate data sets (e.g. PERMANOVA, ANOSIM, CCA, RDA etc.) are "distance-based analyses". This means the first step of the analysis is to calculate a measure of similarity between each pair of samples, thus converting a multivariate dataset into a univariate one.
+**¿En qué se diferencia este método de otros análisis multivariados?**
+Muchos análisis comúnmente utilizados para conjuntos de datos multivariados (por ejemplo, PERMANOVA, ANOSIM, CCA, RDA, etc.) son "análisis basados en distancias". Esto significa que el primer paso del análisis es calcular una medida de similitud entre cada par de muestras, convirtiendo así un conjunto de datos multivariado en univariable.
 
-There are a couple of problems with these kinds of analysis. First, their statistical power is very low, except for variables with high variance. This means that for variables which are less variable, the analyses are less likely to detect a treatment effect. Second, they do not account for a very important property of multivariate data, which is the mean-variance relationship. Typically, in multivariate datasets like species-abundance data sets, counts for rare species will have many zeros with little variance, and the higher counts for more abundant species will be more variable.
+Existen algunos problemas con este tipo de análisis. En primer lugar, su poder estadístico es muy bajo, excepto para variables con alta varianza. Esto significa que para variables que son menos variables, es menos probable que los análisis detecten un efecto de tratamiento. En segundo lugar, no tienen en cuenta una propiedad muy importante de los datos multivariados, que es la relación media-varianza. Típicamente, en conjuntos de datos multivariados como conjuntos de datos de abundancia de especies, las cuentas de especies raras tendrán muchos ceros con poca varianza, y las cuentas más altas para especies más abundantes serán más variables.
 
-The mvabund approach improves power across a range of species with different variances and includes an assumption of a mean-variance relationship. It does this by fitting a single [generalised linear model](../glms/) (GLM) to each  response variable with a common set of predictor variables. We can then use resampling to test for significant community level or species level responses to our predictors.
+El enfoque de mvabund mejora el poder estadístico en una variedad de especies con diferentes varianzas e incluye una suposición de una relación media-varianza. Esto se logra ajustando un único [modelo lineal generalizado](../glms/) (GLM) a cada variable de respuesta con un conjunto común de variables predictoras. Luego podemos usar remuestreo para probar las respuestas significativas a nivel de comunidad o a nivel de especie ante nuestros predictores.
 
-Also, the model-based framework makes it easier to check our assumptions and interpret uncertainty around our findings.    
+Además, el marco basado en modelos facilita verificar nuestras suposiciones e interpretar la incertidumbre en torno a nuestros resultados.
 
-If you're interested in this method, watch the introductory video, [Introducing mvabund and why multivariate statistics in ecology is a bit like Rick Astley...](http://eco-stats.blogspot.com/2012/03/introducing-mvabund-package-and-why.html)
+Si estás interesado en este método, mira el video introductorio [Introducing mvabund and why multivariate statistics in ecology is a bit like Rick Astley...](http://eco-stats.blogspot.com/2012/03/introducing-mvabund-package-and-why.html)
+
 
 ![](Rick-Astley.jpg)
 
-In this example, we use a data set where researchers wanted to contrast the species composition of marine herbivores on five species of macroalgae. Twenty replicate individuals of each of seven species of macroalgae were collected from Sydney Harbour, and the abundance of seven species of herbivorous crustacean recorded from each replicate (data from [Poore *et al*. 2000)](http://www.int-res.com/abstracts/meps/v208/p183-196/). The data are multivariate because seven response variables (the species) were measured from each of the samples. 
+
+En este ejemplo, utilizamos un conjunto de datos en el que los investigadores querían contrastar la composición de especies de herbívoros marinos en cinco especies de macroalgas. Se recolectaron veinte individuos replicados de cada una de las siete especies de macroalgas de Sydney Harbour, y se registró la abundancia de siete especies de crustáceos herbívoros en cada réplica (datos de [Poore *et al*. 2000)](http://www.int-res.com/abstracts/meps/v208/p183-196/). Los datos son multivariados porque se midieron siete variables de respuesta (las especies) en cada una de las muestras.
+
 
 ![](MDS_image.jpg)
 
-We could reduce this into a univariate dataset by calculating the 4950 (100*99/2) pairwise differences between samples, and use these differences to visualise patterns in the data (e.g, as we did in our [multi-dimensional scaling](/graphics/multivariate-vis/mds/) example) or test hypotheses about groups of samples by resampling these differences. 
+Podríamos reducir esto a un conjunto de datos univariado calculando las 4950 (100*99/2) diferencias en pares entre las muestras, y utilizar estas diferencias para visualizar patrones en los datos (por ejemplo, como hicimos en nuestro ejemplo de [escalamiento multidimensional](/graphics/multivariate-vis/mds/)) o probar hipótesis sobre grupos de muestras mediante remuestreo de estas diferencias.
 
-Here, we will use mvabund to contrast species composition across habitats using models that are appropriate for the mean-variance relationships and allowing us to check assumptions of those models. 
+Aquí, utilizaremos `mvabund` para contrastar la composición de especies en diferentes hábitats utilizando modelos apropiados para las relaciones media-varianza y permitiéndonos verificar las suposiciones de esos modelos.
   
 
-### Running the analysis
+### Ejecución del análisis
  
-First, install and load the mvabund package.
+Primero, instala y carga el paquete `mvabund`.
+
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(mvabund)
 ```
 
-Your data should be formatted so that each sample is a row and each variable is a column. Download the [herbivore specialisation](/datasets/Herbivore_specialisation.csv) data set, and import into R to see the desired format.
+
+Tus datos deben tener el formato en el que cada muestra es una fila y cada variable es una columna. Descarga el conjunto de datos de [especialización de herbívoros](/datasets/Herbivore_specialisation.csv) y importa en R para ver el formato deseado.
+
 
 ```{r}
 Herbivores <- read.csv(file = "Herbivore_specialisation.csv", header = TRUE)
 ```
 
-The first two columns are categorical variables that label the samples as coming from each of the five habitats or as being collected during the day or the night. The third column is the replicate number per combination of habitat and day/night. The fourth column is the biomass of the habitat sampled and the rest of the columns are the counts of each herbivore species in each sample.
+Las dos primeras columnas son variables categóricas que etiquetan las muestras como provenientes de cada uno de los cinco hábitats o como recolectadas durante el día o la noche. La tercera columna es el número de réplica por combinación de hábitat y día/noche. La cuarta columna es la biomasa del hábitat muestreado y el resto de las columnas son los recuentos de cada especie de herbívoro en cada muestra.
 
-We will now use the just the abundance data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package. 
+Ahora utilizaremos solo los datos de abundancia (en las columnas 5 a 11) y los convertiremos al formato de objeto mvabund utilizado por el paquete `mvabund`.
+
 
 ```{r}
 Herb_spp <- mvabund(Herbivores[, 5:11])
 ```
 
-We can have a quick look at the spread of our data using the `boxplot` function. 
+Podemos echar un vistazo rápido a la dispersión de nuestros datos utilizando la función `boxplot`.
+
 
 ```{r message=FALSE, warning=FALSE}
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
 boxplot(Herbivores[, 5:11], horizontal = TRUE, las = 2, main = "Abundance")
 ```
 
-It looks like some species of marine herbivores (e.g. *Ampithoe ngana*) are much more abundant and variable than others (e.g. *Cymadusa munnu*). It's probably a good idea to check our mean-variance relationship then! We can do this using the `meanvar.plot` function:
+
+Parece que algunas especies de herbívoros marinos (por ejemplo, *Ampithoe ngana*) son mucho más abundantes y variables que otras (por ejemplo, *Cymadusa munnu*). ¡Probablemente sea una buena idea verificar nuestra relación media-varianza! Podemos hacer esto utilizando la función `meanvar.plot`:
+
 
 ```{r message=FALSE, warning=FALSE}
 meanvar.plot(Herb_spp)
 ```
 
-You can clearly see that the species with high means (on the *x* axis) also have high variances (*y* axis).
+Claramente se puede observar que las especies con altas medias (en el eje *x*) también tienen altas varianzas (eje *y*).
 
-We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by *mvabund* when fitting multivariate GLMs is *negative binomial* which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In this example, we only have categorical variables so that one's not too important. If you are unsure of these relationships, don't worry, we can check our model fit later. 
+Podemos abordar esta relación eligiendo una familia de GLM con una suposición adecuada de media-varianza. La familia predeterminada utilizada por `mvabund` al ajustar GLMs multivariados es la *binomial negativa*, que asume una relación cuadrática entre la media y la varianza, y una relación log-lineal entre las variables de respuesta y las variables continuas. En este ejemplo, solo tenemos variables categóricas, por lo que eso no es demasiado importante. Si no estás seguro de estas relaciones, no te preocupes, podemos verificar el ajuste de nuestro modelo más adelante.
 
-Now let's get back to our research questions. Are there differences in the species composition of the seven marine herbivores sampled? Do some of them specialise on particular types of algae while others are more generalised feeders? Which species? Let's start by eyeballing the data.  
+Ahora volvamos a nuestras preguntas de investigación. ¿Hay diferencias en la composición de especies de los siete herbívoros marinos muestreados? ¿Algunas de ellas se especializan en tipos particulares de algas mientras que otras son alimentadoras más generalizadas? ¿Cuáles son las especies? Comencemos por observar los datos visualmente.
 
-There is a 'quick and dirty' built-in plotting function in the *mvabund* package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against habitat, we would use:
+Existe una función de trazado incorporada y rápida en el paquete `mvabund` que nos permite contrastar las abundancias transformadas con las variables predictoras que elijamos. Para contrastar las abundancias con el hábitat, utilizaríamos:
+
 
 ```{r message=FALSE, warning=FALSE}
 plot(Herb_spp ~ as.factor(Herbivores$Habitat), cex.axis = 0.8, cex = 0.8)
 ```
 
-Alternatively, we can include the argument `transformation="no"` to look at the raw abundance data. Because this plot is based on the base plotting language in R, you can add extra arguments to customise the graph. We have made the axis text (`cex.axis=0.8`) and the symbols (`cex=0.8`) smaller so that we can better see what's going on.
+Alternativamente, podemos incluir el argumento `transformation="no"` para ver los datos de abundancia en bruto. Como este gráfico se basa en el lenguaje de trazado base de R, puedes agregar argumentos adicionales para personalizar el gráfico. Hemos reducido el tamaño del texto de los ejes (`cex.axis=0.8`) y de los símbolos (`cex=0.8`) para poder ver mejor lo que está sucediendo.
 
-It is quite a messy graph but a couple of things jump out at us. It looks like the herbivore *Ampithoe ngana* is very abundant and will eat just about anything. On the other hand, *Cymadusa munnu* and *Plumithoe quadrimana* are quite rare. *Ampithoe ngana*, *A. caddi*, *A. kava* and *Exampithoe kutti* are generalist feeders whereas *Perampithoe parmerong* is largely specialised to the two species of *Sargassum*.
+Es un gráfico bastante desordenado, pero hay un par de cosas que llaman nuestra atención. Parece que el herbívoro *Ampithoe ngana* es muy abundante y comerá prácticamente cualquier cosa. Por otro lado, *Cymadusa munnu* y *Plumithoe quadrimana* son bastante raras. *Ampithoe ngana*, *A. caddi*, *A. kava* y *Exampithoe kutti* son alimentadores generalistas, mientras que *Perampithoe parmerong* está en gran medida especializada en las dos especies de *Sargassum*.
 
-Let's now contrast the species composition across algal species to see if the models support our observations.
+Ahora contrastemos la composición de especies entre las especies de algas para ver si los modelos respaldan nuestras observaciones.
 
-The model syntax below fits our response variable (the mvabund object Herb_spp with the 100 counts of 7 species) to the predictor variable Habitat (type of algae).
+La sintaxis del modelo a continuación ajusta nuestra variable de respuesta (el objeto mvabund Herb_spp con los 100 recuentos de las 7 especies) a la variable predictora Habitat (tipo de alga).
+
 
 ```{r}
 mod1 <- manyglm(Herb_spp ~ Herbivores$Habitat, family = "poisson")
 ```
   
+### Supuestos a verificar
 
-### Assumptions to check
- 
-Before we examine the output, we need to check our model assumptions. We can use the `plot` function to generate a plot of residuals.
+Antes de examinar los resultados, debemos verificar los supuestos de nuestro modelo. Podemos utilizar la función `plot` para generar un gráfico de los residuos.
+
 
 ```{r message=FALSE, warning=FALSE}
 plot(mod1)
 ```
 
-If the model is a good fit, we should see a random scatter of points. What we don't want to see is a relationship, either linear or curvilinear, or a fan shape. This could mean that one of our assumptions was wrong: either our mean-variance relationship was wrongly specified, or our assumed relationship between our response and predictors was incorrect. Or, we could have missed a key explaining variable in our model which leaves a lot of unexplained variance. 
+Si el modelo se ajusta bien, deberíamos ver una dispersión aleatoria de puntos. Lo que no queremos ver es una relación, ya sea lineal o curvilínea, o una forma de abanico. Esto podría significar que uno de nuestros supuestos estaba equivocado: ya sea que hayamos especificado incorrectamente la relación entre la media y la varianza, o que nuestra relación asumida entre nuestra respuesta y los predictores sea incorrecta. O también podríamos haber omitido una variable explicativa clave en nuestro modelo, lo cual deja mucha varianza sin explicar.
 
-In this example, we see a clear fan shape in the residual plot, this means we have misspecified our mean-variance relationship. We can use the `family` argument to choose a distribution which is better suited to our data. For count data which does not fit the `'poisson` distribution, we can use the `negative_binomial` distribution.
+En este ejemplo, vemos una clara forma de abanico en el gráfico de residuos, lo que significa que hemos especificado incorrectamente nuestra relación entre la media y la varianza. Podemos utilizar el argumento `family` para elegir una distribución que se adapte mejor a nuestros datos. Para datos de recuento que no se ajustan a la distribución `'poisson'`, podemos usar la distribución `negative_binomial`.
+
 
 ```{r}
 mod2 <- manyglm(Herb_spp ~ Herbivores$Habitat, family = "negative_binomial")
 plot(mod2)
 ```
 
-This residual plot is much better, there is now no discernible fan shape and we will use this model for all further analysis.
-  
+Este gráfico de residuos es mucho mejor, ahora no hay una forma de abanico discernible y utilizaremos este modelo para todo el análisis posterior.
 
-### Interpreting the results
- 
-We can test the multivariate hypothesis of whether species composition varied across the habitats by using the `anova` function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data. 
+
+### Interpretación de los resultados
+
+Podemos probar la hipótesis multivariante de si la composición de especies varía entre los hábitats utilizando la función `anova`. Esto nos da una tabla de análisis de desviación donde utilizamos pruebas de razón de verosimilitud y valores p remuestreados para buscar un efecto significativo del hábitat en los datos de la comunidad.
+
 
 ```{r}
 anova(mod2)
 ```
 
-We can see from this table that there is a significant effect of Habitat (LRT = 625, P = 0.001), meaning that the species composition of herbivores clearly differs between the species of algae that they are found on. 
+Podemos ver en esta tabla que hay un efecto significativo del hábitat (LRT = 625, P = 0.001), lo que significa que la composición de especies de herbívoros difiere claramente entre las especies de algas en las que se encuentran.
 
-To examine this further, and see which herbivore species are more likely to be found on which algal species, we can run univariate tests for each species separately.
+Para examinar esto más a fondo y ver qué especies de herbívoros es más probable que se encuentren en qué especies de algas, podemos realizar pruebas univariadas para cada especie por separado.
 
-This is done by using the `p.uni="adjusted"` argument in the `anova` function. The "adjusted" part of the argument refers to the resampling method used to compute the p values, taking into account the correlation between the response variables. This correlation is often found in ecological systems where different species will interact with each other, competing with or facilitating each others' resource use.
+Esto se hace utilizando el argumento `p.uni="adjusted"` en la función `anova`. La parte "adjusted" del argumento se refiere al método de remuestreo utilizado para calcular los valores p, teniendo en cuenta la correlación entre las variables de respuesta. Esta correlación se encuentra a menudo en los sistemas ecológicos donde diferentes especies interactuarán entre sí, compitiendo o facilitando el uso de recursos.
+
 
 ```{r}
 anova(mod2, p.uni = "adjusted")
 ```
 
-Even after adjusting for multiple testing, there is an effect of habitat on all species.
+Incluso después de ajustar por pruebas múltiples, hay un efecto del hábitat en todas las especies.
 
-So far, we have considered just one predictor variable of habitat. By altering the formula in mvabund, we can test more complex models. For example, to fit a model with both habitat and day or night, we would use:
+Hasta ahora, solo hemos considerado una variable predictora del hábitat. Al modificar la fórmula en `mvabund`, podemos probar modelos más complejos. Por ejemplo, para ajustar un modelo con tanto el hábitat como el día o la noche, utilizaríamos:
+
 
 ```{r}
 mod3 <- manyglm(Herb_spp ~ Herbivores$Habitat * Herbivores$DayNight, family = "negative_binomial")
 anova(mod3)
 ```
 
-You can see that the species composition of herbivores varies with habitat, but not between day and night.
+Puedes observar que la composición de especies de herbívoros varía según el hábitat, pero no entre el día y la noche.
+
   
 
-### Communicating the results
- 
-**Written.** If we were writing a paper about the differences in habitat use by marine herbivores, we may write the following: There were different marine herbivores communities on different algal substrates (LRT = 625, P < 0.001). We can be more descriptive about the community differences by using a graphical representation of our results.   
+### Comunicando los resultados
 
-**Visual.** Multivariate data are best visualised by ordination plots. See the [boral](https://cran.r-project.org/web/packages/boral/index.html) package for model based ordination. To get started, watch [this](https://www.youtube.com/watch?v=XmrVVMG1HXI) video. 
-  
+**Escrito.** Si estuviéramos escribiendo un artículo sobre las diferencias en el uso de hábitat por parte de los herbívoros marinos, podríamos escribir lo siguiente: Hubo comunidades de herbívoros marinos diferentes en diferentes sustratos de algas (LRT = 625, P < 0.001). Podemos ser más descriptivos sobre las diferencias en la comunidad utilizando una representación gráfica de nuestros resultados.
 
-### Further help
- 
-This method was created by UNSW's Ecostats research group, you can keep up with their latest research on their [blog](http://eco-stats.blogspot.com/). They have been updating the mvabund package with many new exciting features, including block resampling and fourth corner analyses.
+**Visual.** Los datos multivariados se visualizan mejor mediante gráficos de ordenación. Consulta el paquete [boral](https://cran.r-project.org/web/packages/boral/index.html) para obtener una ordenación basada en modelos. Para comenzar, mira [este](https://www.youtube.com/watch?v=XmrVVMG1HXI) video.
 
-<p style="margin-left: .5in; text-indent: -.5in;">Wang, Y, U Naumann, ST Wright & DI Warton (2012) mvabund - an R package for model-based analysis of multivariate abundance data. *Methods in Ecology and Evolution* 3: 471-474.</p>
-  
+### Más ayuda
 
-**Authors**: Rachel V. Blakey & Andrew Letten
- 
-**Year:** 2016
+Este método fue creado por el grupo de investigación Ecostats de la UNSW. Puedes estar al tanto de sus últimas investigaciones en su [blog](http://eco-stats.blogspot.com/). Han estado actualizando el paquete mvabund con muchas características nuevas emocionantes, incluyendo remuestreo por bloques y análisis de la cuarta esquina.
 
-**Last updated:** `r format(Sys.time(), "%b %Y")`
+<p style="margin-left: .5in; text-indent: -.5in;">Wang, Y, U Naumann, ST Wright & DI Warton (2012) mvabund - un paquete R para el análisis basado en modelos de datos de abundancia multivariados. *Methods in Ecology and Evolution* 3: 471-474.</p>
+
+**Autores**: Rachel V. Blakey y Andrew Letten
+
+**Año**: 2016
+
+**Última actualización**: `r format(Sys.time(), "%b %Y")`
